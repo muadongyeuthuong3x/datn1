@@ -7,7 +7,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import {  ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
@@ -33,10 +32,14 @@ export class UsersService {
         email: loginUserDto.email,
       },
     });
-    if (!data)
-    return null;
-    if(await bcrypt.compare(loginUserDto.password , data.password))
-    return null;
+    console.log(!data)
+    if (!data){
+      return null;
+    }
+   
+    if(await bcrypt.compare(loginUserDto.password , data.password)){
+      return null;
+    }
    return data;
 }
 
@@ -52,13 +55,8 @@ export class UsersService {
 }
 
   generateJWT(user){
-    let today = new Date();
-    let exp = new Date(today);
-    exp.setDate(today.getDate() + 60);
-
     return this.jwtService.sign({
       id: user.id,
-      username: user.username,
       email: user.email,
     });
   }

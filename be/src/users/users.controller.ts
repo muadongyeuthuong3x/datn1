@@ -34,14 +34,15 @@ export class UsersController {
   @Post("/login")
   async loginProduct(@Body() loginUserDto: LoginUserDto) : Promise<UserRO>  {
     const  data : CreateUserDto = await this.usersService.login(loginUserDto);
-    const {email , role} = data;
     if(data){
-     const dataRes = this.usersService.generateJWT(data);
+      const {email , role} = data;
+     const dataRes = await this.usersService.generateJWT(data);
      const user = {
       email,
       token : dataRes,
       role
      }
+     
      return  { user };
     }else {
       throw new BadGatewayException({
