@@ -7,7 +7,7 @@ import { UserSchema } from './helpers/validate_schema_user';
 import { BadGatewayException } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UserRO } from './interfaceData/interface-login';
-
+         
 
 @Controller('users')
 export class UsersController {
