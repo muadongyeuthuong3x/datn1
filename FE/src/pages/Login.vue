@@ -49,16 +49,12 @@ export default {
             return this.rememberMe === true;
         },
         async signIn() {
-            try {
                 const formData = {
                     email: this.username,
                     password: this.password
                 }
                 await this.$store.dispatch('auth/signInWithEmailAndPassword', formData)
                 this.successRedirect()
-            } catch (error) {
-                alert(error.message)
-            }
         },
         successRedirect() {
             const redirectTo = this.$route.query.redirectTo || { name: 'Home' }

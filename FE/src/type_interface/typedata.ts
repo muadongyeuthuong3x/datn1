@@ -1,5 +1,5 @@
 export interface notiPush {
-    id : number;
+    id? : number;
     message : string,
     type : string,
     timeout ?:any

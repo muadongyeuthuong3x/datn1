@@ -8,7 +8,13 @@ export default {
   },
   actions: {
     async signInWithEmailAndPassword ( _: any ,data : DataLogin) {
-      return await loginProdcut(data)
+      try {
+        return await loginProdcut(data)
+      } catch (error : any) {
+        const { addNotification } = useNotifications();
+        addNotification({ message: error.response.data.message, type: 'error' })
+      }
+      
     },
   },
 }

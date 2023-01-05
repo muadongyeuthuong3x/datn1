@@ -2,16 +2,15 @@ import { reactive } from 'vue'
 import type { notiPush } from './../type_interface/typedata';
 
 const notifications: notiPush[] = reactive([])
-const addNotification = ({ message, timeout = null, type = 'info' } : notiPush) => {
+const addNotification = ({ message, type = 'info' } : notiPush) => {
     const id = Math.random() + Date.now()
     notifications.push({
         id,
         message,
         type
     })
-    if (timeout) {
-        setTimeout(() => removeNotification(id), timeout)
-    }
+        setTimeout(() => removeNotification(id), 3000)
+
 }
 
 const removeNotification = (id: number) => {

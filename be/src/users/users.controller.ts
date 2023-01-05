@@ -47,7 +47,7 @@ export class UsersController {
     }else {
       throw new BadGatewayException({
         error : "error",
-        message : "login failed you can check email or password login"
+        message : "Login failed you can check email or password login"
     })
     }
   }
