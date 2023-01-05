@@ -6,7 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
-import jwt from 'jsonwebtoken';
+import { JwtService } from '@nestjs/jwt';
 import {  ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -15,6 +15,7 @@ export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async findOneEmail(createUserDto: CreateUserDto) {
@@ -55,12 +56,11 @@ export class UsersService {
     let exp = new Date(today);
     exp.setDate(today.getDate() + 60);
 
-    return jwt.sign({
+    return this.jwtService.sign({
       id: user.id,
       username: user.username,
       email: user.email,
-      exp: exp.getTime() / 1000,
-    }, ConfigService.call('POSTGRES_USER'));
+    });
   }
 
   findAll() {
