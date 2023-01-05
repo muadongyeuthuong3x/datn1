@@ -1,0 +1,8 @@
+https://wanago.io/2020/05/18/api-nestjs-postgresql-typeorm/
+
+https://joi.dev/api/
+
+Quen thuộc với hệ sinh thái Vue.js, bao gồm Vue CLI, Vuex, Vue Router và Nuxt.js
+
+
+// https://github.com/vueschool/vue-masterclass?ref=vuejsexamples.com
