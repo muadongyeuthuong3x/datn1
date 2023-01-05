@@ -6,3 +6,5 @@ Quen thuộc với hệ sinh thái Vue.js, bao gồm Vue CLI, Vuex, Vue Router v
 
 
 // https://github.com/vueschool/vue-masterclass?ref=vuejsexamples.com
+
+//https://stackoverflow.com/questions/48720942/node-js-joi-how-to-display-a-custom-error-messages

@@ -8,9 +8,9 @@ import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
-
+    DatabaseModule,
     UsersModule,
-    ConfigModule.forRoot({
+        ConfigModule.forRoot({
       validationSchema: Joi.object({
         POSTGRES_HOST: Joi.string().required(),
         POSTGRES_PORT: Joi.number().required(),
@@ -20,9 +20,11 @@ import { DatabaseModule } from './database/database.module';
         PORT: Joi.number(),
       })
     }),
-    DatabaseModule,
+   
   ],
+ 
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+}

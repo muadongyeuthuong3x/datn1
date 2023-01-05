@@ -1,17 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column , CreateDateColumn ,UpdateDateColumn } from 'typeorm';
+import {  IsNotEmpty } from 'class-validator';
 import {UserRole} from '../../enums/enum_users';
 
 @Entity('users')
 
-export class User {
+export  class UserEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @IsEmail()
+    @Column()
     email: string;
 
-    @IsNotEmpty()
+    @Column()
     password: string;
 
     @Column({
@@ -20,5 +20,11 @@ export class User {
         default : UserRole._KMA
     })
     role: UserRole;
+
+    @CreateDateColumn({ name: 'created_at', default: new Date() })
+    createdAt?: Date;
+
+    @UpdateDateColumn({ name: 'updated_at', default: new Date() })
+    updatedAt?: Date;
      
 }

@@ -1,20 +1,54 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto , UserSchemaLogin } from './dto/create-user.dto';
+import { CreateUserDto  } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JoiValidatePipe } from './helpers/joi_validate.pipe';
+import { UserSchema } from './helpers/validate_schema_user';
+import { BadGatewayException } from '@nestjs/common';
+import { LoginUserDto } from './dto/login-user.dto';
+import { UserRO } from './interfaceData/interface-login';
+
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @UsePipes(new JoiValidatePipe(UserSchema))
+  async create(@Body() createUserDto: CreateUserDto) {
+    const dataRes =  await this.usersService.findOneEmail(createUserDto);
+    if(!dataRes){
+      await this.usersService.createUser(createUserDto);
+      return {
+        success : true,
+        messages : "create user successfully"
+      }
+    }else {
+      throw new BadGatewayException({
+        error : "error",
+        message : "email hava in database"
+    })
+    }
   }
   
   @Post("/login")
-  loginProduct(@Body() createUserDto: UserSchemaLogin) {
-    return this.usersService.create(createUserDto);
+  async loginProduct(@Body() loginUserDto: LoginUserDto) : Promise<UserRO>  {
+    const  data : CreateUserDto = await this.usersService.login(loginUserDto);
+    const {email , role} = data;
+    if(data){
+     const dataRes = this.usersService.generateJWT(data);
+     const user = {
+      email,
+      token : dataRes,
+      role
+     }
+     return  { user };
+    }else {
+      throw new BadGatewayException({
+        error : "error",
+        message : "login failed you can check email or password login"
+    })
+    }
   }
 
   @Get()

@@ -131,8 +131,8 @@ input:focus {
 
 .form-group {
     position: relative;
-    padding-top: 15px;
-    margin-top: 10px;
+    padding-top: 10px;
+    /* margin-top: 10px; */
 }
 
 label {
