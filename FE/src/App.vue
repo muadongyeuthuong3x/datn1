@@ -1,14 +1,16 @@
 
 <template>
-  <RouterView />
+  <div>
+    <RouterView />
   <AppNotifications />
+  </div>
+
 </template>
 
-<script setup>
+<script lang="ts" >
 import {  RouterView } from 'vue-router'
-import { mapActions } from 'vuex'
 import NProgress from 'nprogress'
-import AppNotifications from '@/components/AppNotifications.vue'
+import AppNotifications from './components/AppNotifications.vue'
 export default {
   name: 'App',
   components: { AppNotifications ,RouterView },

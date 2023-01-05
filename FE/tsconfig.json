@@ -1,4 +1,4 @@
-{
+{ 
   "files": [],
   "references": [
     {
@@ -9,6 +9,17 @@
     },
     {
       "path": "./tsconfig.vitest.json"
-    }
-  ]
+    },
+
+  ],
+  "compilerOptions": {
+    /* other configs */
+    "paths": {
+      "@/*": [
+        "./src/*" // set path `@/*` as alias of `src/*`
+      ]
+    },
+    /* other configs */
+  }
+
 }
