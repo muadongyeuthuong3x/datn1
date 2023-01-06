@@ -8,3 +8,16 @@ Quen thuộc với hệ sinh thái Vue.js, bao gồm Vue CLI, Vuex, Vue Router v
 // https://github.com/vueschool/vue-masterclass?ref=vuejsexamples.com
 
 //https://stackoverflow.com/questions/48720942/node-js-joi-how-to-display-a-custom-error-messages
+
+// https://www.tutorialspoint.com/typeorm/typeorm_transactions.htm
+
+https://viblo.asia/p/framework-nestjs-middleware-63vKjDDxl2R
+
+
+
+
+  "user": {
+        "email": "cuong6@gmail.com",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJjdW9uZzZAZ21haWwuY29tIiwiaWF0IjoxNjcyOTk0OTgxLCJleHAiOjE2NzI5OTg1ODF9.WQQxriHQ1hnui4E40zV7nFpEDCw7lmJb_KibZMtJf4Y",
+        "role": "admin"
+    }

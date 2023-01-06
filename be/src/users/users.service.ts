@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { UserEntity }  from "./entities/user.entity";
+import { UserEntity } from "./entities/user.entity";
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {  Not, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -15,14 +15,14 @@ export class UsersService {
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async findOneEmail(createUserDto: CreateUserDto) {
-      const data = await this.usersRepository.findOne({
-        where: {
-          email: createUserDto.email,
-        },
-      });
+    const data = await this.usersRepository.findOne({
+      where: {
+        email: createUserDto.email,
+      },
+    });
     return data;
   }
 
@@ -32,40 +32,46 @@ export class UsersService {
         email: loginUserDto.email,
       },
     });
-    if(!data){
+    if (!data) {
       return null;
     }
     const isMatch = await bcrypt.compare(loginUserDto.password, data.password);
-    if(isMatch){
+    if (isMatch) {
       return data;
-    } 
-   return null;
-}
+    }
+    return null;
+  }
 
   async createUser(createUserDto: CreateUserDto) {
     const salt = await bcrypt.genSalt();
-    const hash =  await bcrypt.hash(createUserDto.password, salt);
+    const hash = await bcrypt.hash(createUserDto.password, salt);
     let newUser = new UserEntity();
     newUser.email = createUserDto.email;
     newUser.password = hash;
     newUser.role = createUserDto.role;
     const data = await this.usersRepository.save(newUser);
     return data;
-}
+  }
 
-  public generateJWT(user ){
+  public generateJWT(user : any) {
     return this.jwtService.sign({
       id: user.id,
       email: user.email,
     });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(id: number) {
+    const dataAll = await this.usersRepository.find({where: {id: Not(id)}})
+    return dataAll;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(email: string) {
+    const data = await this.usersRepository.findOne({
+      where: {
+        email: email,
+      },
+    });
+    return data;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
