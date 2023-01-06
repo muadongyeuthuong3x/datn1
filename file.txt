@@ -21,3 +21,5 @@ https://viblo.asia/p/framework-nestjs-middleware-63vKjDDxl2R
         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJjdW9uZzZAZ21haWwuY29tIiwiaWF0IjoxNjcyOTk0OTgxLCJleHAiOjE2NzI5OTg1ODF9.WQQxriHQ1hnui4E40zV7nFpEDCw7lmJb_KibZMtJf4Y",
         "role": "admin"
     }
+
+    https://www.darraghoriordan.com/2022/06/12/persistence-5-typeorm-postgres-advanced-querying/

@@ -61,7 +61,7 @@ export class UsersService {
   }
 
   async findAll(id: number) {
-    const dataAll = await this.usersRepository.find({where: {id: Not(id)}})
+    const dataAll = await this.usersRepository.find({where: {id: Not(id)}  , select : ["email", "role"] })
     return dataAll;
   }
 
