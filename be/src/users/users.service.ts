@@ -32,20 +32,19 @@ export class UsersService {
         email: loginUserDto.email,
       },
     });
-    console.log(!data)
-    if (!data){
+    if(!data){
       return null;
     }
-   
-    if(await bcrypt.compare(loginUserDto.password , data.password)){
-      return null;
-    }
-   return data;
+    const isMatch = await bcrypt.compare(loginUserDto.password, data.password);
+    if(isMatch){
+      return data;
+    } 
+   return null;
 }
 
   async createUser(createUserDto: CreateUserDto) {
     const salt = await bcrypt.genSalt();
-    const hash = bcrypt.hashSync(createUserDto.email, salt);
+    const hash =  await bcrypt.hash(createUserDto.password, salt);
     let newUser = new UserEntity();
     newUser.email = createUserDto.email;
     newUser.password = hash;
@@ -54,7 +53,7 @@ export class UsersService {
     return data;
 }
 
-  generateJWT(user){
+  public generateJWT(user ){
     return this.jwtService.sign({
       id: user.id,
       email: user.email,

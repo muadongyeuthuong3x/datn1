@@ -26,10 +26,12 @@
 </template>
 
 <script  >
-import axios from "axios";
+import useNotifications from '@/composables/useNotifications'
+
 export default {
     name: "LoginForm",
     template: "#login-form",
+    // components: { AppNotifications  },
     data() {
         return {
             rememberMe: false,
@@ -53,8 +55,14 @@ export default {
                     email: this.username,
                     password: this.password
                 }
+                try {
                 await this.$store.dispatch('auth/signInWithEmailAndPassword', formData)
                 this.successRedirect()
+                } catch (error) {
+                    const { addNotification } = useNotifications();
+              addNotification({ message: error.response.data.message, type: 'error' })
+                }
+               
         },
         successRedirect() {
             const redirectTo = this.$route.query.redirectTo || { name: 'Home' }
