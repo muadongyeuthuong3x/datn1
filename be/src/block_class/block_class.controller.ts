@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, Req, BadGatewayException, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, Req, BadGatewayException, Res, UseInterceptors , CacheInterceptor  } from '@nestjs/common';
 import { JoiValidatePipe } from 'src/users/helpers/joi_validate.pipe';
 import { BlockClassSchema } from 'src/users/helpers/validate_schema_block_class';
 import { BlockClassService } from './block_class.service';
 import { CreateBlockClassDto } from './dto/create-block_class.dto';
 import { UpdateBlockClassDto } from './dto/update-block_class.dto';
-import { DataSource } from 'typeorm';
+
 @Controller('block-class')
 export class BlockClassController {
   constructor(  private readonly blockClassService: BlockClassService ) { }
@@ -37,6 +37,7 @@ export class BlockClassController {
   }
 
   @Get()
+  @UseInterceptors(CacheInterceptor)
   async findAll() {
     try {
       const data = await this.blockClassService.findAll();

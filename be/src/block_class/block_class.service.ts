@@ -26,7 +26,7 @@ export class BlockClassService {
       await queryRunner.commitTransaction();
       return data;
     } catch (error) {
-      const data =  await queryRunner.rollbackTransaction();
+      await queryRunner.rollbackTransaction();
       throw new BadGatewayException({
         status: "error",
         message: "server error"
