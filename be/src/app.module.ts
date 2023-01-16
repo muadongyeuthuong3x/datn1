@@ -7,6 +7,7 @@ import * as Joi from '@hapi/joi';
 import { DatabaseModule } from './database/database.module';
 import { AuthLogin } from './auth-middleware/auth.login';
 import { JwtModule } from '@nestjs/jwt';
+import { BlockClassModule } from './block_class/block_class.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { JwtModule } from '@nestjs/jwt';
         PORT: Joi.number(),
       })
     }),
+    BlockClassModule,
 
   ],
 

@@ -19,12 +19,12 @@ export class UsersController {
     if (!dataRes) {
       await this.usersService.createUser(createUserDto);
       return {
-        success: true,
+        status: "success",
         messages: "create user successfully"
       }
     } else {
       throw new BadGatewayException({
-        error: "error",
+        status: "error",
         message: "email hava in database"
       })
     }
@@ -44,7 +44,7 @@ export class UsersController {
       return { user };
     } else {
       throw new BadGatewayException({
-        error: "error",
+        status: "error",
         message: "Login failed you can check email or password login"
       })
     }

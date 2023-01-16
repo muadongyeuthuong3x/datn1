@@ -23,3 +23,24 @@ https://viblo.asia/p/framework-nestjs-middleware-63vKjDDxl2R
     }
 
     https://www.darraghoriordan.com/2022/06/12/persistence-5-typeorm-postgres-advanced-querying/
+
+    https://codeforgeek.com/encrypt-and-decrypt-data-in-node-js/
+
+
+
+
+
+
+
+
+
+
+
+
+/// nestjs 
+
+nest g resource [name].
+
+
+https://wanago.io/2020/10/26/api-nestjs-transactions-postgresql-typeorm/
+https://docs.nestjs.com/techniques/database#transactions
