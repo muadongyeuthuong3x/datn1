@@ -44,3 +44,5 @@ nest g resource [name].
 
 https://wanago.io/2020/10/26/api-nestjs-transactions-postgresql-typeorm/
 https://docs.nestjs.com/techniques/database#transactions
+
+https://stackoverflow.com/questions/67012009/error-error-syntax-error-at-or-near-not-typeorm

@@ -1,9 +1,7 @@
 import { Injectable, BadGatewayException } from '@nestjs/common';
-import { CreateBlockClassDto } from './dto/create-block_class.dto';
-import { UpdateBlockClassDto } from './dto/update-block_class.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BlockClass } from './entities/block_class.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
 
 @Injectable()
@@ -38,7 +36,7 @@ export class BlockClassService {
 
   }
 
-  async findOneblockClass(blockClass: string) {
+  async findOneblockClass(blockClass: string): Promise<BlockClass> {
     const data = await this.blockClassRepository.findOne({
       where: {
         blockClass,
@@ -47,16 +45,34 @@ export class BlockClassService {
     return data;
   }
 
+
+  async findOneblockClassUpdate(id: Number, blockClass: string): Promise<BlockClass> {
+    const data = await this.blockClassRepository.findOne({
+      where: {
+        blockClass,
+      },
+    });
+    return data;
+  }
+
+
   findAll() {
-    return this.blockClassRepository.find();
+    return this.blockClassRepository.find({
+      order: {
+        'id': 'ASC',
+      },
+      relations: {
+        class: true,
+      },
+    })
   }
 
   findOne(id: number) {
     return this.blockClassRepository.findOneBy({ id });
   }
 
-  update(id: number, updateBlockClassDto: UpdateBlockClassDto) {
-    return `This action updates a #${id} blockClass`;
+  update(id: number, blockClass: string) {
+    return this.blockClassRepository.update(id, { blockClass: blockClass });
   }
 
   remove(id: number) {

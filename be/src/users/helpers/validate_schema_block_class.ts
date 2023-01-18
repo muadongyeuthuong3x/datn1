@@ -1,7 +1,7 @@
 import * as Joi from '@hapi/joi';
 
 export const BlockClassSchema = Joi.object({
-    blockClass: Joi.string().required().min(10).max(100).messages({
+    blockClass: Joi.string().required().min(3).max(10).messages({
         'string.base': `blockClass no string`,
         'string.empty': `blockClass cannot be an empty field`,
         'string.min': `blockClass have min  {#limit} length`,
