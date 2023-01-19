@@ -46,3 +46,10 @@ https://wanago.io/2020/10/26/api-nestjs-transactions-postgresql-typeorm/
 https://docs.nestjs.com/techniques/database#transactions
 
 https://stackoverflow.com/questions/67012009/error-error-syntax-error-at-or-near-not-typeorm
+
+https://www.positronx.io/node-import-csv-file-data-to-mysql-database-with-html-form/
+
+https://orkhan.gitbook.io/typeorm/docs/many-to-one-one-to-many-relations
+https://stackoverflow.com/questions/71257348/how-do-i-read-an-uploaded-file-text-csv-using-nestjs-and-multer
+
+https://viblo.asia/p/loi-ich-cua-stream-khi-lam-viec-voi-du-lieu-lon-trong-nodejs-6J3ZgXmLlmB

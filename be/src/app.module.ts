@@ -9,6 +9,7 @@ import { AuthLogin } from './auth-middleware/auth.login';
 import { JwtModule } from '@nestjs/jwt';
 import { BlockClassModule } from './block_class/block_class.module';
 import { ClassModule } from './class/class.module';
+import { StudentsModule } from './students/students.module';
 @Module({
   imports: [
     JwtModule.register({
@@ -32,6 +33,7 @@ import { ClassModule } from './class/class.module';
     }),
     BlockClassModule,
     ClassModule,
+    StudentsModule,
 
   ],
 

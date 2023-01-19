@@ -74,6 +74,18 @@ export class ClassController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateClassDto: UpdateClassDto, @Res() res: any) {
     try {
+      const dataFind = await this.classService.findOne(+id);
+      if(dataFind.class_kma  === updateClassDto.class_kma && dataFind.id === +id){
+        return res.status(200).json({
+          status: "success",
+          message: dataFind
+        });
+      }else if (dataFind.class_kma === updateClassDto.class_kma  && dataFind.id !== +id){
+        return res.status(500).json({
+          status: "error",
+          message: "class already exits in the system "
+        });
+      }
       const data = await this.classService.update(+id, updateClassDto);
       return res.status(200).json({
         status: "success",
