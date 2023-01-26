@@ -47,3 +47,4 @@ export class ClassService {
     return this.classRepository.delete({ id });
   }
 }
+ 

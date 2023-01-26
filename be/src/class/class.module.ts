@@ -13,3 +13,4 @@ import { Class } from './entities/class.entity';
   providers: [ClassService]
 })
 export class ClassModule {}
+ 

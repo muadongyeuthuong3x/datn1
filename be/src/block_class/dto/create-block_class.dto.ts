@@ -4,3 +4,4 @@ export class CreateBlockClassDto {
     @IsNotEmpty()
     readonly blockClass: string;
 }
+ 

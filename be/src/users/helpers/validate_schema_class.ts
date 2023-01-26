@@ -18,3 +18,4 @@ export const ClassSchema = Joi.object({
 module.exports ={
     ClassSchema
 }
+ 

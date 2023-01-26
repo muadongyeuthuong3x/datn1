@@ -28,3 +28,4 @@ export  class UserEntity {
     updatedAt?: Date;
      
 }
+ 

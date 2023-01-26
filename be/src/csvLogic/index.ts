@@ -34,3 +34,4 @@ export const editFileName = (req, file, callback) => {
         .join('');
     callback(null, `${name}-${randomName}${fileExtName}`);
 };
+ 

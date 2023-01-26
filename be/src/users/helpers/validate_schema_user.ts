@@ -33,3 +33,4 @@ export const UserSchema = Joi.object({
 module.exports ={
     UserSchema
 }
+ 

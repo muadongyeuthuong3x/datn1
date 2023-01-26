@@ -18,3 +18,4 @@ import { BlockClass } from './entities/block_class.entity';
   ]
 })
 export class BlockClassModule {}
+ 

@@ -79,3 +79,5 @@ export class BlockClassService {
     return this.blockClassRepository.delete({ id });
   }
 }
+
+ 

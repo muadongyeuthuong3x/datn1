@@ -18,3 +18,4 @@ export const BlockClassSchema = Joi.object({
 module.exports ={
     BlockClassSchema
 }
+ 

@@ -7,8 +7,6 @@ import { diskStorage } from 'multer';
 import { csvFileFilter, csvFileName, getCSVFile } from 'src/csvLogic';
 import fs from 'fs';
 import { CsvParser } from 'nest-csv-parser';
-import path from 'path';
-
 
 class CreateStudent {
   name: string
@@ -29,14 +27,32 @@ export class StudentsController {
     }),
     fileFilter: csvFileFilter,
   }))
-  async importCSV(@UploadedFile() file: Express.Multer.File) {
-    const { filename } = file;
-    const csvPath = getCSVFile(filename);
-    const stream = fs.createReadStream(csvPath);
 
-    // const entities: CreateStudent[] = await this.csvParser.parse(stream, CreateStudent) as any;
-    // // You will get JSON
-    // console.log(entities);
+  async importCSV(@UploadedFile() file: Express.Multer.File) {
+    
+    const { filename , path , destination } = file;
+    console.log(file)
+    const csvPath = getCSVFile(filename);
+    console.log(csvPath);
+    const readStream = fs.createReadStream(csvPath);
+
+
+    // readStream.on('data', (chunk) => {
+    //   console.log(chunk);
+    // });
+
+    // readStream.on('error', (err) => {
+    //   console.log(err);
+    //   console.log('error found');
+    // });
+
+    // readStream.on('end', () => {
+    //   console.log('Finished reading');
+    // });
+
+    const entities: CreateStudent[] = await this.csvParser.parse(readStream, CreateStudent ,  1 , 1 ,   { strict: true, separator: ',' }) as any;
+    console.log(entities)
+
   }
 
   @Post()

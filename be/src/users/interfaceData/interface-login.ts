@@ -6,4 +6,4 @@ export interface UserData {
   
 export interface UserRO {
     user: UserData;
-  }
+  } 

@@ -31,7 +31,9 @@ https://viblo.asia/p/framework-nestjs-middleware-63vKjDDxl2R
 
 
 
+csv FE   
 
+https://codesandbox.io/s/csv-import-example-hw3ne?file=/src/App.js:871-885
 
 
 
@@ -53,3 +55,8 @@ https://orkhan.gitbook.io/typeorm/docs/many-to-one-one-to-many-relations
 https://stackoverflow.com/questions/71257348/how-do-i-read-an-uploaded-file-text-csv-using-nestjs-and-multer
 
 https://viblo.asia/p/loi-ich-cua-stream-khi-lam-viec-voi-du-lieu-lon-trong-nodejs-6J3ZgXmLlmB
+
+
+
+
+https://playcode.io/1024386

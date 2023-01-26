@@ -21,3 +21,4 @@ export class Class {
     })
     blockClassId : BlockClass
 }
+ 
