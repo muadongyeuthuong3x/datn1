@@ -1,5 +1,6 @@
 import { BlockClass } from 'src/block_class/entities/block_class.entity';
-import { Entity, PrimaryGeneratedColumn, Column , CreateDateColumn ,UpdateDateColumn ,ManyToOne  } from 'typeorm';
+import { Student } from 'src/students/entities/student.entity';
+import { Entity, PrimaryGeneratedColumn, Column , CreateDateColumn ,UpdateDateColumn ,ManyToOne, OneToMany  } from 'typeorm';
 
 @Entity('class')
 
@@ -20,5 +21,10 @@ export class Class {
         onDelete: 'CASCADE',
     })
     blockClassId : BlockClass
+
+    @OneToMany(() => Student, (item) => item.classId,{
+        onDelete: 'CASCADE',
+    })
+    student : Student[]
 }
  

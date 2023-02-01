@@ -60,3 +60,11 @@ https://viblo.asia/p/loi-ich-cua-stream-khi-lam-viec-voi-du-lieu-lon-trong-nodej
 
 
 https://playcode.io/1024386
+
+
+https://stackoverflow.com/questions/39458201/understanding-javascript-promise-object
+
+
+
+error khi Entity metadata for Class#studentList was not found thiếu @Entity('student') in Entity
+

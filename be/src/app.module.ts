@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { BlockClassModule } from './block_class/block_class.module';
 import { ClassModule } from './class/class.module';
 import { StudentsModule } from './students/students.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
   imports: [
     JwtModule.register({
@@ -29,6 +30,7 @@ import { StudentsModule } from './students/students.module';
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
         PORT: Joi.number(),
+
       })
     }),
     BlockClassModule,

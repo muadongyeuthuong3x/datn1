@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { csvFileFilter, csvFileName, getCSVFile } from 'src/csvLogic';
-import fs from 'fs';
+const fs = require('fs');
 import { CsvParser } from 'nest-csv-parser';
 
 class CreateStudent {
@@ -13,6 +13,9 @@ class CreateStudent {
   id: string
 }
 
+class ClassStudnet {
+  id_class_kma : number
+}
 
 @Controller('students')
 export class StudentsController {
@@ -28,31 +31,41 @@ export class StudentsController {
     fileFilter: csvFileFilter,
   }))
 
-  async importCSV(@UploadedFile() file: Express.Multer.File) {
-    
-    const { filename , path , destination } = file;
-    console.log(file)
+  async importCSV(@UploadedFile() file: Express.Multer.File, @Body() formData: ClassStudnet, @Res() res: any) {
+    const { filename } = file;
+    const {id_class_kma} = formData;
     const csvPath = getCSVFile(filename);
-    console.log(csvPath);
     const readStream = fs.createReadStream(csvPath);
-
-
-    // readStream.on('data', (chunk) => {
-    //   console.log(chunk);
-    // });
-
-    // readStream.on('error', (err) => {
-    //   console.log(err);
-    //   console.log('error found');
-    // });
-
-    // readStream.on('end', () => {
-    //   console.log('Finished reading');
-    // });
-
-    const entities: CreateStudent[] = await this.csvParser.parse(readStream, CreateStudent ,  1 , 1 ,   { strict: true, separator: ',' }) as any;
-    console.log(entities)
-
+    try {
+      const dataFind = await this.studentsService.findOneClass(id_class_kma);
+      if(!dataFind){
+        return res.status(500).json({
+          status: "error",
+          message: `Lớp không tồn tại trong hệ thống`
+        })
+      }
+      const entities: CreateStudent[] = await this.csvParser.parse(readStream, CreateStudent) as any;
+      const { list }: any = entities;
+      for (let i = 0; i < list.length; i++) {
+        const data: CreateStudentDto = await this.studentsService.findOne(list[i].code_student)
+        if (data) {
+          return res.status(500).json({
+            status: "error",
+            message: `Mã sinh viên này đã có trong hệ thống ${data.code_student}`
+          })
+        }
+      }
+      await this.studentsService.updateAllStudent(list);
+      return res.status(200).json({
+        status: "success",
+        message: `Update các sinh viên thành công`
+      })
+    } catch (error) {
+      return res.status(500).json({
+        status: "error",
+        message: error
+      })
+    }
   }
 
   @Post()
@@ -65,10 +78,10 @@ export class StudentsController {
     return this.studentsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.studentsService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.studentsService.findOne(+id);
+  // }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
