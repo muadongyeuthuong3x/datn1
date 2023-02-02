@@ -1,5 +1,6 @@
+import { BigBlockClass } from 'src/big_block_class/entities/big_block_class.entity';
 import { Class } from 'src/class/entities/class.entity';
-import { Entity, PrimaryGeneratedColumn, Column , CreateDateColumn ,UpdateDateColumn ,OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column , CreateDateColumn ,UpdateDateColumn ,OneToMany, ManyToOne } from 'typeorm';
 
 @Entity('block_class')
 
@@ -21,6 +22,11 @@ export class BlockClass {
         onDelete: 'CASCADE',
     })
     class: Class[]
+
+    @ManyToOne(() => BigBlockClass, (item) => item.blockClassList , {
+        onDelete: 'CASCADE',
+    })
+    bigBlockClassID: BigBlockClass
 
 }
  

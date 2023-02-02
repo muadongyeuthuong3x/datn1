@@ -69,7 +69,7 @@ export class BlockClassController {
     const { blockClass } = updateBlockClassDto;
     try {
       const data = await this.blockClassService.findOneblockClassUpdate( Number(id) , blockClass);
-      if(data.id == id ){
+      if(data.id == id  ){
         return res.status(200).json({
           status: "success",
           message: data
