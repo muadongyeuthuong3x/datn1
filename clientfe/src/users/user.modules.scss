@@ -1,0 +1,26 @@
+.form_search {
+    display: flex;
+    padding: 10px;
+    margin-bottom: 30px;
+
+    button{
+        margin-right: 10%;
+        margin-left: 30px;
+       
+    }
+}
+.input_search{
+    width: 20%;
+}
+
+.form_button_group{
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 30px;
+    .ant-form-item {
+        padding: 5px !important;
+    }
+}
+.select_role{
+    width: 100% !important;
+}

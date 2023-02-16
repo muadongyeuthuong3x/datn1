@@ -45,7 +45,7 @@ export class UsersController {
     } else {
       throw new BadGatewayException({
         status: "error",
-        message: "Login failed you can check email or password login"
+        message: "Server error "
       })
     }
   }
@@ -73,8 +73,8 @@ export class UsersController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.usersService.remove(+id);
   }
 }
  

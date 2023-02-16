@@ -6,7 +6,7 @@ const instance = axios.create({
     timeout: 5000,
 });
 
-instance.defaults.headers.common['Authorization'] = tokenWeb;
+instance.defaults.headers.common['Authorization'] = `Bearer ${tokenWeb}`;
 
 instance.interceptors.response.use(function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger

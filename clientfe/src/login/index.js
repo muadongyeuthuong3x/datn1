@@ -1,12 +1,16 @@
 import { useState } from 'react';
-import "./css/style.css";
-import "./css/font-awesome.css";
+import "./css/style.modules.scss";
+import "./css/font-awesome.modules.scss";
 import { useDispatch } from 'react-redux'
 import { apiLoginWeb } from '../slices/login'
+import {toast ,ToastContainer } from 'react-toastify';
 
 const Login = () => {
     const [iconShowPass, setIconShowPass] = useState(false);
-    const [formLogin, setFormLogin] = useState(false);
+    const [formLogin, setFormLogin] = useState({
+        email: "",
+        password: "",
+    });
     const dispatch = useDispatch()
     const onCLickShowPass = () => {
         setIconShowPass(!iconShowPass)
@@ -16,21 +20,21 @@ const Login = () => {
         setFormLogin(prev => {
             return {
                 ...prev,
-                [e.target.key]: e.target.value
+                [e.target.name]: e.target.value
 
             }
         })
     }
+
     const onClickButtonLogin = () => {
-        dispatch(apiLoginWeb(formLogin))
+        dispatch(apiLoginWeb(formLogin, toast));
     }
     return (
         <div className="center-container">
-
             <div className="header-w3l">
                 <h1> Học viện kĩ thuật mật mã</h1>
             </div>
-
+               <ToastContainer/>
             <div className="main-content-agile">
                 <div className="sub-main-w3">
                     <div className="wthree-pro">
@@ -38,11 +42,11 @@ const Login = () => {
                     </div>
                     <form action="#" method="post">
                         <div className="pom-agile">
-                            <input placeholder="E-mail" name="Name" className="user" type="email" required="" onChange={onChangeInput} />
+                            <input placeholder="E-mail" name="email" className="user" type="email" required="" onChange={onChangeInput} value={formLogin.email} />
                             <span className="icon1"><i className="fa fa-user" aria-hidden="true"></i></span>
                         </div>
                         <div className="pom-agile">
-                            <input placeholder="Password" name="Password" className="pass" type={iconShowPass ? "text" : "password"} required="" onChange={onChangeInput} />
+                            <input placeholder="Password" name="password" className="pass" type={iconShowPass ? "text" : "password"} required="" onChange={onChangeInput} value={formLogin.password} />
                             <span className="icon2" onClick={onCLickShowPass}>  {iconShowPass ? <i className="fa fa-unlock" aria-hidden="true"></i> : <i className="fa fa-lock" aria-hidden="true"></i>}  </span>
                         </div>
                         <div className="sub-w3l">

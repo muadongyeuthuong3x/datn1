@@ -1,45 +1,46 @@
 import { createSlice } from '@reduxjs/toolkit'
 import instance from '../configApi/axiosConfig'
+import Cookies from 'js-cookie'
 export const initialState = {
     loading: false,
-    hasErrors: false,
-    datalogin: [],
 }
 
-
 const loginWeb = createSlice({
-    name: 'posts',
+    name: 'login',
     initialState,
     reducers: {
-        getPosts: state => {
+        loginLoadding: state => {
             state.loading = true
         },
-        getPostsSuccess: (state, { payload }) => {
-            state.datalogin = payload
+        loginSuccess: state => {
             state.loading = false
-            state.hasErrors = false
         },
-        getPostsFailure: state => {
+        loginFailure: state => {
             state.loading = false
-            state.hasErrors = true
         },
     },
 })
 
-export function apiLoginWeb() {
+export const { loginLoadding, loginSuccess, loginFailure } = loginWeb.actions
+
+export function apiLoginWeb(dataLogin, alert) {
     return async dispatch => {
-        dispatch(getPosts())
+        dispatch(loginLoadding())
         try {
-            const response = await instance('/login')
-            const data = await response.json()
-            dispatch(getPostsSuccess(data))
+            const response = await instance.post('/users/login', dataLogin)
+            const { email, role, token } = response.data.user
+            Cookies.set('tokenwebkma', token)
+            localStorage.setItem("datawebkma", JSON.stringify({ email, role }))
+            dispatch(loginSuccess)
+            window.location.href = `/dashboard`
         } catch (error) {
-            dispatch(getPostsFailure())
+            alert.error(error.response.data.message)
+            dispatch(loginFailure())
         }
     }
 }
 
 
-export const { getPosts, getPostsSuccess, getPostsFailure } = loginWeb.actions
+
 export const postsSelector = state => state.posts
 export default loginWeb.reducer

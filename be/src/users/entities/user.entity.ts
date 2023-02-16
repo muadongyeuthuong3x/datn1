@@ -14,6 +14,9 @@ export  class UserEntity {
     @Column()
     password: string;
 
+    @Column()
+    name: string;
+
     @Column({
         type : 'enum',
         enum :UserRole,

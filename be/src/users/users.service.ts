@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadGatewayException, Injectable } from '@nestjs/common';
 import { UserEntity } from "./entities/user.entity";
 import { InjectRepository } from '@nestjs/typeorm';
-import {  Not, Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -27,19 +27,26 @@ export class UsersService {
   }
 
   async login(loginUserDto: LoginUserDto) {
-    const data = await this.usersRepository.findOne({
-      where: {
-        email: loginUserDto.email,
-      },
-    });
-    if (!data) {
-      return null;
+    try {
+      const data = await this.usersRepository.findOne({
+        where: {
+          email: loginUserDto.email,
+        },
+      });
+      if (!data) {
+        return null;
+      }
+      const isMatch = await bcrypt.compare(loginUserDto.password, data.password);
+      if (isMatch) {
+        return data;
+      }
+    } catch (error) {
+      throw new BadGatewayException({
+        status: "error",
+        message: "Server error "
+      })
     }
-    const isMatch = await bcrypt.compare(loginUserDto.password, data.password);
-    if (isMatch) {
-      return data;
-    }
-    return null;
+
   }
 
   async createUser(createUserDto: CreateUserDto) {
@@ -49,11 +56,12 @@ export class UsersService {
     newUser.email = createUserDto.email;
     newUser.password = hash;
     newUser.role = createUserDto.role;
+    newUser.name = createUserDto.name;
     const data = await this.usersRepository.save(newUser);
     return data;
   }
 
-  public generateJWT(user : any) {
+  public generateJWT(user: any) {
     return this.jwtService.sign({
       id: user.id,
       email: user.email,
@@ -61,7 +69,7 @@ export class UsersService {
   }
 
   async findAll(id: number) {
-    const dataAll = await this.usersRepository.find({where: {id: Not(id)}  , select : ["email", "role"] })
+    const dataAll = await this.usersRepository.find({ where: { id: Not(id) }, select: ["id", "email", "role", "name"] })
     return dataAll;
   }
 
@@ -78,8 +86,21 @@ export class UsersService {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+
+
+    throw new BadGatewayException({
+      status: "error",
+      message: "Server error "
+    });
+    // try {
+    //   const dataAll = await this.usersRepository.delete(id);
+    //   return dataAll;
+    // } catch (error) {
+    //   throw new BadGatewayException({
+    //     status: "error",
+    //     message: "Server error "
+    //   });
+    // }
   }
 }
- 

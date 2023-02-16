@@ -7,5 +7,8 @@ export class LoginUserDto {
 
   @IsNotEmpty()
   readonly password: string;
+
+  @IsNotEmpty()
+  readonly name: string;
 }
  

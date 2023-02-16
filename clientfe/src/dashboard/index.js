@@ -2,6 +2,7 @@ import { FileOutlined, UserOutlined } from '@ant-design/icons';
 import './Dashboard.modules.scss'
 import { Breadcrumb, Layout, Menu, theme, Image } from 'antd';
 import { useState } from 'react';
+import { ToastContainer } from 'react-toastify';
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
     return {
@@ -22,74 +23,78 @@ const items = [
     getItem('Team', 'sub2', <FileOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
     getItem('Files', '9', <FileOutlined />),
 ];
-const DashBoard = () => {
+const DashBoard = ({ComponentProps}) => {
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer },
     } = theme.useToken();
     return (
-        <Layout
-            style={{
-                minHeight: '100vh',
-            }}
-        >
-            <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                <div
-                    style={{
-                        height: 32,
-                        margin: 16,
-                    }}
-                >
-                    <Image
-                        width={100}
-                        preview={false}
-                        className="image_kma"
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlJzy0MD4G986o9IyoW8knywFzLU4s_Q70anV69BUp&s"
-                    />
-                </div>
-
-
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
-            </Sider>
-            <Layout className="site-layout">
-                <Header
-                    style={{
-                        padding: 0,
-                        background: colorBgContainer,
-                    }}
-                />
-                <Content
-                    style={{
-                        margin: '0 16px',
-                    }}
-                    
-                >
-                    <Breadcrumb
-                        style={{
-                            margin: '16px 0',
-                        }}
-                    >
-                    </Breadcrumb>
+        <div>
+            <ToastContainer />
+            <Layout
+                style={{
+                    minHeight: '100vh',
+                }}
+            >
+                <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
                     <div
                         style={{
-                            padding: 24,
-                            minHeight: 360,
+                            height: 32,
+                            margin: 16,
+                        }}
+                    >
+                        <Image
+                            width={100}
+                            preview={false}
+                            className="image_kma"
+                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlJzy0MD4G986o9IyoW8knywFzLU4s_Q70anV69BUp&s"
+                        />
+                    </div>
+
+
+                    <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+                </Sider>
+                <Layout className="site-layout">
+                    <Header
+                        style={{
+                            padding: 0,
                             background: colorBgContainer,
                         }}
-                        className="content"
+                    />
+                    <Content
+                        style={{
+                            margin: '0 16px',
+                        }}
+
                     >
-                        Bill is a cat.
-                    </div>
-                </Content>
-                <Footer
-                    style={{
-                        textAlign: 'center',
-                    }}
-                >
-                    Học Viện Kĩ Thuật Mật Mã
-                </Footer>
-            </Layout>
-        </Layout >
+                        <Breadcrumb
+                            style={{
+                                margin: '16px 0',
+                            }}
+                        >
+                        </Breadcrumb>
+                        <div
+                            style={{
+                                padding: 24,
+                                minHeight: 360,
+                                background: colorBgContainer,
+                            }}
+                            className="content"
+                        >
+                           <ComponentProps/>
+                        </div>
+                    </Content>
+                    <Footer
+                        style={{
+                            textAlign: 'center',
+                        }}
+                    >
+                        Học Viện Kĩ Thuật Mật Mã
+                    </Footer>
+                </Layout>
+            </Layout >
+        </div>
+
     );
 };
 export default DashBoard;

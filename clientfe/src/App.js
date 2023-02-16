@@ -1,19 +1,19 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import DashBoard from './dashboard/index';
+import Users from "./users/index"
 import Login from './login';
 import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
   return (
     <BrowserRouter>
-      { console.log(process.env.REACT_APP_MY_ENVIRONMENT_VARIABLE)}
-        <Routes>
-          <Route path="/dashboard" element={ <DashBoard />} />
-          <Route path="/login" element={ <Login />} />
-        </Routes>
-      </BrowserRouter>
+      <Routes>
+        <Route path="/dashboard" element={<Users />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
