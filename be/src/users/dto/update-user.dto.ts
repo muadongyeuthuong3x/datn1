@@ -1,5 +1,21 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateUserDto } from './create-user.dto';
+import { IsNotEmpty } from 'class-validator';
+import { UserRole } from '../../enums/enum_users';
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
- 
+export class UpdateUserDto {
+
+    @IsNotEmpty()
+    readonly email: string;
+
+    @IsNotEmpty()
+    readonly id: number;
+
+    readonly password?: string;
+
+    @IsNotEmpty()
+    readonly name: string;
+
+    @IsNotEmpty()
+    readonly role: UserRole;
+
+
+}

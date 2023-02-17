@@ -1,6 +1,7 @@
 import { FileOutlined, UserOutlined } from '@ant-design/icons';
 import './Dashboard.modules.scss'
 import { Breadcrumb, Layout, Menu, theme, Image } from 'antd';
+import Loadding from '../loadding/index'
 import { useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 const { Header, Content, Footer, Sider } = Layout;
@@ -23,7 +24,7 @@ const items = [
     getItem('Team', 'sub2', <FileOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
     getItem('Files', '9', <FileOutlined />),
 ];
-const DashBoard = ({ComponentProps}) => {
+const DashBoard = ({ ComponentProps ,loading }) => {
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer },
@@ -31,6 +32,7 @@ const DashBoard = ({ComponentProps}) => {
     return (
         <div>
             <ToastContainer />
+            <Loadding ld={loading} />
             <Layout
                 style={{
                     minHeight: '100vh',
@@ -81,7 +83,7 @@ const DashBoard = ({ComponentProps}) => {
                             }}
                             className="content"
                         >
-                           <ComponentProps/>
+                            <ComponentProps />
                         </div>
                     </Content>
                     <Footer

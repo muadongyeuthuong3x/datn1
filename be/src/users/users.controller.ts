@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, Req, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -68,13 +68,14 @@ export class UsersController {
   }
 
   @Post('/search')
-  async findEamil(@Body() data: {email : string}) {
+  async findEamil(@Body() data: { email: string }) {
     return this.usersService.findEamil(data.email);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+
+  @Put('/edit')
+  async update(@Body() updateUserDto: UpdateUserDto) {
+    return await this.usersService.update(updateUserDto);
   }
 
   @Delete(':id')

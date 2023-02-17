@@ -92,8 +92,33 @@ export class UsersService {
     return data;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(updateUserDto: UpdateUserDto) {
+    const { id, name, role, password } = updateUserDto;
+    console.log(password)
+    const regex = new RegExp('^[a-zA-Z0-9]{3,30}$');
+    if (!!password && password.length > 0) {
+      if (regex.test(password)) {
+        const salt = await bcrypt.genSalt();
+        const hash = await bcrypt.hash(password, salt);
+        console.log(hash);
+        return this.usersRepository.update(id, {
+          role: role,
+          name: name,
+          password: hash,
+        });
+      } else {
+        throw new BadGatewayException({
+          status: "error",
+          message: "Password không đúng định dạng"
+        })
+      }
+    }
+    else {
+      return this.usersRepository.update(id, {
+        role: role,
+        name: name,
+      });
+    }
   }
 
   async remove(id: number) {
