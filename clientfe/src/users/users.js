@@ -1,7 +1,7 @@
-import { Button, Table, Modal, Input, Form ,Select} from 'antd';
+import { Button, Table, Modal, Input, Form, Select } from 'antd';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-import { apiGetListUsers, deleteItemUser } from '../slices/users'
+import { apiGetListUsers, deleteItemUser ,createUser , searchDataApi} from '../slices/users'
 import './user.modules.scss';
 const UsersComponent = () => {
     const dispatch = useDispatch();
@@ -33,6 +33,13 @@ const UsersComponent = () => {
     const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
     const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
     const [idDelete, setIdDelete] = useState(-1);
+    const [formUserCreate, setFromCreateSearch] = useState({
+        name: '',
+        email: '',
+        password: '',
+        role: 'user'
+    })
+    const [emailSearch , setEmailSearch] = useState('')
     useEffect(() => {
         dispatch(apiGetListUsers())
     }, [dispatch])
@@ -78,7 +85,7 @@ const UsersComponent = () => {
     };
 
     const handleOkCreate = () => {
-        dispatch(deleteItemUser(idDelete))
+        dispatch(createUser(formUserCreate))
         setIsModalOpenCreate(false);
     };
 
@@ -86,13 +93,39 @@ const UsersComponent = () => {
         setIsModalOpenCreate(false);
     };
 
+    const onChanheFormCreate = (e) => {
+        setFromCreateSearch(prev => {
+            return {
+                ...prev,
+                [e.target.name]: e.target.value
+
+            }
+        })
+    }
+
+    const handleChangeCreateRole = (value) => {
+        setFromCreateSearch(prev => {
+            return {
+                ...prev,
+                role: value
+
+            }
+        })
+    };
+
+    // search Data
+
+    const searchData = () => {
+        dispatch(searchDataApi(emailSearch))
+    };
+
 
     return (
         <div>
             <div className='form_search'>
                 <Button type='primary' onClick={showModalCreate}>Tạo user</Button>
-                <Input placeholder='Search email' className='input_search' />
-                <Button type='primary'> Tìm kiếm </Button>
+                <Input placeholder='Search email' className='input_search' onChange={e=>setEmailSearch(e.target.value)} />
+                <Button type='primary' onClick={searchData}> Tìm kiếm </Button>
             </div>
             <Table columns={columns} dataSource={listUserState} />
 
@@ -111,29 +144,35 @@ const UsersComponent = () => {
                     labelCol={{ span: 10 }}
                     wrapperCol={{ span: 24 }}
                     style={{ maxWidth: 500 }}
-                    initialValues={{ remember: false }}
                     layout="vertical"
                     autoComplete="off"
+                    fields={[
+                        {
+                          name: ["role"],
+                          value:formUserCreate.role,
+                        },
+                      ]}
+                    
                 >
                     <Form.Item
-                        label="Username"
-                        name="username"
+                        label="Email"
+                        name="email"
                     >
-                        <Input />
+                        <Input value={formUserCreate.email} onChange={onChanheFormCreate} name="email"/>
                     </Form.Item>
 
                     <Form.Item
                         label="Password"
                         name="password"
                     >
-                        <Input.Password />
+                        <Input.Password value={formUserCreate.password} onChange={onChanheFormCreate} name="password"/>
                     </Form.Item>
 
                     <Form.Item
                         label="Name"
                         name="name"
                     >
-                        <Input />
+                        <Input value={formUserCreate.name} onChange={onChanheFormCreate} name="name"/>
                     </Form.Item>
 
                     <Form.Item
@@ -141,9 +180,10 @@ const UsersComponent = () => {
                         name="role"
                     >
                         <Select
-                            defaultValue="admin"
                             className="select_role"
-                            // onChange={handleChange}
+                            value={formUserCreate.role}
+                            name="role"
+                            onChange={handleChangeCreateRole}
                             options={[
                                 { value: 'admin', label: 'admin' },
                                 { value: 'user', label: 'user' },

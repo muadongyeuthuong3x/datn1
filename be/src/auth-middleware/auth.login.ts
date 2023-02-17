@@ -17,7 +17,6 @@ export class AuthLogin implements NestMiddleware{
 
     async use(req  : RequestWithUser, _ : Response , next : NextFunction){
         const authHeaders = req.headers.authorization;
-        console.log(authHeaders)
         if(authHeaders && authHeaders.startsWith('Bearer') && authHeaders.split(' ')[1]){
             const token = authHeaders.split(' ')[1];
             const decodedToken = this.jwtService.verify(token);
@@ -29,7 +28,6 @@ export class AuthLogin implements NestMiddleware{
                     message : "Error Token"
                 })
             }
-            console.log(authHeaders)
             req.user = {
                 email : findUserInDataBase.email,
                 id :  findUserInDataBase.id

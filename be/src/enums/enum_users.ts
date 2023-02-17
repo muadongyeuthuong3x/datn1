@@ -1,6 +1,6 @@
 enum UserRole {
     Admin = 'admin',
-    _KMA = 'staff'
+    _KMA = 'user'
   }
 
 export  {

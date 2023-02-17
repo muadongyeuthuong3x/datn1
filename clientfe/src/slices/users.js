@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import instance from '../configApi/axiosConfig'
-import {toast}  from 'react-toastify'
+import { toast } from 'react-toastify'
 export const initialState = {
     loading: false,
     data: []
@@ -22,10 +22,24 @@ const listUsers = createSlice({
             const dataAfterDelete = dataOld.filter(item => item.id !== payload);
             state.data = dataAfterDelete
         },
+        loaddingFailes : state => {
+            state.loading = false
+        },
+        createUserReducer: (state, { payload }) => {
+            state.loading = false
+            const dataOld = [...state.data];
+            delete payload.password;
+            dataOld.push(payload)
+            state.data = dataOld
+        },
+        searchData: (state, { payload }) => {
+            state.loading = false
+            state.data = payload
+        },
     },
 })
 
-export const { loadding, getListUserSuccess, deleteUserInList } = listUsers.actions
+export const { loadding, getListUserSuccess, deleteUserInList ,loaddingFailes ,createUserReducer ,searchData } = listUsers.actions
 
 export function apiGetListUsers(alert) {
     return async dispatch => {
@@ -35,12 +49,12 @@ export function apiGetListUsers(alert) {
             dispatch(getListUserSuccess(response.data))
         } catch (error) {
             alert.error(error.response.data.message)
-            dispatch(loadding())
+            dispatch(loaddingFailes())
         }
     }
 }
 
-export function deleteItemUser(id, alert) {
+export function deleteItemUser(id) {
     return async dispatch => {
         dispatch(loadding())
         try {
@@ -50,10 +64,41 @@ export function deleteItemUser(id, alert) {
             }
         } catch (error) {
             toast.error(error.response.data.message)
-            dispatch(loadding())
+            dispatch(loaddingFailes())
         }
     }
 }
+
+
+export function createUser(data) {
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const dataRes= await instance.post(`/users`, data);
+            console.log(dataRes.data)
+            toast.success(dataRes.data.message)
+            dispatch(createUserReducer(data))
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
+
+export function searchDataApi(data) {
+    console.log(data)
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const dataRes= await instance.post(`/users/search`, {email : data});
+            dispatch(searchData(dataRes.data))
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
+
 
 
 export const postsSelector = state => state.posts

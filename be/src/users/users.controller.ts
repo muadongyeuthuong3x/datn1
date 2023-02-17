@@ -20,12 +20,12 @@ export class UsersController {
       await this.usersService.createUser(createUserDto);
       return {
         status: "success",
-        messages: "create user successfully"
+        message: "Tạo thành công  tài khoản"
       }
     } else {
       throw new BadGatewayException({
         status: "error",
-        message: "email hava in database"
+        message: "Đã tồn tại email này trong database"
       })
     }
   }
@@ -67,6 +67,11 @@ export class UsersController {
     return this.usersService.findOne(params.email);
   }
 
+  @Post('/search')
+  async findEamil(@Body() data: {email : string}) {
+    return this.usersService.findEamil(data.email);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
@@ -77,4 +82,3 @@ export class UsersController {
     return await this.usersService.remove(+id);
   }
 }
- 

@@ -1,7 +1,7 @@
 import { BadGatewayException, Injectable } from '@nestjs/common';
 import { UserEntity } from "./entities/user.entity";
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { Like, Not, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -82,25 +82,29 @@ export class UsersService {
     return data;
   }
 
+  async findEamil(email: string) {
+    const data = await this.usersRepository.find({
+      where: {
+        email: Like(`%${email}%`),
+      },
+      select: ["id", "email", "role", "name"]
+    });
+    return data;
+  }
+
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
   async remove(id: number) {
-
-
-    throw new BadGatewayException({
-      status: "error",
-      message: "Server error "
-    });
-    // try {
-    //   const dataAll = await this.usersRepository.delete(id);
-    //   return dataAll;
-    // } catch (error) {
-    //   throw new BadGatewayException({
-    //     status: "error",
-    //     message: "Server error "
-    //   });
-    // }
+    try {
+      const dataAll = await this.usersRepository.delete(id);
+      return dataAll;
+    } catch (error) {
+      throw new BadGatewayException({
+        status: "error",
+        message: "Server error "
+      });
+    }
   }
 }
