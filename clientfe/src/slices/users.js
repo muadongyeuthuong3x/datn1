@@ -5,6 +5,9 @@ export const initialState = {
     loading: false,
     data: []
 }
+
+
+
 const listUsers = createSlice({
     name: 'getListUsers',
     initialState,
@@ -55,6 +58,7 @@ export function apiGetListUsers(alert) {
         dispatch(loadding())
         try {
             const response = await instance.get('/users');
+            
             dispatch(getListUserSuccess(response.data))
           
         } catch (error) {

@@ -1,8 +1,12 @@
-import { FileOutlined, UserOutlined } from '@ant-design/icons';
+import { FormOutlined, UserOutlined } from '@ant-design/icons';
 import './Dashboard.modules.scss'
 import { Breadcrumb, Layout, Menu, theme, Image } from 'antd';
 import Loadding from '../loadding/index'
-import { useState } from 'react';
+import {
+    useState,
+    useMemo,
+} from 'react';
+import { Link } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -13,22 +17,52 @@ function getItem(label, key, icon, children) {
         label,
     };
 }
-const items = [
-    getItem('Danh sách user', '1', <UserOutlined />),
-    getItem('Option 2', '2', <FileOutlined />),
-    getItem('User', 'sub1', <UserOutlined />, [
-        getItem('Tom', '3'),
-        getItem('Bill', '4'),
-        getItem('Alex', '5'),
-    ]),
-    getItem('Team', 'sub2', <FileOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-    getItem('Files', '9', <FileOutlined />),
-];
-const DashBoard = ({ ComponentProps ,loading }) => {
+
+const DashBoard = ({ ComponentProps, loading }) => {
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer },
     } = theme.useToken();
+    const checkRole = JSON.parse(localStorage.getItem('datawebkma')).role || '';
+    const [stateRenderClickId , setRenderClickId] = useState(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const items = [
+        {
+            slider: getItem(<Link to="/dashboard">
+                Danh sách user
+            </Link>, '1', < UserOutlined />), isAdmin: true
+        },
+        {
+            slider: getItem(<Link to="/list-mon-hoc">
+                Danh sách môn học
+            </Link>, '2', <FormOutlined />), isAdmin: false
+        },
+    ];
+
+
+    const listData = useMemo(() => {
+        console.log("meo meo", checkRole)
+        if (checkRole.length < 0) {
+            return
+        }
+        const itemsList = [];
+        // eslint-disable-next-line array-callback-return
+        items.map(data => {
+            const { isAdmin } = data
+            if (checkRole === "admin" && isAdmin) {
+                itemsList.push(data.slider)
+            } else if ((checkRole === "user" && !isAdmin) || checkRole === "admin") {
+                itemsList.push(data.slider)
+            }
+        })
+        return itemsList;
+    }, [checkRole ,items])
+
+
+
+    const openTabMenu = (e) => {
+        setRenderClickId(e.key)
+    }
     return (
         <div>
             <ToastContainer />
@@ -54,7 +88,7 @@ const DashBoard = ({ ComponentProps ,loading }) => {
                     </div>
 
 
-                    <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+                    <Menu theme="dark" onClick={openTabMenu}  defaultSelectedKeys={listData[0].key}    mode="inline" items={listData} />
                 </Sider>
                 <Layout className="site-layout">
                     <Header

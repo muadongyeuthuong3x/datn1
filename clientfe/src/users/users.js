@@ -277,7 +277,7 @@ const UsersComponent = () => {
             <Modal title="Edit user" open={isModalOpenEdit} footer={null}>
 
                 <Form
-                    name="basic-edit"
+                    name="basic"
                     labelCol={{ span: 10 }}
                     wrapperCol={{ span: 24 }}
                     style={{ maxWidth: 500 }}
