@@ -8,18 +8,18 @@ export const initialState = {
 
 
 
-const listUsers = createSlice({
-    name: 'getListUsers',
+const listSubjects = createSlice({
+    name: 'getListSubject',
     initialState,
     reducers: {
         loadding: state => {
             state.loading = true
         },
-        getListUserSuccess: (state, { payload }) => {
+        getListSubjectSuccess: (state, { payload }) => {
             state.loading = false
             state.data = payload
         },
-        deleteUserInList: (state, { payload }) => {
+        deleteSubjectInList: (state, { payload }) => {
             state.loading = false
             const dataOld = [...state.data];
             const dataAfterDelete = dataOld.filter(item => item.id !== payload);
@@ -28,11 +28,14 @@ const listUsers = createSlice({
         loaddingFailes: state => {
             state.loading = false
         },
-        createUserReducer: (state, { payload }) => {
+        createSubjectReducer: (state, { payload }) => {
             state.loading = false
             const dataOld = [...state.data];
-            delete payload.password;
-            dataOld.push(payload)
+            const {id , bigBlockClass} = payload;
+            dataOld.push({
+                id: id ,
+                bigBlockClass: bigBlockClass
+            })
             state.data = dataOld
         },
         searchData: (state, { payload }) => {
@@ -42,24 +45,23 @@ const listUsers = createSlice({
         editData: (state, { payload }) => {
             state.loading = false
             const dataOld = state.data
-            const { name , role ,email } = payload;
-            const indexEdit = dataOld.findIndex(item => item.email === email);
-            dataOld[indexEdit].name = name;
-            dataOld[indexEdit].role = role
+            const { bigBlockClass , id } = payload;
+            const indexEdit = dataOld.findIndex(item => item.id === id);
+            dataOld[indexEdit].bigBlockClass = bigBlockClass;
             state.data = dataOld
         },
     },
 })
 
-export const { loadding, getListUserSuccess, deleteUserInList, loaddingFailes, createUserReducer, searchData ,editData } = listUsers.actions
+export const { loadding, getListSubjectSuccess, deleteSubjectInList, loaddingFailes, createSubjectReducer, searchData ,editData } = listSubjects.actions
 
-export function apiGetListUsers(alert) {
+export function apiGetListSubject(alert) {
     return async dispatch => {
         dispatch(loadding())
         try {
-            const response = await instance.get('/users');
-
-            dispatch(getListUserSuccess(response.data))
+            const response = await instance.get('/big-block-class');
+            
+            dispatch(getListSubjectSuccess(response.data))
           
         } catch (error) {
             alert.error(error.response.data.message)
@@ -68,13 +70,13 @@ export function apiGetListUsers(alert) {
     }
 }
 
-export function deleteItemUser(id) {
+export function deleteItemSubject(id) {
     return async dispatch => {
         dispatch(loadding())
         try {
-            const response = await instance.delete(`/users/${id}`);
+            const response = await instance.delete(`/big-block-class/${id}`);
             if (response) {
-                dispatch(deleteUserInList(id))
+                dispatch(deleteSubjectInList(id))
             }
         } catch (error) {
             toast.error(error.response.data.message)
@@ -84,12 +86,13 @@ export function deleteItemUser(id) {
 }
 
 
-export function createUser(data) {
+export function createSubject(data) {
     return async dispatch => {
         dispatch(loadding())
         try {
-            const dataRes = await instance.post(`/users`, data);
-            dispatch(createUserReducer(dataRes.data.message))
+            const dataRes = await instance.post(`/big-block-class`, data);
+            toast.success(dataRes.data.message)
+            dispatch(createSubjectReducer(dataRes.data.message))
         } catch (error) {
             toast.error(error.response.data.message)
             dispatch(loaddingFailes())
@@ -101,7 +104,7 @@ export function searchDataApi(data) {
     return async dispatch => {
         dispatch(loadding())
         try {
-            const dataRes = await instance.post(`/users/search`, { email: data });
+            const dataRes = await instance.post(`/big-block-class/search`, { bigBlockClass: data });
             dispatch(searchData(dataRes.data))
         } catch (error) {
             toast.error(error.response.data.message)
@@ -112,11 +115,12 @@ export function searchDataApi(data) {
 
 
 
-export function editDataUserApi(data) {
+export function editDataSubjectApi(data) {
     return async dispatch => {
         dispatch(loadding())
         try {
-            const dataRes = await instance.put(`/users/edit`, data);
+            const {id , bigBlockClass} = data
+            const dataRes = await instance.patch(`/big-block-class/${id}`, {bigBlockClass});
             dispatch(editData(data))
             toast.success(dataRes.data.message)
         } catch (error) {
@@ -127,4 +131,4 @@ export function editDataUserApi(data) {
 }
 
 export const postsSelector = state => state.posts
-export default listUsers.reducer
+export default listSubjects.reducer

@@ -1,6 +1,6 @@
 import { BadGatewayException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { CreateBigBlockClassDto } from './dto/create-big_block_class.dto';
 import { UpdateBigBlockClassDto } from './dto/update-big_block_class.dto';
 import { BigBlockClass } from './entities/big_block_class.entity';
@@ -37,6 +37,15 @@ export class BigBlockClassService {
 
   update(id: number, bigBlockClass: string) {
     return this.bigBlockClassRepository.update(id, {bigBlockClass });
+  }
+
+  async findBigBlockClassService(bigBlockClass: string) {
+    const data = await this.bigBlockClassRepository.find({
+      where: {
+        bigBlockClass: Like(`%${bigBlockClass}%`),
+      },
+    });
+    return data;
   }
 
   remove(id: number) {

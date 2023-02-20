@@ -17,10 +17,10 @@ export class UsersController {
   async create(@Body() createUserDto: CreateUserDto) {
     const dataRes = await this.usersService.findOneEmail(createUserDto);
     if (!dataRes) {
-      await this.usersService.createUser(createUserDto);
+      const data =   await this.usersService.createUser(createUserDto);
       return {
         status: "success",
-        message: "Tạo thành công  tài khoản"
+        message: data
       }
     } else {
       throw new BadGatewayException({

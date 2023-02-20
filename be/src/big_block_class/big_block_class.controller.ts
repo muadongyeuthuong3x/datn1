@@ -56,10 +56,10 @@ export class BigBlockClassController {
     const { bigBlockClass } = updateBigBlockClassDto
     try {
       const data = await this.bigBlockClassService.findOneBigBlockClass(bigBlockClass);
-      if (!data || (data.id !== +id)) {
+      if (!!data && (data.id !== +id)) {
         throw new BadGatewayException({
           status: "error",
-          message: "server error"
+          message: "Đã tồn tại khối này trong hệ thống"
         })
       } else {
         await this.bigBlockClassService.update(+id, updateBigBlockClassDto.bigBlockClass);
@@ -69,9 +69,19 @@ export class BigBlockClassController {
         })
       }
     } catch (error) {
-
+      console.log(error)
+      throw new BadGatewayException({
+        status: "error",
+        message: "server error"
+      })
     }
 
+  }
+
+
+  @Post('/search')
+  async findBigBlockClass(@Body() data: { bigBlockClass: string }) {
+    return this.bigBlockClassService.findBigBlockClassService(data.bigBlockClass);
   }
 
   @Delete(':id')

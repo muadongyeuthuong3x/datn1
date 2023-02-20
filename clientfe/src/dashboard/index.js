@@ -41,7 +41,6 @@ const DashBoard = ({ ComponentProps, loading }) => {
 
 
     const listData = useMemo(() => {
-        console.log("meo meo", checkRole)
         if (checkRole.length < 0) {
             return
         }
