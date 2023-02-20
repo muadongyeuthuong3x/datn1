@@ -34,8 +34,18 @@ const DashBoard = ({ ComponentProps, loading }) => {
         },
         {
             slider: getItem(<Link to="/list-mon-hoc">
-                Danh sách môn học
+                Danh sách khối
             </Link>, '2', <FormOutlined />), isAdmin: false
+        },
+        {
+            slider: getItem(<Link to="/list-exam">
+                Danh sách môn thi
+            </Link>, '3', <FormOutlined />), isAdmin: false
+        },
+        {
+            slider: getItem(<Link to="/exam-form">
+                Hình thức thi
+            </Link>, '4', <FormOutlined />), isAdmin: false
         },
     ];
 

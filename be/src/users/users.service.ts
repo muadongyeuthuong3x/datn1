@@ -94,7 +94,6 @@ export class UsersService {
 
   async update(updateUserDto: UpdateUserDto) {
     const { id, name, role, password } = updateUserDto;
-    console.log(password)
     const regex = new RegExp('^[a-zA-Z0-9]{3,30}$');
     if (!!password && password.length > 0) {
       if (regex.test(password)) {

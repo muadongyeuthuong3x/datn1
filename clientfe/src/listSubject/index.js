@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import DashBoard from "../dashboard";
 
 const ListSubject = () => {
-    const { loading } = useSelector(state => state.listUsers)
+    const { loading } = useSelector(state => state.listSubjects)
     return <DashBoard ComponentProps={SubjectComponent} loading={loading} />
 }
 

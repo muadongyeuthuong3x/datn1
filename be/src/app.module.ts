@@ -12,6 +12,8 @@ import { ClassModule } from './class/class.module';
 import { StudentsModule } from './students/students.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BigBlockClassModule } from './big_block_class/big_block_class.module';
+import { ExamModule } from './exam/exam.module';
+import { ExamFormModule } from './exam_form/exam_form.module';
 @Module({
   imports: [
     JwtModule.register({
@@ -38,6 +40,8 @@ import { BigBlockClassModule } from './big_block_class/big_block_class.module';
     ClassModule,
     StudentsModule,
     BigBlockClassModule,
+    ExamModule,
+    ExamFormModule,
 
   ],
 
