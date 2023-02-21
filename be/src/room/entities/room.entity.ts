@@ -1,30 +1,26 @@
 
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { RoomData } from '../../enums/enum_users';
+@Entity('room')
 
-@Entity('teacher')
-
-export class Teacher {
+export class Room {
 
     @PrimaryGeneratedColumn()
     id: number;
-    
-    @Column({ unique: true })
-    id_teacher: string;
 
-    @Column()
+    @Column({ unique: true })
     name: string;
 
-    @Column()
-    avatar: string;
-
-    @Column()
-    phone_number: string;
-
+    @Column({
+        type: 'enum',
+        enum: RoomData,
+        default: RoomData.r1
+    })
+    form_room: RoomData;
 
     @CreateDateColumn({ name: 'created_at', default: new Date() })
     createdAt?: Date;
 
     @UpdateDateColumn({ name: 'updated_at', default: new Date() })
     updatedAt?: Date;
-
 }

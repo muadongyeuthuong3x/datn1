@@ -55,7 +55,6 @@ export class ExamController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateExamDto: UpdateExamDto, @Res() res: any) {
     const { name } = updateExamDto;
-    console.log(id)
     try {
       const data = await this.examService.findOneExam(name);
       const idEdit: number = data?.id;

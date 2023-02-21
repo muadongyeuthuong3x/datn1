@@ -3,7 +3,9 @@ import { Spin } from 'antd';
 import './loadding.modules.scss'
 const Loadding = (props) => {
     const { ld } = props;
+    console.log(ld)
     const Component = useCallback(() => {
+      
         if (!!ld) {
             return (
                 <div className="example">

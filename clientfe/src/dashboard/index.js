@@ -52,6 +52,11 @@ const DashBoard = ({ ComponentProps, loading }) => {
                 Hình thức thi
             </Link>, '4', <FormOutlined />), isAdmin: false
         },
+        {
+            slider: getItem(<Link to="/form-room">
+               Phòng Thi
+            </Link>, '5', <FormOutlined />), isAdmin: false
+        },
     ];
 
 
