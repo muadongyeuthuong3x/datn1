@@ -1,4 +1,4 @@
-import { Button, Table, Modal, Input, Form, Radio ,DatePicker, Space } from 'antd';
+import { Button, Table, Modal, Input, Form, Radio, DatePicker, Space,Select  } from 'antd';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListDataApi, deleteItemRoom, createRoom, searchDataApi, editDataRoomApi } from '../slices/scheduleTest'
@@ -81,12 +81,12 @@ const ScheduleComponent = () => {
 
     const onRangeChange = (dates, dateStrings) => {
         if (dates) {
-          console.log('From: ', dates[0], ', to: ', dates[1]);
-          console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
+            console.log('From: ', dates[0], ', to: ', dates[1]);
+            console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
         } else {
-          console.log('Clear');
+            console.log('Clear');
         }
-      };
+    };
 
 
     return (
@@ -102,9 +102,9 @@ const ScheduleComponent = () => {
 
                 <Form
                     name="basic"
-                    labelCol={{ span: 10 }}
-                    wrapperCol={{ span: 24 }}
-                    style={{ maxWidth: 500 }}
+                    labelCol={{ span: 0 }}
+                    wrapperCol={{ span: 20 }}
+                    style={{ maxWidth: "100%" }}
                     layout="vertical"
                     autoComplete="off"
                     fields={[
@@ -128,32 +128,61 @@ const ScheduleComponent = () => {
                         </Space>
                     </Form.Item>
 
-                    <Form.Item
-                        label="Môn Thi"
-                        name="bigBlockClass"
-                    >
-                        <Space direction="vertical" size={12}>
-                            <RangePicker
-                                showTime
-                                format="YYYY/MM/DD HH:mm"
-                                onChange={onRangeChange}
-                            />
-                        </Space>
-                    </Form.Item>
-
 
                     <Form.Item
                         label="Khóa"
                         name="bigBlockClass"
                     >
-                        <Space direction="vertical" size={12}>
-                            <RangePicker
-                                showTime
-                                format="YYYY/MM/DD HH:mm"
-                                onChange={onRangeChange}
-                            />
-                        </Space>
+                         <Select
+                            showSearch
+                            style={{ width: '100%' }}
+                            placeholder="Chọn Khối"
+                            optionFilterProp="children"
+                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                            filterSort={(optionA, optionB) =>
+                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                            }
+                            options={[
+                                {
+                                    value: '1',
+                                    label: 'Not Identified',
+                                },
+                                {
+                                    value: '2',
+                                    label: 'Closed',
+                                },
+                            ]}
+                        />
                     </Form.Item>
+
+                    <Form.Item
+                        label="Môn Thi"
+                        name="bigBlockClass"
+                    >
+                        <Select
+                            showSearch
+                            style={{ width: '100%' }}
+                            placeholder="Chọn môn thi"
+                            optionFilterProp="children"
+                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                            filterSort={(optionA, optionB) =>
+                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                            }
+                            options={[
+                                {
+                                    value: '1',
+                                    label: 'Not Identified',
+                                },
+                                {
+                                    value: '2',
+                                    label: 'Closed',
+                                },
+                            ]}
+                        />
+                    </Form.Item>
+
+
+                 
 
 
                     <div className='form_button_group'>
