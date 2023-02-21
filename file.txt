@@ -81,3 +81,8 @@ https://codesandbox.io/s/react-redux-toolkit-application-cbb6s?file=/src/pages/P
 
 
 // autoLoadEntities: true thieu
+
+
+
+
+join N table : https://stackoverflow.com/questions/8636398/joining-tables-in-orm

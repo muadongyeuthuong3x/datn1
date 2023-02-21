@@ -9,6 +9,7 @@ import ListTeacher from './teacher/index'
 import ListRoom from './examinationRoom/index'
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
+import ScheduleTest from './scheduleTest/index'
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/exam-form" element={<ListExamForm />} />
         <Route path="/list-teacher" element={<ListTeacher />} />
         <Route path="/form-room" element={<ListRoom />} />
+        <Route path="/schedule-test" element={<ScheduleTest />} />
       </Routes>
     </BrowserRouter>
   );

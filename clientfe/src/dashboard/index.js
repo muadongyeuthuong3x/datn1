@@ -35,7 +35,7 @@ const DashBoard = ({ ComponentProps, loading }) => {
         {
             slider: getItem(<Link to="/list-teacher">
                 Danh sách  giáo viên
-            </Link>, '5', <FormOutlined />), isAdmin: false
+            </Link>, '7', <FormOutlined />), isAdmin: false
         },
         {
             slider: getItem(<Link to="/list-khoi">
@@ -57,6 +57,12 @@ const DashBoard = ({ ComponentProps, loading }) => {
                Phòng Thi
             </Link>, '5', <FormOutlined />), isAdmin: false
         },
+          {
+            slider: getItem(<Link to="/schedule-test">
+               Lên Lịch Thi
+            </Link>, '6', <FormOutlined />), isAdmin: false
+        },
+        
     ];
 
 

@@ -2,7 +2,7 @@ import { Button, Table, Modal, Input, Form, Radio } from 'antd';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListRoom, deleteItemRoom, createRoom, searchDataApi, editDataRoomApi } from '../slices/room'
-const RoomComponent = () => {
+const TestScoreComponent = () => {
     const dispatch = useDispatch();
     const columns = [
         {
@@ -10,12 +10,24 @@ const RoomComponent = () => {
             dataIndex: 'index',
         },
         {
-            title: 'Phòng',
+            title: 'Mã Sinh Viên',
+            dataIndex: 'ma_id',
+        },
+        {
+            title: 'Tên Sinh Viên',
             dataIndex: 'name',
         },
         {
-            title: 'Loại Phòng',
-            dataIndex: 'form_room',
+            title: 'Điểm chuyên cần',
+            dataIndex: 'name',
+        },
+        {
+            title: 'Điểm giữa kì',
+            dataIndex: 'name',
+        },
+        {
+            title: 'Điểm Cuối Kì',
+            dataIndex: 'name',
         },
         {
             title: 'Edit',
@@ -312,4 +324,4 @@ const RoomComponent = () => {
 
 }
 
-export default RoomComponent;
+export default TestScoreComponent;
