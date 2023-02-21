@@ -5,6 +5,7 @@ import Login from './login';
 import ListSubject from './listSubject/index'
 import ListExam from './exam/index'
 import ListExamForm from './examForm/index'
+import ListTeacher from './teacher/index'
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/list-khoi" element={<ListSubject />} />
         <Route path="/list-exam" element={<ListExam />} />
         <Route path="/exam-form" element={<ListExamForm />} />
+        <Route path="/list-teacher" element={<ListTeacher />} />
       </Routes>
     </BrowserRouter>
   );

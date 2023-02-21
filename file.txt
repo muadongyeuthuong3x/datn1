@@ -76,3 +76,8 @@ https://ant.design/components/layout
 
 https://codesandbox.io/s/lhrbs?file=/src/reducers/auth.js
 https://codesandbox.io/s/react-redux-toolkit-application-cbb6s?file=/src/pages/PostsPage.js:97-157
+
+
+
+
+// autoLoadEntities: true thieu

@@ -2,8 +2,11 @@ import { Button, Table, Modal, Input, Form, } from 'antd';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListExam, deleteItemExam, createExam, searchDataApi, editDataExamApi } from '../slices/exam'
+import { Upload } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import {UploadMuitiFie} from "../uploadImage/index"
 
-const ExamComponent = () => {
+const TeacherComponent = () => {
     const dispatch = useDispatch();
     const columns = [
         {
@@ -11,8 +14,20 @@ const ExamComponent = () => {
             dataIndex: 'index',
         },
         {
-            title: 'Tên môn thi',
+            title: 'Id teacher',
+            dataIndex: 'id_teacher',
+        },
+        {
+            title: 'Tên giáo viên',
             dataIndex: 'name',
+        },
+        {
+            title: 'Ảnh giáo viên',
+            dataIndex: 'avatar',
+        },
+        {
+            title: 'Số điện thoại',
+            dataIndex: 'phone_number',
         },
         {
             title: 'Edit',
@@ -23,7 +38,7 @@ const ExamComponent = () => {
             dataIndex: 'delete',
         },
     ];
-    
+
 
     const { data } = useSelector(state => state.listExam)
     const [listExamState, setListExamState] = useState([])
@@ -31,14 +46,67 @@ const ExamComponent = () => {
     const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
     const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
     const [idDelete, setIdDelete] = useState(-1);
-    const [formExamCreate, setFromCreateSearch] = useState({
+    const [formTeacherCreate, setFromCreateTeacher] = useState({
         name: '',
+        id_teacher: '',
+        avatar: [],
+        phone_number: ''
     });
     const [nameSearch, setNameSearch] = useState('');
     const [formDataEdit, setFormDataEdit] = useState({
         name: '',
-        id :''
+        id_teacher: '',
+        avatar: '',
+        phone_number: '',
+        id: ''
     });
+    //
+
+    const getBase64 = (file) =>
+        new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+
+    // handele image :
+
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
+    const [previewTitle, setPreviewTitle] = useState('');
+    const [fileList, setFileList] = useState([
+      
+    ]);
+    const handleCancel = () => setPreviewOpen(false);
+    const handlePreview = async (file) => {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        setPreviewImage(file.url || file.preview);
+        setPreviewOpen(true);
+        setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+    };
+    const handleChange = async({ fileList: newFileList }) => {
+        setFromCreateTeacher(prev => ({
+            ...prev,
+            avatar: newFileList
+        }))
+    } 
+    const uploadButton = (
+        <div>
+            <PlusOutlined />
+            <div
+                style={{
+                    marginTop: 8,
+                }}
+            >
+                Upload
+            </div>
+        </div>
+    );
+
+    // end 
     useEffect(() => {
         dispatch(apiGetListExam())
     }, [dispatch])
@@ -48,8 +116,11 @@ const ExamComponent = () => {
             data.forEach((item, i) => {
                 dataList.push({
                     key: i,
-                    index : i,
+                    index: i,
+                    id_teacher: item?.id_teacher,
                     name: item?.name,
+                    avatar: "A",
+                    phone_number: item?.phone_number,
                     edit: <Button type='primary' onClick={() => showModalEdit(item)}>Edit</Button>,
                     delete: <Button type='primary' danger onClick={() => showModalDelete(item?.id)}>Delete</Button>
                 });
@@ -83,8 +154,11 @@ const ExamComponent = () => {
         setIsModalOpenCreate(true);
     };
 
-    const handleOkCreate = () => {
-        dispatch(createExam(formExamCreate))
+    const handleOkCreate = async() => {
+        console.log(formTeacherCreate)
+        const urlImage = await UploadMuitiFie(formTeacherCreate?.avatar);
+        // dispatch(createExam(formTeacherCreate))
+  
         setIsModalOpenCreate(false);
     };
 
@@ -93,7 +167,7 @@ const ExamComponent = () => {
     };
 
     const onChanheFormCreate = (e) => {
-        setFromCreateSearch(prev => {
+        setFromCreateTeacher(prev => {
             return {
                 ...prev,
                 [e.target.name]: e.target.value
@@ -115,7 +189,7 @@ const ExamComponent = () => {
 
     const showModalEdit = (data) => {
         setIsModalOpenEdit(true);
-        const { name , id} = data
+        const { name, id } = data
         setFormDataEdit({
             name: name,
             id: id
@@ -145,22 +219,22 @@ const ExamComponent = () => {
     return (
         <div>
             <div className='form_search'>
-                <Button type='primary' onClick={showModalCreate}>Tạo Môn Thi</Button>
+                <Button type='primary' onClick={showModalCreate}>Tạo Giáo Viên</Button>
                 <Input placeholder='Search name' className='input_search' onChange={e => setNameSearch(e.target.value)} />
                 <Button type='primary' onClick={searchData}> Tìm kiếm </Button>
             </div>
-         
+
             <Table columns={columns} dataSource={listExamState} />
 
             {/* Modal delete */}
-            <Modal title="Delete Khối" open={isModalOpenDelete} onOk={handleOkDelete} onCancel={handleCancelDelete}>
+            <Modal title="Delete Giáo Viên" open={isModalOpenDelete} onOk={handleOkDelete} onCancel={handleCancelDelete}>
                 <p> Bạn chắc chắn xóa dữ liệu này chứ </p>
             </Modal>
             {/* End Modal delete */}
 
 
             {/* Modal Create */}
-            <Modal title="Tạo Khối" open={isModalOpenCreate} footer={null}>
+            <Modal title="Tạo Giạo Viên" open={isModalOpenCreate} footer={null}>
 
                 <Form
                     name="basic"
@@ -172,16 +246,57 @@ const ExamComponent = () => {
                     fields={[
                         {
                             name: ["name"],
-                            value: formExamCreate.name,
+                            value: formTeacherCreate.name,
+                        },
+                        {
+                            name: ["id_teacher"],
+                            value: formTeacherCreate.id_teacher,
+                        },
+                        {
+                            name: ["phone_number"],
+                            value: formTeacherCreate.phone_number,
+                        },
+                        {
+                            name: ["avatar"],
+                            value: formTeacherCreate.avatar,
                         },
                     ]}
 
                 >
                     <Form.Item
+                        label="ID Giáo Viên"
+                        name="id_teacher"
+                    >
+                        <Input value={formTeacherCreate.id_teacher} onChange={onChanheFormCreate} name="id_teacher" />
+                    </Form.Item>
+
+                    <Form.Item
                         label="Name"
                         name="name"
                     >
-                        <Input value={formExamCreate.name} onChange={onChanheFormCreate} name="name" />
+                        <Input value={formTeacherCreate.name} onChange={onChanheFormCreate} name="name" />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Số điện thoại liên hệ"
+                        name="phone_number"
+                    >
+                        <Input value={formTeacherCreate.phone_number} onChange={onChanheFormCreate} name="phone_number" />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Ảnh đại diện"
+                        name="avatar"
+                    >
+                        <Upload
+                            listType="picture-card"
+                            fileList={formTeacherCreate.avatar}
+                            onPreview={handlePreview}
+                            onChange={handleChange}
+                        >
+                            {fileList.length >= 1 ? null : uploadButton}
+                        </Upload>
+
                     </Form.Item>
 
 
@@ -210,7 +325,7 @@ const ExamComponent = () => {
 
 
             {/* Modal Edit */}
-            <Modal title="Edit khối" open={isModalOpenEdit} footer={null}>
+            <Modal title="Edit Giao Viên" open={isModalOpenEdit} footer={null}>
 
                 <Form
                     name="basic"
@@ -227,7 +342,7 @@ const ExamComponent = () => {
                     ]}
 
                 >
-                
+
 
                     <Form.Item
                         label="Name"
@@ -257,10 +372,22 @@ const ExamComponent = () => {
             {/* End Modal Edit */}
 
 
+            {/* modal open avatar */}
 
+            <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+                <img
+                    alt="example"
+                    style={{
+                        width: '100%',
+                    }}
+                    src={previewImage}
+                />
+            </Modal>
+
+            {/* end modal */}
         </div>
     );
 
 }
 
-export default ExamComponent;
+export default TeacherComponent;

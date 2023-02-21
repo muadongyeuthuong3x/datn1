@@ -60,7 +60,7 @@ const ExamFormComponent = () => {
         }
     }, [data])
 
-    console.log(data)
+
 
 
     const showModalDelete = (id) => {

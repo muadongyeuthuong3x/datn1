@@ -93,7 +93,6 @@ export function createExam(data) {
         try {
             const dataRes = await instance.post(`/exam-form`, data);
             toast.success("Tạo thành công")
-            console.log(dataRes.data)
             dispatch(createExamReducer(dataRes.data.message))
         } catch (error) {
             toast.error(error.response.data.message)

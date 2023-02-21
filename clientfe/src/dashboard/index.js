@@ -33,7 +33,12 @@ const DashBoard = ({ ComponentProps, loading }) => {
             </Link>, '1', < UserOutlined />), isAdmin: true
         },
         {
-            slider: getItem(<Link to="/list-mon-hoc">
+            slider: getItem(<Link to="/list-teacher">
+                Danh sách  giáo viên
+            </Link>, '5', <FormOutlined />), isAdmin: false
+        },
+        {
+            slider: getItem(<Link to="/list-khoi">
                 Danh sách khối
             </Link>, '2', <FormOutlined />), isAdmin: false
         },
