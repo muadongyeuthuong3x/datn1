@@ -1,13 +1,15 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, current } from '@reduxjs/toolkit'
 import instance from '../configApi/axiosConfig'
 import { toast } from 'react-toastify'
 import { UploadMuitiFie } from "../uploadImage/index"
 export const initialState = {
     loading: false,
-    data: [],
-    teacher: [],
-    room: [],
-    examForm: [],
+    bigBlockClass: [],
+    teachers: [],
+    rooms: [],
+    examForms: [],
+    exams : []
+
 }
 
 
@@ -21,7 +23,12 @@ const listSchedule = createSlice({
         },
         getListDataSuccess: (state, { payload }) => {
             state.loading = false
-            state.data = payload
+            const { roomExam, examForm, bigBlockClass, teacher  ,exams} = payload
+            state.bigBlockClass = bigBlockClass
+            state.rooms = roomExam
+            state.examForms = examForm
+            state.teachers = teacher
+            state.exams = exams
         },
         deleteScheduleInList: (state, { payload }) => {
             state.loading = false
@@ -74,9 +81,17 @@ export function apiGetListDataApi(alert) {
                 await instance.get('/exam-form'),
                 await instance.get('/big-block-class'),
                 await instance.get('/teacher'),
+                await instance.get('/exam'),
             ]).then((res) => {
-                console.log(2222222222,res)
-                dispatch(getListDataSuccess(res.data))
+                const roomExam = res[0]?.data
+                const examForm = res[1]?.data
+                const bigBlockClass = res[2]?.data
+                const teacher = res[3]?.data
+                const exams = res[4]?.data
+                const objectList = {
+                    roomExam, examForm, bigBlockClass, teacher,exams
+                }
+                dispatch(getListDataSuccess(objectList))
             })
                 .catch(error => console.log(error));
 

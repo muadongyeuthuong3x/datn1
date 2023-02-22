@@ -25,6 +25,7 @@ const DashBoard = ({ ComponentProps, loading }) => {
     } = theme.useToken();
     const checkRole = JSON.parse(localStorage.getItem('datawebkma')).role || '';
     const [stateRenderClickId , setRenderClickId] = useState(1)
+   
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const items = [
         {
@@ -44,7 +45,7 @@ const DashBoard = ({ ComponentProps, loading }) => {
         },
         {
             slider: getItem(<Link to="/list-exam">
-                Danh sách môn thi
+              Môn Học
             </Link>, '3', <FormOutlined />), isAdmin: false
         },
         {
@@ -61,6 +62,17 @@ const DashBoard = ({ ComponentProps, loading }) => {
             slider: getItem(<Link to="/schedule-test">
                Lên Lịch Thi
             </Link>, '6', <FormOutlined />), isAdmin: false
+        },
+        {
+            slider: getItem(<Link to="/student-score">
+               Lên Điểm Thi
+            </Link>, '8', <FormOutlined />), isAdmin: false
+        },
+
+        {
+            slider: getItem(<Link to="/exam-block">
+                Môn Thi Của Khối
+            </Link>, '9', <FormOutlined />), isAdmin: false
         },
         
     ];

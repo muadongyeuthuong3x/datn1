@@ -7,6 +7,8 @@ import listExam from './exam'
 import listExamForm from './examForm'
 import listTeacher from './teacher'
 import listRoom from './room'
+import listSchedule from './scheduleTest'
+import listExamBlockForm from './examBlock'
 const rootReducer = combineReducers({
   login: loginWeb,
   listUsers: listUsers,
@@ -14,7 +16,9 @@ const rootReducer = combineReducers({
   listExam: listExam,
   listExamForm: listExamForm,
   listTeacher: listTeacher,
-  listRoom : listRoom
+  listRoom : listRoom,
+  listSchedule:listSchedule,
+  listExamBlock: listExamBlockForm
 })
 
 export default rootReducer

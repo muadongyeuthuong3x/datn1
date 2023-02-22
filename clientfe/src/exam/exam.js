@@ -1,4 +1,4 @@
-import { Button, Table, Modal, Input, Form, } from 'antd';
+import { Button, Table, Modal, Input, Form,Select } from 'antd';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListExam, deleteItemExam, createExam, searchDataApi, editDataExamApi } from '../slices/exam'
@@ -23,7 +23,7 @@ const ExamComponent = () => {
             dataIndex: 'delete',
         },
     ];
-    
+
 
     const { data } = useSelector(state => state.listExam)
     const [listExamState, setListExamState] = useState([])
@@ -37,7 +37,7 @@ const ExamComponent = () => {
     const [nameSearch, setNameSearch] = useState('');
     const [formDataEdit, setFormDataEdit] = useState({
         name: '',
-        id :''
+        id: ''
     });
     useEffect(() => {
         dispatch(apiGetListExam())
@@ -48,7 +48,7 @@ const ExamComponent = () => {
             data.forEach((item, i) => {
                 dataList.push({
                     key: i,
-                    index : i,
+                    index: i,
                     name: item?.name,
                     edit: <Button type='primary' onClick={() => showModalEdit(item)}>Edit</Button>,
                     delete: <Button type='primary' danger onClick={() => showModalDelete(item?.id)}>Delete</Button>
@@ -115,7 +115,7 @@ const ExamComponent = () => {
 
     const showModalEdit = (data) => {
         setIsModalOpenEdit(true);
-        const { name , id} = data
+        const { name, id } = data
         setFormDataEdit({
             name: name,
             id: id
@@ -149,7 +149,7 @@ const ExamComponent = () => {
                 <Input placeholder='Search name' className='input_search' onChange={e => setNameSearch(e.target.value)} />
                 <Button type='primary' onClick={searchData}> Tìm kiếm </Button>
             </div>
-         
+
             <Table columns={columns} dataSource={listExamState} />
 
             {/* Modal delete */}
@@ -185,6 +185,7 @@ const ExamComponent = () => {
                     </Form.Item>
 
 
+                  
                     <div className='form_button_group'>
                         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                             <Button htmlType="submit" onClick={handleCancelCreate}>
@@ -227,7 +228,7 @@ const ExamComponent = () => {
                     ]}
 
                 >
-                
+
 
                     <Form.Item
                         label="Name"

@@ -22,6 +22,8 @@ import { FormManagementModule } from './form_management/form_management.module';
 import { StudentTestModule } from './student_test/student_test.module';
 import { RoomTestModule } from './room_test/room_test.module';
 import { TableTeacherRoomModule } from './table_teacher_room/table_teacher_room.module';
+import { TableExamBigBlockClassModule } from './table_exam_big_block_class/table_exam_big_block_class.module';
+import { TableBigClassExamModule } from './table-big-class-exam/table-big-class-exam.module';
 @Module({
   imports: [
     JwtModule.register({
@@ -58,6 +60,8 @@ import { TableTeacherRoomModule } from './table_teacher_room/table_teacher_room.
     StudentTestModule,
     RoomTestModule,
     TableTeacherRoomModule,
+    TableExamBigBlockClassModule,
+    TableBigClassExamModule,
 
   ],
 
