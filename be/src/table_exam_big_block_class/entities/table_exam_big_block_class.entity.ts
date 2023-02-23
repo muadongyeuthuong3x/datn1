@@ -2,7 +2,7 @@
 import { BigBlockClass } from 'src/big_block_class/entities/big_block_class.entity';
 import { Exam } from 'src/exam/entities/exam.entity';
 import { TableBigClassExam } from 'src/table-big-class-exam/entities/table-big-class-exam.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 
 @Entity('table-exam-big-block-class')
 export class TableExamBigBlockClass {
@@ -16,15 +16,17 @@ export class TableExamBigBlockClass {
     time_year_end: String;
 
     @Column()
-    id_exam_where: number;
+    id_exam_where: Number;
 
 
     @OneToOne(() => Exam, (item) => item.exams)
+    @JoinColumn()
     id_exam: Exam
 
     @OneToMany(() => TableBigClassExam, (item) => item.id_exam_big_block_class, {
         onDelete: 'CASCADE',
     })
+    
     id_big_class_exam: TableBigClassExam
 
     @CreateDateColumn({ name: 'created_at', default: new Date() })

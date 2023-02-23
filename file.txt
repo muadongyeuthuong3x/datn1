@@ -92,3 +92,6 @@ join N table : https://stackoverflow.com/questions/8636398/joining-tables-in-orm
 // li do 
 
 https://orkhan.gitbook.io/typeorm/docs/many-to-many-relations
+
+query many table 
+https://blog.logrocket.com/using-typeorms-querybuilder-nestjs/

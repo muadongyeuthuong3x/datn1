@@ -24,11 +24,11 @@ export class BigBlockClass {
     //     onDelete: 'CASCADE',
     // })
 
-    @OneToOne(() => TableBigClassExam, (item) => item.id_big_class_exam, {
-        onDelete: 'CASCADE',
-    })
+    // @OneToOne(() => TableBigClassExam, (item) => item.id_big_class_exam, {
+    //     onDelete: 'CASCADE',
+    // })
 
-    id_table_big_class_exam: TableBigClassExam
+    // id_table_big_class_exam: TableBigClassExam
 
     // @OneToMany(() => TableExamBigBlockClass, item => item.id_big_block_class, {
     //     cascade: true,

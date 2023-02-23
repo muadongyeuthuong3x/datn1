@@ -11,7 +11,8 @@ import { TableBigClassExamModule } from 'src/table-big-class-exam/table-big-clas
 @Module({
   imports: [
     TypeOrmModule.forFeature([TableExamBigBlockClass, TableBigClassExam]),
-    TableBigClassExamModule
+    TableBigClassExamModule,
+    
 
   ],
   controllers: [TableExamBigBlockClassController, TableBigClassExamController],

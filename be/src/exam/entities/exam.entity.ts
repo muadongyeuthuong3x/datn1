@@ -12,10 +12,10 @@ export class Exam {
     @Column({ unique: true })
     name: string;
 
-    @OneToMany(() => TableExamBigBlockClass, item => item.id_exam, {
+    @OneToOne(() => TableExamBigBlockClass, item => item.id_exam, {
         cascade: true,
     })
-    exams: TableExamBigBlockClass[];
+    exams: TableExamBigBlockClass;
 
     @CreateDateColumn({ name: 'created_at', default: new Date() })
     createdAt?: Date;

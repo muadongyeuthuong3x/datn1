@@ -15,7 +15,7 @@ export class CreateTableExamBigBlockClassDto {
     readonly id_big_class_exam: number;
 
     @IsNotEmpty()
-     id_exam: any;
+    id_exam: any;
 
 
 }
