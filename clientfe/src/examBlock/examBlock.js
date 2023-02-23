@@ -1,9 +1,10 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, Table, Modal, Input, Form, Radio, DatePicker, Space, Select, Image } from 'antd';
 import { useDispatch, useSelector } from 'react-redux'
-import { apiGetListExamBlock ,createExamBlock } from "../slices/examBlock"
-const { Option } = Select
+import { apiGetListExamBlock, createExamBlock } from "../slices/examBlock"
+const { Option } = Select;
+const { Column } = Table;
 const searchData = () => {
 
 }
@@ -11,16 +12,16 @@ const searchData = () => {
 
 const ExamBlockComponent = () => {
 
-    const { bigClass, exams } = useSelector(state => state.listExamBlock);
+    const { bigClass, exams, listDataExamBigClass } = useSelector(state => state.listExamBlock);
     const dispatch = useDispatch();
     const year = new Date().getFullYear();
     const [isModalOpenCreate, setShowModalCreate] = useState(false);
     const [nameSearch, setNameSearch] = useState('');
     const [formCreate, setFormCreate] = useState({
-        id_big_class_exam : [],
-        id_exam : '',
-        time_year_start : year,
-        time_year_end : year+1
+        id_big_class_exam: [],
+        id_exam: '',
+        time_year_start: year,
+        time_year_end: year + 1
     })
 
     useEffect(() => {
@@ -42,7 +43,7 @@ const ExamBlockComponent = () => {
 
 
     const handleOkCreate = () => {
-      dispatch(createExamBlock(formCreate))
+        dispatch(createExamBlock(formCreate))
     }
 
     const handleChangeExam = (e) => {
@@ -54,7 +55,42 @@ const ExamBlockComponent = () => {
         })
     }
 
-    
+    const fetchDataBigClassExam = (data) => {
+        const result = [];
+        data.map(e => {
+            const { id, id_big_class_exam } = e
+            result.push({
+                id: id,
+                id_big_class_exam: id_big_class_exam.bigBlockClass,
+                idClass: id_big_class_exam.id,
+            })
+        })
+        return data
+    }
+
+    const dataTableMemo = useMemo(() => {
+
+        const data = [];
+        listDataExamBigClass.map(e => {
+            data.push({
+                time: {
+                    id: e.id,
+                    time_year_start: e.time_year_start,
+                    time_year_end: e.time_year_end,
+                },
+                id_big_class_exam: fetchDataBigClassExam(e.id_big_class_exam),
+                id_exam: [{
+                    id: e.id_exam.id,
+                    name: e.id_exam.name
+                }]
+
+            })
+        })
+        return data;
+    }, [listDataExamBigClass]);
+
+    console.log(5551, dataTableMemo);
+
 
     const handleChangeBlockClass = (e) => {
         setFormCreate(prev => {
@@ -72,7 +108,29 @@ const ExamBlockComponent = () => {
             <Input placeholder='Search name' className='input_search' onChange={e => setNameSearch(e.target.value)} />
             <Button type='primary' onClick={searchData}> Tìm kiếm </Button>
         </div>
-    
+
+        <div className='container'>
+            <Table dataSource={listDataExamBigClass}>
+                <Column title="Tên môn thi" dataIndex="id_exam" key="id_exam" render={(item) => (
+                    <>
+                        
+                        {
+                         
+                          
+                                <div color="blue" key={item.id}>
+                                    {item.name}
+                                </div>
+                            
+                        }
+                    </>
+                )} />
+                <Column title="Năm Học" dataIndex="time" key="time" />
+                <Column title="Khóa Thi" dataIndex='id_big_class_exam' key="id_big_class_exam" />
+            </Table>
+
+
+        </div>
+
         {/* Modal Create */}
         <Modal title={`Tạo Môn Thi Năm Học ${year} - ${year + 1}`} open={isModalOpenCreate} footer={null}>
 
@@ -83,16 +141,16 @@ const ExamBlockComponent = () => {
                 style={{ maxWidth: 500 }}
                 layout="vertical"
                 autoComplete="off"
-            fields={[
-                {
-                    name: ["id_exam"],
-                    value: formCreate.id_exam,
-                },
-                {
-                    name: ["id_big_class_exam"],
-                    value: formCreate.id_big_class_exam,
-                },
-            ]}
+                fields={[
+                    {
+                        name: ["id_exam"],
+                        value: formCreate.id_exam,
+                    },
+                    {
+                        name: ["id_big_class_exam"],
+                        value: formCreate.id_big_class_exam,
+                    },
+                ]}
 
             >
                 <Form.Item
@@ -143,7 +201,7 @@ const ExamBlockComponent = () => {
                         filterSort={(optionA, optionB) =>
                             (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                         }
-                     onChange={handleChangeBlockClass}
+                        onChange={handleChangeBlockClass}
                     >
                         {
                             bigClass.map(e => {

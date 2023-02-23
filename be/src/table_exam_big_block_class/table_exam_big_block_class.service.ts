@@ -67,7 +67,7 @@ export class TableExamBigBlockClassService {
           "exam.name",
           "table-big-class-exam.id",
           "big_block_class.bigBlockClass",
-          // "big_block_class.name"
+          "big_block_class.id",
         ]).
         innerJoin('table_exam_big_block_class.id_exam', 'exam')
         .innerJoin(
