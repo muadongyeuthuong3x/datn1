@@ -8,7 +8,7 @@ export class TableBigClassExamController {
   constructor(private readonly tableBigClassExamService: TableBigClassExamService) {}
 
   @Post()
-  create(@Body() createTableBigClassExamDto: CreateTableBigClassExamDto) {
+  create(@Body() createTableBigClassExamDto: { id_big_class_exam: Number[], id: Number , queryRunner: any}) {
     return this.tableBigClassExamService.create(createTableBigClassExamDto);
   }
 

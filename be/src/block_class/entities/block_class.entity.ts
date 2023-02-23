@@ -23,10 +23,10 @@ export class BlockClass {
     })
     class: Class[]
 
-    @ManyToOne(() => BigBlockClass, (item) => item.blockClassList , {
-        onDelete: 'CASCADE',
-    })
-    bigBlockClassID: BigBlockClass
+    // @ManyToOne(() => BigBlockClass, (item) => item.blockClassList , {
+    //     onDelete: 'CASCADE',
+    // })
+    // bigBlockClassID: BigBlockClass
 
 }
  

@@ -1,10 +1,14 @@
 
 import { IsNotEmpty } from 'class-validator';
+import { BigBlockClass } from 'src/big_block_class/entities/big_block_class.entity';
 import { TableExamBigBlockClass } from 'src/table_exam_big_block_class/entities/table_exam_big_block_class.entity';
-export class CreateTableExamBigBlockClassDto {
+export class CreateTableBigClassExamDto {
 
     @IsNotEmpty()
-    readonly id_class: TableExamBigBlockClass;
+    id_big_class_exam: BigBlockClass;
+
+    @IsNotEmpty()
+    id_exam_big_block_class: TableExamBigBlockClass;
 
 
 }

@@ -2,6 +2,7 @@
 import { IsNotEmpty } from 'class-validator';
 import { Exam } from 'src/exam/entities/exam.entity';
 import { BigBlockClass } from 'src/big_block_class/entities/big_block_class.entity';
+import { TableBigClassExam } from 'src/table-big-class-exam/entities/table-big-class-exam.entity';
 export class CreateTableExamBigBlockClassDto {
 
     @IsNotEmpty()
@@ -11,10 +12,10 @@ export class CreateTableExamBigBlockClassDto {
     readonly time_year_end: String;
 
     @IsNotEmpty()
-    readonly id_big_block_class: Array<BigBlockClass>;
+    readonly id_big_class_exam: number;
 
     @IsNotEmpty()
-    readonly id_exam: Exam;
+     id_exam: any;
 
 
 }

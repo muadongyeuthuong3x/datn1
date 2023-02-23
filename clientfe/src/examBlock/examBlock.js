@@ -17,7 +17,7 @@ const ExamBlockComponent = () => {
     const [isModalOpenCreate, setShowModalCreate] = useState(false);
     const [nameSearch, setNameSearch] = useState('');
     const [formCreate, setFormCreate] = useState({
-        id_big_block_class : [],
+        id_big_class_exam : [],
         id_exam : '',
         time_year_start : year,
         time_year_end : year+1
@@ -60,7 +60,7 @@ const ExamBlockComponent = () => {
         setFormCreate(prev => {
             return {
                 ...prev,
-                "id_big_block_class": e
+                "id_big_class_exam": e
             }
         })
     }
@@ -89,8 +89,8 @@ const ExamBlockComponent = () => {
                     value: formCreate.id_exam,
                 },
                 {
-                    name: ["id_big_block_class"],
-                    value: formCreate.id_big_block_class,
+                    name: ["id_big_class_exam"],
+                    value: formCreate.id_big_class_exam,
                 },
             ]}
 
@@ -130,13 +130,13 @@ const ExamBlockComponent = () => {
 
                 <Form.Item
                     label="Các khối tham gia thi"
-                    name="id_big_block_class"
+                    name="id_big_class_exam"
                 >
                     <Select
                         showSearch
                         mode="multiple"
                         style={{ width: '100%' }}
-                        name="id_big_block_class"
+                        name="id_big_class_exam"
                         placeholder="Chọn Khối Thi"
                         optionFilterProp="children"
                         filterOption={(input, option) => (option?.label ?? '').includes(input)}
