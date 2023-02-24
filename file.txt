@@ -95,3 +95,5 @@ https://orkhan.gitbook.io/typeorm/docs/many-to-many-relations
 
 query many table 
 https://blog.logrocket.com/using-typeorms-querybuilder-nestjs/
+
+// transactions api  : https://orkhan.gitbook.io/typeorm/docs/entity-manager-api

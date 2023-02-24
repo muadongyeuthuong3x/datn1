@@ -1,14 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { TableBigClassExamService } from './table-big-class-exam.service';
-import { CreateTableBigClassExamDto } from './dto/create-table-big-class-exam.dto';
-import { UpdateTableBigClassExamDto } from './dto/update-table-big-class-exam.dto';
-
 @Controller('table-big-class-exam')
 export class TableBigClassExamController {
-  constructor(private readonly tableBigClassExamService: TableBigClassExamService) {}
+  constructor(
+    private readonly tableBigClassExamService: TableBigClassExamService,
+  ) {}
 
   @Post()
-  create(@Body() createTableBigClassExamDto: { id_big_class_exam: Number[], id: Number , queryRunner: any}) {
+  create(
+    @Body()
+    createTableBigClassExamDto: {
+      id_big_class_exam: number[];
+      id: number;
+      queryRunner: any;
+    },
+  ) {
     return this.tableBigClassExamService.create(createTableBigClassExamDto);
   }
 
@@ -22,9 +28,10 @@ export class TableBigClassExamController {
     return this.tableBigClassExamService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTableBigClassExamDto: UpdateTableBigClassExamDto) {
-    return this.tableBigClassExamService.update(+id, updateTableBigClassExamDto);
+  async update(@Body() updateTableBigClassExamDto: any) {
+    return await this.tableBigClassExamService.update(
+      updateTableBigClassExamDto,
+    );
   }
 
   @Delete(':id')

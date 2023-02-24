@@ -1,37 +1,42 @@
-
-import { BigBlockClass } from 'src/big_block_class/entities/big_block_class.entity';
 import { Exam } from 'src/exam/entities/exam.entity';
 import { TableBigClassExam } from 'src/table-big-class-exam/entities/table-big-class-exam.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, OneToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity('table-exam-big-block-class')
 export class TableExamBigBlockClass {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    time_year_start: String;
+  @Column()
+  time_year_start: string;
 
-    @Column()
-    time_year_end: String;
+  @Column()
+  time_year_end: string;
 
-    @Column()
-    id_exam_where: Number;
+  @Column()
+  id_exam_where: string;
 
+  @ManyToOne(() => Exam, (item) => item.exams)
+  @JoinColumn()
+  id_exam: Exam;
 
-    @OneToOne(() => Exam, (item) => item.exams)
-    @JoinColumn()
-    id_exam: Exam
+  @OneToMany(() => TableBigClassExam, (item) => item.id_exam_big_block_class, {
+    onDelete: 'CASCADE',
+  })
+  id_big_class_exam: TableBigClassExam;
 
-    @OneToMany(() => TableBigClassExam, (item) => item.id_exam_big_block_class, {
-        onDelete: 'CASCADE',
-    })
-    
-    id_big_class_exam: TableBigClassExam
+  @CreateDateColumn({ name: 'created_at', default: new Date() })
+  createdAt?: Date;
 
-    @CreateDateColumn({ name: 'created_at', default: new Date() })
-    createdAt?: Date;
-
-    @UpdateDateColumn({ name: 'updated_at', default: new Date() })
-    updatedAt?: Date;
+  @UpdateDateColumn({ name: 'updated_at', default: new Date() })
+  updatedAt?: Date;
 }

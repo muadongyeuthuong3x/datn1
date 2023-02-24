@@ -12,7 +12,7 @@ export class Exam {
     @Column({ unique: true })
     name: string;
 
-    @OneToOne(() => TableExamBigBlockClass, item => item.id_exam, {
+    @OneToMany(() => TableExamBigBlockClass, item => item.id_exam, {
         cascade: true,
     })
     exams: TableExamBigBlockClass;

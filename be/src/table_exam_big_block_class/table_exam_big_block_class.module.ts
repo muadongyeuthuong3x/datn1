@@ -1,4 +1,4 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TableExamBigBlockClassService } from './table_exam_big_block_class.service';
 import { TableExamBigBlockClassController } from './table_exam_big_block_class.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,11 +12,8 @@ import { TableBigClassExamModule } from 'src/table-big-class-exam/table-big-clas
   imports: [
     TypeOrmModule.forFeature([TableExamBigBlockClass, TableBigClassExam]),
     TableBigClassExamModule,
-    
-
   ],
   controllers: [TableExamBigBlockClassController, TableBigClassExamController],
   providers: [TableExamBigBlockClassService, TableBigClassExamService],
-
 })
-export class TableExamBigBlockClassModule { }
+export class TableExamBigBlockClassModule {}

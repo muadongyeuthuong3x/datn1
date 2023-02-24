@@ -3,7 +3,7 @@ import instance from '../configApi/axiosConfig'
 import { toast } from 'react-toastify'
 export const initialState = {
     loading: false,
-    data: [],
+    dataOldSearchView: [],
     bigClass  : [],
     exams : [],
     listDataExamBigClass : []
@@ -24,12 +24,13 @@ const listExamBlockForm = createSlice({
             state.bigClass = bigClass;
             state.exams = exam
             state.listDataExamBigClass =listDataExamBigClass
+            state.dataOldSearchView = listDataExamBigClass
         },
         deleteExamList: (state, { payload }) => {
             state.loading = false
-            const dataOld = [...state.data];
+            const dataOld = [...state.listDataExamBigClass];
             const dataAfterDelete = dataOld.filter(item => item.id !== payload);
-            state.data = dataAfterDelete
+            state.listDataExamBigClass = dataAfterDelete
         },
         loaddingFailes: state => {
             state.loading = false
@@ -46,20 +47,15 @@ const listExamBlockForm = createSlice({
         },
         searchData: (state, { payload }) => {
             state.loading = false
-            state.data = payload
+            state.listDataExamBigClass = payload
         },
-        editData: (state, { payload }) => {
+        editData: (state) => {
             state.loading = false
-            const dataOld = state.data
-            const { name , id } = payload;
-            const indexEdit = dataOld.findIndex(item => item.id === id);
-            dataOld[indexEdit].name = name;
-            state.data = dataOld
         },
     },
 })
 
-export const { loadding, getListExamBlockSuccess, deleteExamBlockList, loaddingFailes, createExamBlockReducer, searchData ,editData } = listExamBlockForm.actions
+export const { loadding, getListExamBlockSuccess, deleteExamList, loaddingFailes, createExamBlockReducer, searchData ,editData } = listExamBlockForm.actions
 
 export function apiGetListExamBlock(alert) {
     return async dispatch => {
@@ -91,11 +87,12 @@ export function deleteItemExamBlock(id) {
     return async dispatch => {
         dispatch(loadding())
         try {
-            const response = await instance.delete(`/exam-form/${id}`);
+            const response = await instance.delete(`/table-exam-big-block-class/${id}`);
             if (response) {
-                dispatch(deleteExamBlockList(id))
+                dispatch(deleteExamList(id))
+                toast.success("Xóa thành công")
             }
-            toast.success("Xóa thành công")
+           
         } catch (error) {
             toast.error(error.response.data.message)
             dispatch(loaddingFailes())
@@ -109,8 +106,10 @@ export function createExamBlock(data) {
         dispatch(loadding())
         try {
             const dataRes = await instance.post(`/table-exam-big-block-class`, data);
-            toast.success("Tạo thành công")
-            dispatch(createExamBlockReducer(dataRes.data.message))
+            if(dataRes){
+                toast.success("Tạo thành công")
+            }
+          
         } catch (error) {
             toast.error(error.response.data.message)
             dispatch(loaddingFailes())
@@ -122,7 +121,7 @@ export function searchDataApi(data) {
     return async dispatch => {
         dispatch(loadding())
         try {
-            const dataRes = await instance.post(`/exam-form/search`, { name: data });
+            const dataRes = await instance.post(`/table-exam-big-block-class/search`,  data );
             dispatch(searchData(dataRes.data))
         } catch (error) {
             toast.error(error.response.data.message)
@@ -137,10 +136,12 @@ export function editDataExamBlockApi(data) {
     return async dispatch => {
         dispatch(loadding())
         try {
-            const {id , name} = data
-            const dataRes = await instance.patch(`/exam-form/${id}`, {name});
-            dispatch(editData(data))
-            toast.success(dataRes.data.message)
+            const {id } = data
+            const dataRes = await instance.patch(`/table-exam-big-block-class/${id}`, data);
+            if(dataRes){
+                toast.success("Sửa dữ liệu thành công")
+                dispatch(editData())
+            }
         } catch (error) {
             toast.error(error.response.data.message)
             dispatch(loaddingFailes())
