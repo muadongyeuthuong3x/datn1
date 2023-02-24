@@ -20,7 +20,9 @@ export class TableBigClassExamService {
       const newDataBigClassExam = new TableBigClassExam();
       newDataBigClassExam.id_big_class_exam = id_big_class_exam[i] as any;
       newDataBigClassExam.id_exam_big_block_class = id as any;
-      newDataBigClassExam.id_exam_big_block_class_query = id as any;
+      newDataBigClassExam.id_exam_big_block_class_query = id_big_class_exam[
+        i
+      ] as any;
       const dataRes = await queryRunner.save(newDataBigClassExam);
       data.push(dataRes);
     }
@@ -56,19 +58,19 @@ export class TableBigClassExamService {
     id_big_class_exam.map((e) => {
       formatNumber.push(+e);
     });
-    const arrayIdOld: number[] = [];
+    const arrayIdOld: string[] = [];
     const arrayDelete: number[] = [];
     const arrayCreate: number[] = [];
     dataIdOld.map((e) => {
-      return arrayIdOld.push(e.id);
+      return arrayIdOld.push(e.id_exam_big_block_class_query);
     });
     const formatNumber_arrayIdOld: number[] = [];
     arrayIdOld.map((e) => {
       formatNumber_arrayIdOld.push(+e);
     });
-    console.log(id_big_class_exam)
-    console.log(formatNumber_arrayIdOld)
-    console.log(formatNumber_id_big_class_exam)
+    console.log("id class old new ", id_big_class_exam)
+    console.log("id classs query ", formatNumber_arrayIdOld)
+    console.log("id classs format ", formatNumber)
     const arrayConcat: number[] = formatNumber_arrayIdOld.concat(
       formatNumber_id_big_class_exam,
     );
