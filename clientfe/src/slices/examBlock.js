@@ -6,7 +6,8 @@ export const initialState = {
     dataOldSearchView: [],
     bigClass  : [],
     exams : [],
-    listDataExamBigClass : []
+    listDataExamBigClass : [],
+    getYear : []
 }
 
 
@@ -52,10 +53,17 @@ const listExamBlockForm = createSlice({
         editData: (state) => {
             state.loading = false
         },
+        getYearStore: (state ,{ payload }) => {
+            state.loading = false;
+            const dataOld = state.dataOldSearchView;
+            const dataFilter = dataOld.filter(e=>e.id_exam.id === payload);
+            state.getYear = dataFilter
+
+        },
     },
 })
 
-export const { loadding, getListExamBlockSuccess, deleteExamList, loaddingFailes, createExamBlockReducer, searchData ,editData } = listExamBlockForm.actions
+export const { loadding, getListExamBlockSuccess, deleteExamList, loaddingFailes, createExamBlockReducer, searchData ,editData ,getYearStore } = listExamBlockForm.actions
 
 export function apiGetListExamBlock(alert) {
     return async dispatch => {
@@ -149,5 +157,18 @@ export function editDataExamBlockApi(data) {
     }
 }
 
+
+export function callDataGetYear(data){
+    return async dispatch => {
+        dispatch(loadding())
+        try {   
+            console.log(data)
+                dispatch(getYearStore(data))
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
 export const postsSelector = state => state.posts
 export default listExamBlockForm.reducer

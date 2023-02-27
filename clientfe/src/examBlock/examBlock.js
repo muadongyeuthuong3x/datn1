@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Button, Table, Modal, Form, Space, Select } from 'antd';
 import { useDispatch, useSelector } from 'react-redux'
-import { apiGetListExamBlock, createExamBlock, deleteItemExamBlock, searchDataApi ,editDataExamBlockApi } from "../slices/examBlock";
+import { apiGetListExamBlock, createExamBlock, deleteItemExamBlock, searchDataApi, editDataExamBlockApi } from "../slices/examBlock";
 import './exam.modules.scss'
 const { Option } = Select;
 
@@ -12,7 +12,9 @@ const ExamBlockComponent = () => {
 
     const { bigClass, exams, listDataExamBigClass, dataOldSearchView } = useSelector(state => state.listExamBlock);
     const dispatch = useDispatch();
-    const year = new Date().getFullYear();
+    const yearCheck = new Date().getFullYear();
+    const monthCheck = new Date().getMonth();
+    const year = monthCheck > 6 ? yearCheck : yearCheck - 1;
     const [isModalOpenCreate, setShowModalCreate] = useState(false);
     const [isModalOpenDelete, setShowModalDelete] = useState(false);
     const [callRefesh, setCallRefesh] = useState(false);
@@ -218,7 +220,7 @@ const ExamBlockComponent = () => {
         // eslint-disable-next-line array-callback-return
         dataOldSearchView.map((e) => {
             const { name, id } = e.id_exam;
-            const getNameSlice = data.find(e=>e.name === name)
+            const getNameSlice = data.find(e => e.name === name)
             if (!getNameSlice) {
                 data.push({
                     name: name,

@@ -1,67 +1,86 @@
-import { Button, Table, Modal, Input, Form, Radio, DatePicker, Space, Select, Image } from 'antd';
-import { useState, useEffect } from 'react';
+import { Button, Table, Modal, Input, Form, DatePicker, Space, Select, Image } from 'antd';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-import { apiGetListDataApi, deleteItemRoom, createRoom, searchDataApi, editDataRoomApi } from '../slices/scheduleTest'
+import { apiGetListDataApi } from '../slices/scheduleTest';
+import { apiGetListExamBlock, callDataGetYear } from "../slices/examBlock";
 import './styleTeacher.modules.scss'
+import { toast } from 'react-toastify'
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 const ScheduleComponent = () => {
     const dispatch = useDispatch();
-    const columns = [
-        {
-            title: 'Index',
-            dataIndex: 'index',
-        },
-        {
-            title: 'Khóa',
-            dataIndex: 'ma_id',
-        },
-        {
-            title: 'Môn Thi',
-            dataIndex: 'name',
-        },
-        {
-            title: 'Hình thức thi',
-            dataIndex: 'name',
-        },
-        {
-            title: 'Phòng thi',
-            dataIndex: 'name',
-        },
-        {
-            title: 'Edit',
-            dataIndex: 'edit',
-        },
-        {
-            title: 'Delete',
-            dataIndex: 'delete',
-        },
-    ];
 
-    const { bigBlockClass, rooms, examForms, teachers, exams } = useSelector(state => state.listSchedule);
+
+    const { rooms, examForms, teachers } = useSelector(state => state.listSchedule);
+    const { dataOldSearchView, getYear } = useSelector(state => state.listExamBlock);
     const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
     // hình thức thi + môn thi + time => array name  timeExamAndFormExam
     const [onFormCreate, setOnchangeFormCreate] = useState({
-        idExam: '',
         roomExam: [],
         timeExamAndFormExam: [{
-            time_start: '',
-            time_end: '',
+            time_year_start: "",
+            time_year_end: "",
             form_exam: '',
-            systemForm_Exam: ''
+            systemForm_Exam: '',
+            id_exam: '',
         }],
         exam: '',
-        roomExamAndTeacher: [{
-            room: '',
-            teachers: [],
-            count_student_room: ''
-        }],
-
-
+        mode: 1,
+        bigBlockClassExam: '',
+        roomPeopleMax: 30,
+        countPeopleExam: 100
     });
 
+    const options = [
+        {
+            value: 1,
+            label: "Thi cuối kì",
+        },
+        {
+            value: 2,
+            label: "Thi lại cuối kì",
+        },
+    ]
 
 
+    const getClassBigExam = (data) => {
+        let listBigClassExam = '';
+        // eslint-disable-next-line array-callback-return
+        data.length > 0 && data.map((e, index) => {
+            let data = e.id_big_class_exam.bigBlockClass;
+            listBigClassExam += (index === 0 ? "" : " - ") + data
+        });
+        return listBigClassExam;
+    }
+
+
+    const listTimeSelect = useMemo(() => {
+        if (onFormCreate.timeExamAndFormExam?.id_exam?.length < 1) {
+            return [];
+        }
+        const data = [];
+        // eslint-disable-next-line array-callback-return
+        getYear.length > 0 && getYear.map((e, index) => {
+            const timeConcat = e.time_year_start + "-" + e.time_year_end;
+            if (!data.includes(timeConcat)) {
+                data.push(timeConcat)
+            }
+            if (index === 0) {
+                const dataOld = onFormCreate;
+                dataOld.timeExamAndFormExam.time_year_start = e.time_year_start;
+                dataOld.timeExamAndFormExam.time_year_end = e.time_year_end;
+                dataOld.bigBlockClassExam = getClassBigExam(e.id_big_class_exam);
+                setOnchangeFormCreate(dataOld);
+            }
+        });
+
+        return data;
+    }, [onFormCreate.timeExamAndFormExam?.id_exam, getYear])
+
+
+    useEffect(() => {
+        dispatch(apiGetListExamBlock())
+    }, [dispatch])
 
 
     useEffect(() => {
@@ -104,6 +123,105 @@ const ScheduleComponent = () => {
         }
     };
 
+    const onChangeSearchYear = (e) => {
+        const [time_start, time_end] = e.split('-');
+        const dataOld = { ...onFormCreate };
+        dataOld.timeExamAndFormExam.time_year_start = time_start;
+        dataOld.timeExamAndFormExam.time_year_end = time_end;
+        const dataFind = getYear.find(e => (e.time_year_start === time_start && e.time_year_end === time_end))
+        dataOld.bigBlockClassExam = getClassBigExam(dataFind.id_big_class_exam);
+        setOnchangeFormCreate(dataOld);
+    }
+
+
+    const onChangeExam = (e) => {
+        const dataOld = { ...onFormCreate };
+        dataOld.timeExamAndFormExam.id_exam = e;
+        setOnchangeFormCreate(dataOld);
+        dispatch(callDataGetYear(e));
+    }
+
+    const listExamSelect = useMemo(() => {
+        const data = [];
+        // eslint-disable-next-line array-callback-return
+        dataOldSearchView.map((e) => {
+            const { name, id } = e.id_exam;
+            const getNameSlice = data.find(e => e.name === name)
+            if (!getNameSlice) {
+                data.push({
+                    name: name,
+                    id: id,
+                })
+            }
+        })
+        return data;
+    }, [dataOldSearchView])
+
+
+    const handleChangeMode = (e) => {
+        setOnchangeFormCreate(prev => {
+            return {
+                ...prev,
+                mode: e
+            }
+        })
+    }
+
+
+    const changeMaxPeople = (e) => {
+        const valueGet = e.target.value;
+        if (valueGet < 1) {
+            toast.error(` Số lượng sinh viên một lớp phải lớn hơn 0 `);
+        }
+        const dataOld = { ...onFormCreate };
+
+        const formObject = {
+            time_start_exam: '',
+            time_end_exam: '',
+            teacher_exam: [],
+            people_room: valueGet,
+            room_exam : ''
+        }
+        const dataArray = []
+        const numberCell = Math.ceil((onFormCreate.countPeopleExam) / (valueGet));
+        for (let index = 0; index < numberCell; index++) {
+            dataArray.push(formObject);
+        }
+
+        dataOld.roomPeopleMax = valueGet;
+        dataOld.roomExamAndTeacher = dataArray;
+
+        setOnchangeFormCreate(prev => {
+            return {
+                ...prev,
+                roomPeopleMax: valueGet
+            }
+        })
+
+    }
+
+    const changeFormExam = (e) => {
+        const dataOld = { ...onFormCreate };
+        dataOld.timeExamAndFormExam.form_exam = e;
+        setOnchangeFormCreate(dataOld);
+    }
+
+
+    const changeRoomExam = (e) => {
+        setOnchangeFormCreate(prev => {
+            return {
+                ...prev,
+                roomExam: e
+            }
+        })
+    }
+
+    const renderTextRoom = (data) => {
+        const dataFind = rooms.find(e => e.id === data);
+        return dataFind?.name + "-" + dataFind?.form_room;
+    }
+
+
 
     return (
         <div>
@@ -114,7 +232,7 @@ const ScheduleComponent = () => {
 
 
             {/* Modal Create */}
-            <Modal title="Tạo Lịch Thi Môn" open={isModalOpenCreate} footer={null}>
+            <Modal title="Tạo Lịch Thi" open={isModalOpenCreate} footer={null}>
 
                 <Form
                     name="basic"
@@ -125,43 +243,44 @@ const ScheduleComponent = () => {
                     autoComplete="off"
                     fields={[
                         {
-                            name: ["bigBlockClass"],
-                            value: onFormCreate.bigBlockClass,
+                            name: ["id_exam"],
+                            value: onFormCreate.timeExamAndFormExam.id_exam,
+                        },
+                        {
+                            name: ["mode"],
+                            value: onFormCreate.mode,
+                        },
+                        {
+                            name: ["year"],
+                            value: onFormCreate.timeExamAndFormExam.time_year_start + "-" + onFormCreate.timeExamAndFormExam.time_year_end,
+                        },
+                        {
+                            name: ["roomExam"],
+                            value: onFormCreate.roomExam,
                         },
                     ]}
 
                 >
-                    {/* <Form.Item
-                        label="Thời gian thi môn"
-                        name="bigBlockClass"
-                    >
-                        <Space direction="vertical" size={12}>
-                            <RangePicker
-                                showTime
-                                format="YYYY/MM/DD HH:mm"
-                                onChange={onRangeChange}
-                            />
-                        </Space>
-                    </Form.Item> */}
                     <Form.Item
                         label="Môn thi"
-                        name="bigBlockClass"
+                        name="id_exam"
                     >
                         <Select
                             showSearch
                             style={{ width: '100%' }}
-                            placeholder="Chọn Khối"
+                            placeholder="Chọn Môn Thi"
+                            value={onFormCreate.timeExamAndFormExam.id_exam}
                             optionFilterProp="children"
                             filterOption={(input, option) => (option?.label ?? '').includes(input)}
                             filterSort={(optionA, optionB) =>
                                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                             }
-
+                            onChange={onChangeExam}
                         >
                             {
-                                exams.map(e => {
+                                listExamSelect.map((e, index) => {
                                     return (
-                                        <Option value={e.id} label={e.name}>
+                                        <Option value={e.id} label={e.name} key={index}>
                                             <Space>
                                                 {e.name}
                                             </Space>
@@ -169,155 +288,212 @@ const ScheduleComponent = () => {
                                     )
                                 })
                             }
-
                         </Select>
                     </Form.Item>
 
                     <Form.Item
-                        label="Khóa"
-                        name="bigBlockClass"
-                    >
-                        <Select
-                            showSearch
+                        label="Thi cuối kì - Thi Lại"
+                        name="mode"
+                    >  <Select
+                            name="mode"
+                            value={onFormCreate.mode}
+                            onChange={handleChangeMode}
                             style={{ width: '100%' }}
-                            placeholder="Chọn Khối"
-                            optionFilterProp="children"
-                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                            filterSort={(optionA, optionB) =>
-                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                            }
-
-                        >
-                            {
-                                bigBlockClass.map(e => {
-                                    return (
-                                        <Option value={e.id} label={e.bigBlockClass}>
-                                            <Space>
-                                                {e.bigBlockClass}
-                                            </Space>
-                                        </Option>
-                                    )
-                                })
-                            }
-
-                        </Select>
+                            options={options}
+                        />
                     </Form.Item>
 
-
-
-
-                    <div className='count_exam'> Có tổng cộng 300 sinh viên đăng kí học môn</div>
-                    <Form.Item
-                        label="Số lượng sinh viên tối đa của 1 phòng"
-                        name="bigBlockClass"
-                    >
-                        <Input />
-
-                    </Form.Item>
-
-
-
-                    <Form.Item
-                        label="Phòng thi"
-                        name="bigBlockClass"
-                    >
-                        <Select
-                            showSearch
-                            style={{ width: '100%' }}
-                            placeholder="Chọn Khối"
-                            optionFilterProp="children"
-                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                            filterSort={(optionA, optionB) =>
-                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                            }
-
+                    {
+                        onFormCreate.timeExamAndFormExam.id_exam > 0 && <Form.Item
+                            label="Năm học"
+                            name="year"
                         >
-                            {
-                                rooms.map(e => {
-                                    return (
-                                        <Option value={e.id} label={e.name}>
-                                            <Space>
-                                                {e.name}-{e.form_room}
-                                            </Space>
-                                        </Option>
-                                    )
-                                })
-                            }
-
-                        </Select>
-                    </Form.Item>
-
-
-
-                    <Form.Item
-                        label="Giáo viên coi thi"
-                        name="bigBlockClass"
-                    >
-                        <Select
-                            showSearch
-                            style={{ width: '100%' }}
-                            placeholder="Chọn Khối"
-                            optionFilterProp="children"
-                            optionLabelProp="label"
-                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                            filterSort={(optionA, optionB) =>
-                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                            }
-
-                        >
-                            {
-                                teachers.map(e => {
-                                    return (
-                                        <Option value={e.id} label={e.name}>
-                                            <div className='option_teacher'>
+                            <Select
+                                showSearch
+                                style={{ width: '100%' }}
+                                placeholder="Năm học"
+                                value={onFormCreate.timeExamAndFormExam.time_year_start + "-" + onFormCreate.timeExamAndFormExam.time_year_end}
+                                optionFilterProp="children"
+                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                filterSort={(optionA, optionB) =>
+                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                }
+                                onChange={onChangeSearchYear}
+                            >
+                                {
+                                    listTimeSelect.map((e, index) => {
+                                        return (
+                                            <Option value={e} label={e} key={index}>
                                                 <Space>
-                                                    {e.name}
+                                                    {e}
                                                 </Space>
-                                                <Image
-                                                    width={50}
-                                                    height={50}
-                                                    src={e.avatar}
-                                                    aria-label={e.name}
-                                                />
-                                            </div>
-                                        </Option>
-                                    )
-                                })
-                            }
-
-                        </Select>
-                    </Form.Item>
+                                            </Option>
+                                        )
+                                    })
+                                }
+                            </Select>
+                        </Form.Item>
+                    }
 
 
-                    <Form.Item
-                        label="Hình thức thi"
-                        name="bigBlockClass"
-                    >
-                        <Select
-                            showSearch
-                            style={{ width: '100%' }}
-                            placeholder="Chọn Khối"
-                            optionFilterProp="children"
-                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                            filterSort={(optionA, optionB) =>
-                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                            }
-
+                    {
+                        onFormCreate.timeExamAndFormExam.id_exam > 0 && <Form.Item
+                            label="Khóa Dự Thi"
+                            name="bigBlockClass"
                         >
-                            {
-                                examForms.map(e => {
-                                    return (
-                                        <Option value={e.id} label={e.name}>
-                                            <Space>
-                                                {e.name}
-                                            </Space>
-                                        </Option>
-                                    )
-                                })
-                            }
+                            <div> {onFormCreate.bigBlockClassExam}</div>
+                        </Form.Item>
 
-                        </Select>
-                    </Form.Item>
+                    }
+
+
+
+                    {
+                        onFormCreate.timeExamAndFormExam.id_exam > 0 &&
+                        <div>
+                            <div className='count_exam'> Có tổng cộng {onFormCreate.countPeopleExam} sinh viên đăng kí học môn</div>
+                            <Form.Item
+                                label="Hình thức thi"
+                                name="form_exam"
+                            >
+                                <Select
+                                    showSearch
+                                    style={{ width: '100%' }}
+                                    placeholder="Chọn hình thức thi"
+                                    value={onFormCreate.timeExamAndFormExam.form_exam}
+                                    optionFilterProp="children"
+                                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                    filterSort={(optionA, optionB) =>
+                                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                    }
+                                    onChange={changeFormExam}
+
+                                >
+                                    {
+                                        examForms.map(e => {
+                                            return (
+                                                <Option value={e.id} label={e.name}>
+                                                    <Space>
+                                                        {e.name}
+                                                    </Space>
+                                                </Option>
+                                            )
+                                        })
+                                    }
+
+                                </Select>
+                            </Form.Item>
+                        </div>}
+
+
+
+                    {
+                        (onFormCreate.timeExamAndFormExam?.form_exam) > 0 && <Form.Item
+                            label="Số lượng sinh viên tối đa của 1 phòng"
+                            name="bigBlockClass"
+                        >
+                            <Input name="roomPeopleMax" value={onFormCreate.roomPeopleMax} onChange={changeMaxPeople} type="number" />
+
+                        </Form.Item>
+                    }
+
+
+
+
+                    {onFormCreate.roomPeopleMax > 0 &&
+                        <Form.Item
+                            label={`Số phòng thi cần chọn là : ${Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax))} phòng`}
+                            name="roomExam"
+                        >
+                            <Select
+                                showSearch
+                                style={{ width: '100%' }}
+                                mode="multiple"
+                                placeholder="Chọn phòng thi"
+                                optionFilterProp="children"
+                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                filterSort={(optionA, optionB) =>
+                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                }
+                                value={onFormCreate.roomExam}
+                                onChange={changeRoomExam}
+                            >
+                                {
+                                    rooms.map(e => {
+                                        return (
+                                            <Option value={e.id} label={e.name}>
+                                                <Space>
+                                                    {e.name}-{e.form_room}
+                                                </Space>
+                                            </Option>
+                                        )
+                                    })
+                                }
+
+                            </Select>
+                        </Form.Item>
+                    }
+
+
+
+                    {
+                        (onFormCreate.roomExam).map(e => {
+                            return (
+                                <div>
+                                    <p className='ex_room_item'>Phòng thi : {renderTextRoom(e)} </p>
+                                    <Form.Item
+                                        label="Thời gian thi "
+                                        name="time_exam"
+                                    >
+                                        <RangePicker
+                                            showTime
+                                            format="YYYY/MM/DD HH:mm"
+                                            onChange={onRangeChange}
+                                        />
+                                    </Form.Item>
+                                    <Form.Item
+                                        label="Giáo viên coi thi"
+                                        name="bigBlockClass"
+                                    >
+                                        <Select
+                                            showSearch
+                                            style={{ width: '100%' }}
+                                            placeholder="Chọn giáo viên coi thi"
+                                            mode="multiple"
+                                            optionFilterProp="children"
+                                            optionLabelProp="label"
+                                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                            filterSort={(optionA, optionB) =>
+                                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                            }
+                                        >
+                                            {
+                                                teachers.map(e => {
+                                                    return (
+                                                        <Option value={e.id} label={e.name}>
+                                                            <div className='option_teacher'>
+                                                                <Space>
+                                                                    {e.name}
+                                                                </Space>
+                                                                <Image
+                                                                    width={50}
+                                                                    height={50}
+                                                                    src={e.avatar}
+                                                                    aria-label={e.name}
+                                                                />
+                                                            </div>
+                                                        </Option>
+                                                    )
+                                                })
+                                            }
+
+                                        </Select>
+                                    </Form.Item>
+                                </div>
+                            )
+                        })
+                    }
+
 
 
 
