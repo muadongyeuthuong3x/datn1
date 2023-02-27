@@ -218,8 +218,8 @@ const ExamBlockComponent = () => {
         // eslint-disable-next-line array-callback-return
         dataOldSearchView.map((e) => {
             const { name, id } = e.id_exam;
-            console.log(!!data.find(item => item.name = name))
-            if (!!data.find(item => item.name = name)) {
+            const getNameSlice = data.find(e=>e.name === name)
+            if (!getNameSlice) {
                 data.push({
                     name: name,
                     id: id,

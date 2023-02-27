@@ -8,7 +8,7 @@ export class TableBigClassExamService {
   constructor(
     @InjectRepository(TableBigClassExam)
     private readonly tableBigClassExamRepository: Repository<TableBigClassExam>,
-  ) { }
+  ) {}
   async create(createTableBigClassExamDto: {
     id_big_class_exam: number[];
     id: number;
@@ -20,7 +20,8 @@ export class TableBigClassExamService {
       const newDataBigClassExam = new TableBigClassExam();
       newDataBigClassExam.id_big_class_exam = id_big_class_exam[i] as any;
       newDataBigClassExam.id_exam_big_block_class = id as any;
-      newDataBigClassExam.id_exam_big_block_class_query = id_big_class_exam[
+      newDataBigClassExam.id_exam_big_block_class_query = id as any;
+      newDataBigClassExam.id_big_block_class_query = id_big_class_exam[
         i
       ] as any;
       const dataRes = await queryRunner.save(newDataBigClassExam);
@@ -54,47 +55,41 @@ export class TableBigClassExamService {
       },
     });
     const formatNumber: number[] = [];
-    const formatNumber_id_big_class_exam: number[] = [];
     id_big_class_exam.map((e) => {
-      formatNumber.push(+e);
+      formatNumber.push(Number(e));
     });
-    const arrayIdOld: string[] = [];
+    const arrayIdOld: number[] = [];
     const arrayDelete: number[] = [];
     const arrayCreate: number[] = [];
     dataIdOld.map((e) => {
-      return arrayIdOld.push(e.id_exam_big_block_class_query);
+      return arrayIdOld.push(Number(e.id_big_block_class_query));
     });
-    const formatNumber_arrayIdOld: number[] = [];
-    arrayIdOld.map((e) => {
-      formatNumber_arrayIdOld.push(+e);
-    });
-    console.log("id class old new ", id_big_class_exam)
-    console.log("id classs query ", formatNumber_arrayIdOld)
-    console.log("id classs format ", formatNumber)
-    const arrayConcat: number[] = formatNumber_arrayIdOld.concat(
-      formatNumber_id_big_class_exam,
+    const arrayConcat: number[] = arrayIdOld.concat(id_big_class_exam);
+    const arraySlice = arrayConcat.filter(
+      (c) => arrayConcat.indexOf(c) == arrayConcat.lastIndexOf(c),
     );
-    console.log(arrayConcat);
-    const arraySlice = [...new Set(arrayConcat)] as any;
-    console.log(arraySlice);
+
     for (let i = 0; i < arraySlice.length; i++) {
-      if (formatNumber.includes(arraySlice[i])) {
-        arrayDelete.push(arraySlice[i]);
-      } else if (!arrayIdOld.includes(arraySlice[i])) {
+      if (!arrayIdOld.includes(arraySlice[i])) {
         arrayCreate.push(arraySlice[i]);
+      }
+      if (!id_big_class_exam.includes(arraySlice[i])) {
+        arrayDelete.push(arraySlice[i]);
       }
     }
 
     for (let i = 0; i < arrayDelete.length; i++) {
       await queryRunner.delete(TableBigClassExam, {
-        id_exam_big_block_class: id,
+        id_big_block_class_query: arrayDelete[i],
       });
     }
 
     for (let i = 0; i < arrayCreate.length; i++) {
       const newDataBigClassExam = new TableBigClassExam();
-      newDataBigClassExam.id_big_class_exam = id_big_class_exam[i] as any;
+      newDataBigClassExam.id_big_class_exam = arrayCreate[i] as any;
       newDataBigClassExam.id_exam_big_block_class = id as any;
+      newDataBigClassExam.id_exam_big_block_class_query = id as any;
+      newDataBigClassExam.id_big_block_class_query = arrayCreate[i] as any;
       await queryRunner.save(newDataBigClassExam);
     }
     return 'success';

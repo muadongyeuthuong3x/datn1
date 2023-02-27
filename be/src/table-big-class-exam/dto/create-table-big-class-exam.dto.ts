@@ -10,4 +10,7 @@ export class CreateTableBigClassExamDto {
 
   @IsNotEmpty()
   id_exam_big_block_class_query: string;
+
+  @IsNotEmpty()
+  id_big_block_class_query: string;
 }

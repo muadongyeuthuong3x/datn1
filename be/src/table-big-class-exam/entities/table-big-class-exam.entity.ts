@@ -25,6 +25,9 @@ export class TableBigClassExam {
   @Column()
   id_exam_big_block_class_query: string;
 
+  @Column()
+  id_big_block_class_query: string;
+
   @ManyToOne(() => TableExamBigBlockClass, (item) => item.id_big_class_exam, {
     onDelete: 'CASCADE',
   })
