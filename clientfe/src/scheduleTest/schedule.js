@@ -1,11 +1,10 @@
 import { Button, Table, Modal, Input, Form, DatePicker, Space, Select, Image } from 'antd';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListDataApi } from '../slices/scheduleTest';
 import { apiGetListExamBlock, callDataGetYear } from "../slices/examBlock";
 import './styleTeacher.modules.scss'
 import { toast } from 'react-toastify'
-const { RangePicker } = DatePicker;
 const { Option } = Select;
 const ScheduleComponent = () => {
     const dispatch = useDispatch();
@@ -28,7 +27,8 @@ const ScheduleComponent = () => {
         mode: 1,
         bigBlockClassExam: '',
         roomPeopleMax: 30,
-        countPeopleExam: 100
+        countPeopleExam: 100,
+        time_exam: 0
     });
 
     const options = [
@@ -75,7 +75,7 @@ const ScheduleComponent = () => {
         });
 
         return data;
-    }, [onFormCreate.timeExamAndFormExam?.id_exam, getYear])
+    }, [onFormCreate, getYear])
 
 
     useEffect(() => {
@@ -97,6 +97,38 @@ const ScheduleComponent = () => {
 
     const handleOkCreate = () => {
         // dispatch(createSubject(formSubjectCreate))
+        // check room submit 
+
+        //check tt 
+        if (!onFormCreate.timeExamAndFormExam.id_exam) {
+           return toast.error("Thiếu thông tin môn thi")
+        }
+
+        if (!onFormCreate.timeExamAndFormExam.form_exam) {
+            return  toast.error("Thiếu hình thức thi")
+        }
+
+       
+
+        if (!onFormCreate.roomPeopleMax || onFormCreate.roomPeopleMax < 1) {
+            return  toast.error("Thiếu số lượng sinh viên tối đa của một phòng")
+        }
+
+        console.log(Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax)))
+
+        console.log(onFormCreate.roomExam.length, Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax) !== onFormCreate.roomExam.length))
+
+        if (Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax)) !== onFormCreate.roomExam.length) {
+            return   toast.error("Tổng số phòng thi chưa đủ")
+        }
+
+        if (!onFormCreate.time_exam || onFormCreate.time_exam < 1) {
+            return  toast.error("Thời gian thi phải lớn hơn 0 ")
+        }
+
+
+
+
         setIsModalOpenCreate(false);
     };
 
@@ -104,23 +136,11 @@ const ScheduleComponent = () => {
         setIsModalOpenCreate(false);
     };
 
-    const onChanheFormCreate = (e) => {
-        setOnchangeFormCreate(prev => {
-            return {
-                ...prev,
-                [e.target.name]: e.target.value
 
-            }
-        })
-    }
 
-    const onRangeChange = (dates, dateStrings) => {
-        if (dates) {
-            console.log('From: ', dates[0], ', to: ', dates[1]);
-            console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
-        } else {
-            console.log('Clear');
-        }
+    const onRangeChange = (date) => {
+        console.log(onFormCreate)
+        console.log(date)
     };
 
     const onChangeSearchYear = (e) => {
@@ -175,28 +195,25 @@ const ScheduleComponent = () => {
         }
         const dataOld = { ...onFormCreate };
 
-        const formObject = {
-            time_start_exam: '',
-            time_end_exam: '',
-            teacher_exam: [],
-            people_room: valueGet,
-            room_exam : ''
-        }
+
         const dataArray = []
         const numberCell = Math.ceil((onFormCreate.countPeopleExam) / (valueGet));
         for (let index = 0; index < numberCell; index++) {
+            const formObject = {
+                time_start_exam: '',
+                time_end_exam: '',
+                teacher_exam: [],
+                people_room: valueGet,
+                room_exam: ''
+            }
             dataArray.push(formObject);
         }
 
         dataOld.roomPeopleMax = valueGet;
         dataOld.roomExamAndTeacher = dataArray;
 
-        setOnchangeFormCreate(prev => {
-            return {
-                ...prev,
-                roomPeopleMax: valueGet
-            }
-        })
+
+        setOnchangeFormCreate(dataOld);
 
     }
 
@@ -208,6 +225,7 @@ const ScheduleComponent = () => {
 
 
     const changeRoomExam = (e) => {
+
         setOnchangeFormCreate(prev => {
             return {
                 ...prev,
@@ -221,7 +239,21 @@ const ScheduleComponent = () => {
         return dataFind?.name + "-" + dataFind?.form_room;
     }
 
+    const changeTimeExam = (e) => {
+        setOnchangeFormCreate(prev => {
+            return {
+                ...prev,
+                "time_exam": e.target.value
+            }
+        })
+    }
 
+    const changeTeacherRooms = (e, index) => {
+        console.log(e, index)
+        const dataOld = { ...onFormCreate }
+        dataOld.roomExamAndTeacher[index].teacher_exam = e;
+        setOnchangeFormCreate(dataOld);
+    }
 
     return (
         <div>
@@ -238,7 +270,7 @@ const ScheduleComponent = () => {
                     name="basic"
                     labelCol={{ span: 0 }}
                     wrapperCol={{ span: 20 }}
-                    style={{ maxWidth: "100%" }}
+                    style={{ maxWidth: '500' }}
                     layout="vertical"
                     autoComplete="off"
                     fields={[
@@ -258,6 +290,15 @@ const ScheduleComponent = () => {
                             name: ["roomExam"],
                             value: onFormCreate.roomExam,
                         },
+                        
+                        {
+                            name: ["roomPeopleMax"],
+                            value: onFormCreate.roomPeopleMax,
+                        },
+                        {
+                            name: ["time_exam"],
+                            value: onFormCreate.time_exam,
+                        },
                     ]}
 
                 >
@@ -276,6 +317,7 @@ const ScheduleComponent = () => {
                                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                             }
                             onChange={onChangeExam}
+
                         >
                             {
                                 listExamSelect.map((e, index) => {
@@ -390,7 +432,7 @@ const ScheduleComponent = () => {
                     {
                         (onFormCreate.timeExamAndFormExam?.form_exam) > 0 && <Form.Item
                             label="Số lượng sinh viên tối đa của 1 phòng"
-                            name="bigBlockClass"
+                            name="roomPeopleMax"
                         >
                             <Input name="roomPeopleMax" value={onFormCreate.roomPeopleMax} onChange={changeMaxPeople} type="number" />
 
@@ -435,26 +477,39 @@ const ScheduleComponent = () => {
                     }
 
 
+                    {
+                        (onFormCreate.timeExamAndFormExam?.form_exam) > 0 && <Form.Item
+                            label="Tổng thời gian thi môn (Phút)"
+                            name="time_exam"
+                        >
+                            <Input name="time_exam" value={onFormCreate.time_exam} onChange={changeTimeExam} type="number" />
+
+                        </Form.Item>
+                    }
+
 
                     {
-                        (onFormCreate.roomExam).map(e => {
+                        onFormCreate?.time_exam > 0 && (onFormCreate.roomExam).map((e, index) => {
                             return (
                                 <div>
                                     <p className='ex_room_item'>Phòng thi : {renderTextRoom(e)} </p>
                                     <Form.Item
-                                        label="Thời gian thi "
-                                        name="time_exam"
+                                        label="Thời gian bắt đầu thi"
+                                        name="time_exam_start"
                                     >
-                                        <RangePicker
+                                        <DatePicker
                                             showTime
                                             format="YYYY/MM/DD HH:mm"
-                                            onChange={onRangeChange}
+                                            onChange={() => onRangeChange(e)}
+                                            className="time_start_begin"
                                         />
+
+                                        <div className="time_start_end">Thời gian kết thúc thi : </div>
                                     </Form.Item>
-                                    <Form.Item
+                                    {/* <Form.Item
                                         label="Giáo viên coi thi"
-                                        name="bigBlockClass"
-                                    >
+                                        name="teacher_exam"
+                                    > */}
                                         <Select
                                             showSearch
                                             style={{ width: '100%' }}
@@ -466,6 +521,9 @@ const ScheduleComponent = () => {
                                             filterSort={(optionA, optionB) =>
                                                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                             }
+                                            value={onFormCreate?.roomExamAndTeacher[index]?.teacher_exam}
+                                            onChange={(e) => changeTeacherRooms(e, index)}
+                                            className="select_teacher"
                                         >
                                             {
                                                 teachers.map(e => {
@@ -488,7 +546,7 @@ const ScheduleComponent = () => {
                                             }
 
                                         </Select>
-                                    </Form.Item>
+                                    {/* </Form.Item> */}
                                 </div>
                             )
                         })
