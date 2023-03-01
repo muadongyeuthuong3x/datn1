@@ -1,66 +1,98 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-var-requires */
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseInterceptors,
+  UploadedFile,
+  Res,
+} from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { csvFileFilter, csvFileName, getCSVFile } from 'src/csvLogic';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Excel = require('exceljs');
+const xlsx = require('xlsx');
 const fs = require('fs');
-import { CsvParser } from 'nest-csv-parser';
 
-class CreateStudent {
-  name: string
-  id: string
-}
 
 class ClassStudnet {
-  id_class_kma : number
+  id_class_kma: number;
 }
 
 @Controller('students')
 export class StudentsController {
-  constructor(private readonly studentsService: StudentsService, private readonly csvParser: CsvParser) { }
+  constructor(private readonly studentsService: StudentsService) { }
 
-
-  @Post('/import-csv')
-  @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './uploads/csv',
-      filename: csvFileName,
+  @Post('/import-csv/beet-ween')
+  @UseInterceptors(
+    FileInterceptor('files', {
+      storage: diskStorage({
+        destination: './uploads/xlsx',
+        filename: csvFileName,
+      }),
+      fileFilter: csvFileFilter,
     }),
-    fileFilter: csvFileFilter,
-  }))
+  )
+  async importCSV(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() formData: ClassStudnet,
+    @Res() res: any,
+  ) {
+    const { originalname } = file;
 
-  async importCSV(@UploadedFile() file: Express.Multer.File, @Body() formData: ClassStudnet, @Res() res: any) {
-    const { filename } = file;
-    const {id_class_kma} = formData;
-    const csvPath = getCSVFile(filename);
-    const readStream = fs.createReadStream(csvPath);
+    const filePath = getCSVFile(originalname);
+    console.log(filePath)
+    const readStream = fs.createReadStream(filePath);
     try {
-      const dataFind = await this.studentsService.findOneClass(id_class_kma);
-      if(!dataFind){
-        return res.status(500).json({
-          status: "error",
-          message: `Lớp không tồn tại trong hệ thống`
-        })
-      }
-      const entities: CreateStudent[] = await this.csvParser.parse(readStream, CreateStudent) as any;
-      const { list }: any = entities;
-      for (let i = 0; i < list.length; i++) {
-        const data: CreateStudentDto = await this.studentsService.findOne(list[i].code_student)
-        if (data) {
-          return res.status(500).json({
-            status: "error",
-            message: `Mã sinh viên này đã có trong hệ thống ${data.code_student}`
-          })
-        }
-      }
-      await this.studentsService.updateAllStudent(list);
-      return res.status(200).json({
-        status: "success",
-        message: `Update các sinh viên thành công`
-      })
+      // const dataFind = await this.studentsService.findOneClass(id_class_kma);
+      // if(!dataFind){
+      //   return res.status(500).json({
+      //     status: "error",
+      //     message: `Lớp không tồn tại trong hệ thống`
+      //   })
+      // }
+
+      const workbook = xlsx.readFile(
+        `D:\doantn\be/uploads/xlsx/TestUpload.xlsx`,
+      );
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      // const sh = wb.getWorksheet();
+      console.log(worksheet);
+
+      //sh.getRow(1).getCell(2).value = 32;
+      // console.log("Row-3 | Cell-2 - " + sh.getRow(3).getCell(2).value);
+
+      // console.log(sh.rowCount);
+      // //Get all the rows data [1st and 2nd column]
+      // for (let i = 1; i <= sh.rowCount; i++) {
+      //   console.log(sh.getRow(i).getCell(1).value);
+      //   console.log(sh.getRow(i).getCell(2).value);
+      // }
+      // const { list }: any = entities;
+      // for (let i = 0; i < list.length; i++) {
+      //   const data: CreateStudentDto = await this.studentsService.findOne(list[i].code_student)
+      //   if (data) {
+      //     return res.status(500).json({
+      //       status: "error",
+      //       message: `Mã sinh viên này đã có trong hệ thống ${data.code_student}`
+      //     })
+      //   }
+      // }
+      // await this.studentsService.updateAllStudent(list);
+      // return res.status(200).json({
+      //   status: "success",
+      //   message: `Update các sinh viên thành công`
+      // })
     } catch (error) {
+      console.log(error)
       return res.status(500).json({
         status: "error",
         message: error

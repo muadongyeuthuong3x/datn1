@@ -1,28 +1,30 @@
-import {extname, join} from 'path';
+import { extname, join } from 'path';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const path = require('path');
 
 export const csvFileFilter = (req, file, callback) => {
-    if (!file.originalname.match(/\.(csv|xlsx)$/)) {
-        return callback(new Error('Only CSV | xlsx files are allowed!'), false);
+    if (!file.originalname.match(/\.xlsx$/)) {
+        return callback(new Error('Only  xlsx files are allowed!'), false);
     }
     callback(null, true);
 };
 
-
-
 export const csvFileName = (req, file, callback) => {
-    //const name = file.originalname.split('.')[0];
-   
-    // const fileExtName = extname(file.originalname);
-    // extname get .namefile
-    // console.log(fileExtName)
     callback(null, `${file.originalname}`);
 };
 
+export const getCSVFile = (fileName: string) => {
+    const filePath = path.resolve(
+        __dirname,
+        '..',
+        '..',
+        'uploads/xlsx/',
+        fileName,
+    );
 
-export const getCSVFile = (fileName : string) => {
-    //const name = file.originalname.split('.')[0];
-    const filePath = join(__dirname, "..", "..", "uploads/csv", fileName);
-    return filePath;
+
+    return filePath.toString();
 };
 
 export const editFileName = (req, file, callback) => {
@@ -34,4 +36,3 @@ export const editFileName = (req, file, callback) => {
         .join('');
     callback(null, `${name}-${randomName}${fileExtName}`);
 };
- 
