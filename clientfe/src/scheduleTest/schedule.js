@@ -26,7 +26,7 @@ const ScheduleComponent = () => {
         exam: '',
         mode: 1,
         bigBlockClassExam: '',
-        roomPeopleMax: 30,
+        roomPeopleMax: 0,
         countPeopleExam: 100,
         time_exam: 0
     });
@@ -101,17 +101,17 @@ const ScheduleComponent = () => {
 
         //check tt 
         if (!onFormCreate.timeExamAndFormExam.id_exam) {
-           return toast.error("Thiếu thông tin môn thi")
+            return toast.error("Thiếu thông tin môn thi")
         }
 
         if (!onFormCreate.timeExamAndFormExam.form_exam) {
-            return  toast.error("Thiếu hình thức thi")
+            return toast.error("Thiếu hình thức thi")
         }
 
-       
+
 
         if (!onFormCreate.roomPeopleMax || onFormCreate.roomPeopleMax < 1) {
-            return  toast.error("Thiếu số lượng sinh viên tối đa của một phòng")
+            return toast.error("Thiếu số lượng sinh viên tối đa của một phòng")
         }
 
         console.log(Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax)))
@@ -119,11 +119,11 @@ const ScheduleComponent = () => {
         console.log(onFormCreate.roomExam.length, Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax) !== onFormCreate.roomExam.length))
 
         if (Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax)) !== onFormCreate.roomExam.length) {
-            return   toast.error("Tổng số phòng thi chưa đủ")
+            return toast.error("Tổng số phòng thi chưa đủ")
         }
 
         if (!onFormCreate.time_exam || onFormCreate.time_exam < 1) {
-            return  toast.error("Thời gian thi phải lớn hơn 0 ")
+            return toast.error("Thời gian thi phải lớn hơn 0 ")
         }
 
 
@@ -243,7 +243,7 @@ const ScheduleComponent = () => {
         setOnchangeFormCreate(prev => {
             return {
                 ...prev,
-                "time_exam": e.target.value
+                time_exam: Number(e.target.value)
             }
         })
     }
@@ -269,7 +269,7 @@ const ScheduleComponent = () => {
                 <Form
                     name="basic"
                     labelCol={{ span: 0 }}
-                    wrapperCol={{ span: 20 }}
+                    wrapperCol={{ span: 24 }}
                     style={{ maxWidth: '500' }}
                     layout="vertical"
                     autoComplete="off"
@@ -290,7 +290,7 @@ const ScheduleComponent = () => {
                             name: ["roomExam"],
                             value: onFormCreate.roomExam,
                         },
-                        
+
                         {
                             name: ["roomPeopleMax"],
                             value: onFormCreate.roomPeopleMax,
@@ -512,7 +512,9 @@ const ScheduleComponent = () => {
                                     > */}
                                         <Select
                                             showSearch
-                                            style={{ width: '100%' }}
+                                            labelCol={{ span: 0 }}
+                                            wrapperCol={{ span: 20 }}
+                                            style={{ width: '100%'  , marginBottom:"10px"}}
                                             placeholder="Chọn giáo viên coi thi"
                                             mode="multiple"
                                             optionFilterProp="children"
@@ -546,8 +548,8 @@ const ScheduleComponent = () => {
                                             }
 
                                         </Select>
-                                    {/* </Form.Item> */}
-                                </div>
+                                        {/* </Form.Item> */}
+                                        </div>
                             )
                         })
                     }
