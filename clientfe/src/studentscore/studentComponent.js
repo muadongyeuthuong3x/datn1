@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListExamBlock, searchDataApi } from "../slices/examBlock";
 import { UploadOutlined } from '@ant-design/icons';
+import { postDataFileScoreStudent } from '../slices/student'
 const { Option } = Select;
 const { Dragger } = Upload;
 
@@ -23,7 +24,7 @@ const StudentComponent = () => {
         id_exam: '',
         time_year_end: '',
         time_year_start: '',
-        file: [],
+        files: [],
         name: ''
     })
 
@@ -42,7 +43,8 @@ const StudentComponent = () => {
         time_year_start: '',
         file: [],
         name: ''
-    })
+    });
+
 
     const { listDataExamBigClass, dataOldSearchView } = useSelector(state => state.listExamBlock);
 
@@ -234,15 +236,13 @@ const StudentComponent = () => {
         name: 'file',
         multiple: true,
         onChange(info) {
-            const { status } = info.file;
-            if (status !== 'uploading') {
-                console.log(info.file, info.fileList);
-            }
-            if (status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully.`);
-            } else if (status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-            }
+            const listFiles = info.fileList;
+            setFormCreateBetween(prev => {
+                return {
+                    ...prev,
+                    files: listFiles
+                }
+            })
         },
         onDrop(e) {
             console.log('Dropped files', e.dataTransfer.files);
@@ -251,6 +251,27 @@ const StudentComponent = () => {
 
 
     const createFileBetween = () => {
+        const formUpload = new FormData();
+        const listFile = formCreateBetween.files;
+        // eslint-disable-next-line array-callback-return
+        listFile.map(e => {
+            console.log(e.originFileObj)
+            formUpload.append("files", e.originFileObj);
+        })
+        // const {id_exam , time_year_end , time_year_start , name} = formCreateBetween
+        // formUpload.append("id_exam", id_exam);
+        // formUpload.append("time_year_start", time_year_start);
+        // formUpload.append("time_year_end", time_year_end);
+        // formUpload.append("name", name);
+
+        dispatch(postDataFileScoreStudent(formUpload))
+    }
+
+    const createFileEndEnd = () => {
+
+    }
+
+    const createFileEnd = () => {
 
     }
 
@@ -326,20 +347,20 @@ const StudentComponent = () => {
                 }>
 
                 <div style={{ marginBottom: "20px" }}> Môn thi : {formCreateBetween.name}  </div>
-                <Dragger {...props} accept=".csv">
+                <Dragger {...props} accept=".xlsx" beforeUpload={() => false}>
                     <p className="ant-upload-drag-icon">
                         <UploadOutlined />
                     </p>
                     <p className="ant-upload-text">Upload file điểm</p>
                     <p className="ant-upload-hint">
-                        File hỗ trợ .xlsx , csv
+                        File hỗ trợ .xlsx
                     </p>
                 </Dragger>
             </Modal>
 
 
             {/* multi  upload file end */}
-            <Modal title={`Upload điểm thi cuối năm học ${formCreateEnd.time_year_start} - ${formCreateEnd.time_year_end}`} open={isShowModalOpenEnd} onOk={createFileBetween}
+            <Modal title={`Upload điểm thi cuối năm học ${formCreateEnd.time_year_start} - ${formCreateEnd.time_year_end}`} open={isShowModalOpenEnd} onOk={createFileEnd}
                 onCancel={() => {
                     setFormCreateBetween({
                         id_exam: '',
@@ -353,13 +374,13 @@ const StudentComponent = () => {
                 }>
 
                 <div style={{ marginBottom: "20px" }}> Môn thi : {formCreateEnd.name}  </div>
-                <Dragger {...props} accept=".csv" >
+                <Dragger {...props} accept=".xlsx" beforeUpload={() => false}>
                     <p className="ant-upload-drag-icon">
                         <UploadOutlined />
                     </p>
                     <p className="ant-upload-text">Upload file điểm</p>
                     <p className="ant-upload-hint">
-                        File hỗ trợ .xlsx , csv
+                        File hỗ trợ .xlsx
                     </p>
                 </Dragger>
             </Modal>
@@ -368,7 +389,7 @@ const StudentComponent = () => {
 
 
             {/* multi  upload file */}
-            <Modal title={`Upload điểm thi lại năm học ${formCreateEndEnd.time_year_start} - ${formCreateEndEnd.time_year_end}`} open={isShowModalOpenEndEnd} onOk={createFileBetween}
+            <Modal title={`Upload điểm thi lại năm học ${formCreateEndEnd.time_year_start} - ${formCreateEndEnd.time_year_end}`} open={isShowModalOpenEndEnd} onOk={createFileEndEnd}
                 onCancel={() => {
                     setFormCreateEndEnd({
                         id_exam: '',
@@ -382,16 +403,13 @@ const StudentComponent = () => {
                 }>
 
                 <div style={{ marginBottom: "20px" }}> Môn thi : {formCreateEndEnd.name}  </div>
-                <Dragger {...props} beforeUpload={() => {
-                    /* update state here */
-                    return false;
-                }}>
+                <Dragger {...props} accept=".xlsx" beforeUpload={() => false}>
                     <p className="ant-upload-drag-icon">
                         <UploadOutlined />
                     </p>
                     <p className="ant-upload-text">Upload file điểm</p>
                     <p className="ant-upload-hint">
-                        File hỗ trợ .xlsx , csv
+                        File hỗ trợ .xlsx
                     </p>
                 </Dragger>
             </Modal>

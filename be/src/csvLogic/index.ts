@@ -19,7 +19,7 @@ export const getCSVFile = (fileName: string) => {
         __dirname,
         '..',
         '..',
-        'uploads/xlsx/',
+        'upload/',
         fileName,
     );
 

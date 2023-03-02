@@ -18,9 +18,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { csvFileFilter, csvFileName, getCSVFile } from 'src/csvLogic';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Excel = require('exceljs');
-const xlsx = require('xlsx');
-const fs = require('fs');
+const XLSX = require('xlsx');
+const fs = require('fs')
 
 
 class ClassStudnet {
@@ -35,7 +34,7 @@ export class StudentsController {
   @UseInterceptors(
     FileInterceptor('files', {
       storage: diskStorage({
-        destination: './uploads/xlsx',
+        destination: './upload',
         filename: csvFileName,
       }),
       fileFilter: csvFileFilter,
@@ -49,8 +48,6 @@ export class StudentsController {
     const { originalname } = file;
 
     const filePath = getCSVFile(originalname);
-    console.log(filePath)
-    const readStream = fs.createReadStream(filePath);
     try {
       // const dataFind = await this.studentsService.findOneClass(id_class_kma);
       // if(!dataFind){
@@ -60,12 +57,22 @@ export class StudentsController {
       //   })
       // }
 
-      const workbook = xlsx.readFile(
-        `D:\doantn\be/uploads/xlsx/TestUpload.xlsx`,
-      );
-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      // const sh = wb.getWorksheet();
-      console.log(worksheet);
+      const workbook = XLSX.readFile(filePath);
+      const data = [];
+
+      const sheets = workbook.SheetNames;
+
+      for (let i = 0; i < sheets.length; i++) {
+        const temp = XLSX.utils.sheet_to_json(
+          workbook.Sheets[workbook.SheetNames[i]],
+        );
+        temp.forEach((res) => {
+          data.push(res);
+        });
+      }
+
+      // Printing data
+      console.log(data);
 
       //sh.getRow(1).getCell(2).value = 32;
       // console.log("Row-3 | Cell-2 - " + sh.getRow(3).getCell(2).value);
@@ -92,11 +99,11 @@ export class StudentsController {
       //   message: `Update các sinh viên thành công`
       // })
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(500).json({
-        status: "error",
-        message: error
-      })
+        status: 'error',
+        message: error,
+      });
     }
   }
 

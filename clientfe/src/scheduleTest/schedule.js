@@ -506,10 +506,7 @@ const ScheduleComponent = () => {
 
                                         <div className="time_start_end">Thời gian kết thúc thi : </div>
                                     </Form.Item>
-                                    {/* <Form.Item
-                                        label="Giáo viên coi thi"
-                                        name="teacher_exam"
-                                    > */}
+                                       <div className="teacher_exam">Giáo Viên Coi Thi : </div>
                                         <Select
                                             showSearch
                                             labelCol={{ span: 0 }}
@@ -548,7 +545,6 @@ const ScheduleComponent = () => {
                                             }
 
                                         </Select>
-                                        {/* </Form.Item> */}
                                         </div>
                             )
                         })
