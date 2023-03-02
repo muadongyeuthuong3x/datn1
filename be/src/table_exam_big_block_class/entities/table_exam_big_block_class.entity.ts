@@ -1,4 +1,5 @@
 import { Exam } from 'src/exam/entities/exam.entity';
+import { Student } from 'src/students/entities/student.entity';
 import { TableBigClassExam } from 'src/table-big-class-exam/entities/table-big-class-exam.entity';
 import {
   Entity,
@@ -33,6 +34,11 @@ export class TableExamBigBlockClass {
     onDelete: 'CASCADE',
   })
   id_big_class_exam: TableBigClassExam;
+
+  @OneToMany(() => Student, (item) => item.id_exam_big_class, {
+    onDelete: 'CASCADE',
+  })
+  id_student: TableBigClassExam;
 
   @CreateDateColumn({ name: 'created_at', default: new Date() })
   createdAt?: Date;

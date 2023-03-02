@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListExamBlock, searchDataApi } from "../slices/examBlock";
 import { UploadOutlined } from '@ant-design/icons';
-import { postDataFileScoreStudent } from '../slices/student'
+import { postDataFileScoreStudent, postDataFileScoreStudentEnd } from '../slices/student'
 const { Option } = Select;
 const { Dragger } = Upload;
 
@@ -32,7 +32,7 @@ const StudentComponent = () => {
         id_exam: '',
         time_year_end: '',
         time_year_start: '',
-        file: [],
+        files: [],
         name: ''
     })
 
@@ -132,7 +132,17 @@ const StudentComponent = () => {
                 title: 'Lên điểm cuối kì',
                 dataIndex: 'button_end',
                 key: 'button_end',
-                render: (item) => <Button type='primary' >Upload điểm thi cuối kì</Button>,
+                render: (item) => <Button type='primary' onClick={() => {
+                    setIsShowModalOpenEnd(true)
+                    const objectCreate = {
+                        id_exam: item.id,
+                        time_year_end: item.time_year_end,
+                        time_year_start: item.time_year_start,
+                        file: [],
+                        name: item.name,
+                    }
+                    setFormCreateEnd(objectCreate)
+                }}>Upload điểm thi cuối kì</Button>,
             },
             {
                 title: 'Lên điểm cuối kì thi lại',
@@ -249,6 +259,23 @@ const StudentComponent = () => {
         },
     };
 
+    const propsEnd = {
+        name: 'file',
+        multiple: true,
+        onChange(info) {
+            const listFiles = info.fileList;
+            setFormCreateEnd(prev => {
+                return {
+                    ...prev,
+                    files: listFiles
+                }
+            })
+        },
+        onDrop(e) {
+            console.log('Dropped files', e.dataTransfer.files);
+        },
+    };
+
 
     const createFileBetween = () => {
         const formUpload = new FormData();
@@ -258,21 +285,47 @@ const StudentComponent = () => {
             console.log(e.originFileObj)
             formUpload.append("files", e.originFileObj);
         })
-        // const {id_exam , time_year_end , time_year_start , name} = formCreateBetween
-        // formUpload.append("id_exam", id_exam);
-        // formUpload.append("time_year_start", time_year_start);
-        // formUpload.append("time_year_end", time_year_end);
-        // formUpload.append("name", name);
+        const { id_exam, time_year_end, time_year_start, name } = formCreateBetween
+        formUpload.append("id_exam", id_exam);
+        formUpload.append("time_year_start", time_year_start);
+        formUpload.append("time_year_end", time_year_end);
+        formUpload.append("name", name);
 
         dispatch(postDataFileScoreStudent(formUpload))
     }
 
     const createFileEndEnd = () => {
+        const formUpload = new FormData();
+        const listFile = formCreateEnd.files;
+        // eslint-disable-next-line array-callback-return
+        listFile.map(e => {
+            console.log(e.originFileObj)
+            formUpload.append("files", e.originFileObj);
+        })
+        const { id_exam, time_year_end, time_year_start, name } = formCreateEnd
+        formUpload.append("id_exam", id_exam);
+        formUpload.append("time_year_start", time_year_start);
+        formUpload.append("time_year_end", time_year_end);
+        formUpload.append("name", name);
 
+        dispatch(postDataFileScoreStudentEnd(formUpload))
     }
 
     const createFileEnd = () => {
+        const formUpload = new FormData();
+        const listFile = formCreateEnd.files;
+        // eslint-disable-next-line array-callback-return
+        listFile.map(e => {
+            console.log(e.originFileObj)
+            formUpload.append("files", e.originFileObj);
+        })
+        const { id_exam, time_year_end, time_year_start, name } = formCreateEnd
+        formUpload.append("id_exam", id_exam);
+        formUpload.append("time_year_start", time_year_start);
+        formUpload.append("time_year_end", time_year_end);
+        formUpload.append("name", name);
 
+        dispatch(postDataFileScoreStudentEnd(formUpload))
     }
 
     return (
@@ -362,7 +415,7 @@ const StudentComponent = () => {
             {/* multi  upload file end */}
             <Modal title={`Upload điểm thi cuối năm học ${formCreateEnd.time_year_start} - ${formCreateEnd.time_year_end}`} open={isShowModalOpenEnd} onOk={createFileEnd}
                 onCancel={() => {
-                    setFormCreateBetween({
+                    setFormCreateEnd({
                         id_exam: '',
                         time_year_end: '',
                         time_year_start: '',
@@ -374,7 +427,7 @@ const StudentComponent = () => {
                 }>
 
                 <div style={{ marginBottom: "20px" }}> Môn thi : {formCreateEnd.name}  </div>
-                <Dragger {...props} accept=".xlsx" beforeUpload={() => false}>
+                <Dragger {...propsEnd} accept=".xlsx" beforeUpload={() => false}>
                     <p className="ant-upload-drag-icon">
                         <UploadOutlined />
                     </p>

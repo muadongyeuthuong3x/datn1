@@ -19,16 +19,10 @@ import { diskStorage } from 'multer';
 import { csvFileFilter, csvFileName, getCSVFile } from 'src/csvLogic';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const XLSX = require('xlsx');
-const fs = require('fs')
-
-
-class ClassStudnet {
-  id_class_kma: number;
-}
 
 @Controller('students')
 export class StudentsController {
-  constructor(private readonly studentsService: StudentsService) { }
+  constructor(private readonly studentsService: StudentsService) {}
 
   @Post('/import-csv/beet-ween')
   @UseInterceptors(
@@ -42,74 +36,87 @@ export class StudentsController {
   )
   async importCSV(
     @UploadedFile() file: Express.Multer.File,
-    @Body() formData: ClassStudnet,
+    @Body() formData: any,
     @Res() res: any,
   ) {
     const { originalname } = file;
-
     const filePath = getCSVFile(originalname);
-    try {
-      // const dataFind = await this.studentsService.findOneClass(id_class_kma);
-      // if(!dataFind){
-      //   return res.status(500).json({
-      //     status: "error",
-      //     message: `Lớp không tồn tại trong hệ thống`
-      //   })
-      // }
+    const { id_exam, name } = formData;
+    // const myRegex = /^[a-zA-Z0-9]{3,}.xlsx+$/g;
+    // const a = "ssfsad.svg";
+    // const b = "fasfsaf.xlsx";
 
-      const workbook = XLSX.readFile(filePath);
-      const data = [];
-
-      const sheets = workbook.SheetNames;
-
-      for (let i = 0; i < sheets.length; i++) {
-        const temp = XLSX.utils.sheet_to_json(
-          workbook.Sheets[workbook.SheetNames[i]],
-        );
-        temp.forEach((res) => {
-          data.push(res);
+    const workbook = XLSX.readFile(filePath);
+    const data = [];
+    const sheets = workbook.SheetNames;
+    for (let i = 0; i < sheets.length; i++) {
+      const temp = XLSX.utils.sheet_to_json(
+        workbook.Sheets[workbook.SheetNames[i]],
+      );
+      const getKeys = Object.keys(temp[0]);
+      if (
+        getKeys[0] !== 'STT' ||
+        getKeys[1] !== 'Mã Sinh Viên' ||
+        getKeys[2] !== 'Họ và Tên' ||
+        getKeys[3] !== 'Điểm Chuyên Cần' ||
+        getKeys[4] !== 'Điểm giữa kì' ||
+        getKeys.length !== 5
+      ) {
+        return res.status(500).json({
+          status: 'error',
+          message: 'Upload điểm vào database chưa đúng format',
         });
       }
-
-      // Printing data
-      console.log(data);
-
-      //sh.getRow(1).getCell(2).value = 32;
-      // console.log("Row-3 | Cell-2 - " + sh.getRow(3).getCell(2).value);
-
-      // console.log(sh.rowCount);
-      // //Get all the rows data [1st and 2nd column]
-      // for (let i = 1; i <= sh.rowCount; i++) {
-      //   console.log(sh.getRow(i).getCell(1).value);
-      //   console.log(sh.getRow(i).getCell(2).value);
-      // }
-      // const { list }: any = entities;
-      // for (let i = 0; i < list.length; i++) {
-      //   const data: CreateStudentDto = await this.studentsService.findOne(list[i].code_student)
-      //   if (data) {
-      //     return res.status(500).json({
-      //       status: "error",
-      //       message: `Mã sinh viên này đã có trong hệ thống ${data.code_student}`
-      //     })
-      //   }
-      // }
-      // await this.studentsService.updateAllStudent(list);
-      // return res.status(200).json({
-      //   status: "success",
-      //   message: `Update các sinh viên thành công`
-      // })
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        status: 'error',
-        message: error,
+      temp.forEach((res: any) => {
+        data.push(res);
       });
     }
+    return await this.studentsService.create(id_exam, data, name, res);
   }
 
-  @Post()
-  create(@Body() createStudentDto: CreateStudentDto) {
-    return this.studentsService.create(createStudentDto);
+  @Post('/import-csv/end')
+  @UseInterceptors(
+    FileInterceptor('files', {
+      storage: diskStorage({
+        destination: './upload',
+        filename: csvFileName,
+      }),
+      fileFilter: csvFileFilter,
+    }),
+  )
+  async importCSVEnd(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() formData: any,
+    @Res() res: any,
+  ) {
+    const { originalname } = file;
+    const filePath = getCSVFile(originalname);
+    const { id_exam, name } = formData;
+    const workbook = XLSX.readFile(filePath);
+    const data = [];
+    const sheets = workbook.SheetNames;
+    for (let i = 0; i < sheets.length; i++) {
+      const temp = XLSX.utils.sheet_to_json(
+        workbook.Sheets[workbook.SheetNames[i]],
+      );
+      const getKeys = Object.keys(temp[0]);
+      if (
+        getKeys[0] !== 'STT' ||
+        getKeys[1] !== 'Mã Sinh Viên' ||
+        getKeys[2] !== 'Họ và Tên' ||
+        getKeys[3] !== 'Điểm Cuối Kì' ||
+        getKeys.length !== 4
+      ) {
+        return res.status(500).json({
+          status: 'error',
+          message: 'Upload điểm vào database chưa đúng format',
+        });
+      }
+      temp.forEach((res: any) => {
+        data.push(res);
+      });
+    }
+    return await this.studentsService.createScoreEnd(id_exam, data, name, res);
   }
 
   @Get()

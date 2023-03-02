@@ -1,27 +1,54 @@
-import { Class } from "src/class/entities/class.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Class } from 'src/class/entities/class.entity';
+import { TableExamBigBlockClass } from 'src/table_exam_big_block_class/entities/table_exam_big_block_class.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('student')
-
 export class Student {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ unique : true})
-    name: string;
+  @Column()
+  code_student: string;
 
-    @Column({ unique : true})
-    code_student: string;
+  @Column()
+  name: string;
 
-    @CreateDateColumn({ name: 'created_at', default: new Date() })
-    createdAt?: Date;
+  @Column({ default: '0' })
+  point_diligence: string;
 
-    @UpdateDateColumn({ name: 'updated_at', default: new Date() })
-    updatedAt?: Date;
+  @Column({ default: '0' })
+  point_beetween: string;
 
-    @ManyToOne(() => Class, (item) => item.student , {
-        onDelete: 'CASCADE',
-    })
-    classId: Class
+  @Column({ default: '0' })
+  point_end: string;
+
+  @Column({ default: '0' })
+  point_end_end: string;
+
+  @Column({ default: '0' })
+  why_edit_point_end_end: string;
+
+  @Column({ default: '0' })
+  why_edit_point_end: string;
+
+  @Column()
+  id_exam_query: string;
+
+  @ManyToOne(() => TableExamBigBlockClass, (item) => item.id_student, {
+    onDelete: 'CASCADE',
+  })
+  id_exam_big_class: TableExamBigBlockClass;
+
+  @CreateDateColumn({ name: 'created_at', default: new Date() })
+  createdAt?: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', default: new Date() })
+  updatedAt?: Date;
 }
- 

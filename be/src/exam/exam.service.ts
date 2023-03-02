@@ -2,13 +2,13 @@ import { BadGatewayException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import { CreateExamDto } from './dto/create-exam.dto';
-import { Exam } from './entities/exam.entity'
+import { Exam } from './entities/exam.entity';
 @Injectable()
 export class ExamService {
   constructor(
     @InjectRepository(Exam)
     private readonly examRepository: Repository<Exam>,
-  ) { }
+  ) {}
 
   create(createExamDto: CreateExamDto) {
     const ExamCreate = new Exam();
