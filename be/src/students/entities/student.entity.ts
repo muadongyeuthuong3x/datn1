@@ -32,10 +32,10 @@ export class Student {
   @Column({ default: '0' })
   point_end_end: string;
 
-  @Column({ default: '0' })
+  @Column({ default: '' })
   why_edit_point_end_end: string;
 
-  @Column({ default: '0' })
+  @Column({ default: '' })
   why_edit_point_end: string;
 
   @Column()

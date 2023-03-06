@@ -69,6 +69,26 @@ export function postDataFileScoreStudentEnd(data) {
 }
 
 
+export function postDataFileScoreStudentEndEnd(data) {
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const dataRes = await instance.post("/students/import-csv/end_end", data, {
+                headers: {
+                    "content-type": "multipart/form-data",
+                }
+            });
+            if (dataRes) {
+                toast.success("Upload file điểm thi lại thành công");
+                dispatch(postFilesScoreStudentBeetwen());
+            }
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
+
 
 
 export const postsSelector = state => state.posts

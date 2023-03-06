@@ -3,14 +3,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListExamBlock, searchDataApi } from "../slices/examBlock";
 import { UploadOutlined } from '@ant-design/icons';
-import { postDataFileScoreStudent, postDataFileScoreStudentEnd } from '../slices/student'
+import { postDataFileScoreStudent, postDataFileScoreStudentEnd,postDataFileScoreStudentEndEnd} from '../slices/student'
 const { Option } = Select;
 const { Dragger } = Upload;
 
 
 const StudentComponent = () => {
 
-    const [showModalCreate, setShowModalCreate] = useState(false);
     const [formSearch, setFormSearch] = useState({
         id_exam_where: '',
         time_year_start: '',
@@ -41,7 +40,7 @@ const StudentComponent = () => {
         id_exam: '',
         time_year_end: '',
         time_year_start: '',
-        file: [],
+        files: [],
         name: ''
     });
 
@@ -148,7 +147,18 @@ const StudentComponent = () => {
                 title: 'Lên điểm cuối kì thi lại',
                 dataIndex: 'button_end_end',
                 key: 'button_end_end',
-                render: (item) => <Button type='primary' >Upload điểm thi lại</Button>,
+                render: (item) => <Button type='primary'  onClick={() => {
+                    setIsShowModalOpenEndEnd(true);
+                    console.log(item)
+                    const objectCreate = {
+                        id_exam: item.id,
+                        time_year_end: item.time_year_end,
+                        time_year_start: item.time_year_start,
+                        file: [],
+                        name: item.name,
+                    }
+                    setFormCreateEndEnd(objectCreate)
+                }}>Upload điểm thi lại</Button>,
             },
         ]
         return dataFormat;
@@ -277,6 +287,24 @@ const StudentComponent = () => {
     };
 
 
+    const propsEndEnd = {
+        name: 'file',
+        multiple: true,
+        onChange(info) {
+            const listFiles = info.fileList;
+            setFormCreateEndEnd(prev => {
+                return {
+                    ...prev,
+                    files: listFiles
+                }
+            })
+        },
+        onDrop(e) {
+            console.log('Dropped files', e.dataTransfer.files);
+        },
+    };
+
+
     const createFileBetween = () => {
         const formUpload = new FormData();
         const listFile = formCreateBetween.files;
@@ -296,19 +324,19 @@ const StudentComponent = () => {
 
     const createFileEndEnd = () => {
         const formUpload = new FormData();
-        const listFile = formCreateEnd.files;
+        const listFile = formCreateEndEnd.files;
         // eslint-disable-next-line array-callback-return
         listFile.map(e => {
             console.log(e.originFileObj)
             formUpload.append("files", e.originFileObj);
         })
-        const { id_exam, time_year_end, time_year_start, name } = formCreateEnd
+        const { id_exam, time_year_end, time_year_start, name } = formCreateEndEnd
         formUpload.append("id_exam", id_exam);
         formUpload.append("time_year_start", time_year_start);
         formUpload.append("time_year_end", time_year_end);
         formUpload.append("name", name);
 
-        dispatch(postDataFileScoreStudentEnd(formUpload))
+        dispatch(postDataFileScoreStudentEndEnd(formUpload))
     }
 
     const createFileEnd = () => {
@@ -456,7 +484,7 @@ const StudentComponent = () => {
                 }>
 
                 <div style={{ marginBottom: "20px" }}> Môn thi : {formCreateEndEnd.name}  </div>
-                <Dragger {...props} accept=".xlsx" beforeUpload={() => false}>
+                <Dragger {...propsEndEnd} accept=".xlsx" beforeUpload={() => false}>
                     <p className="ant-upload-drag-icon">
                         <UploadOutlined />
                     </p>

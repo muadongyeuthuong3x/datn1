@@ -74,9 +74,14 @@ const DashBoard = ({ ComponentProps, loading }) => {
                 Môn Thi Của Khối
             </Link>, '9', <FormOutlined />), isAdmin: false
         },
+        {
+            slider: getItem(<Link to="/edit-score">
+               Sửa điểm thi
+            </Link>, '10', <FormOutlined />), isAdmin: false
+        },
         
     ];
-
+    
 
     const listData = useMemo(() => {
         if (checkRole.length < 0) {

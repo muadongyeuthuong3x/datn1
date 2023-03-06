@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ScheduleTest from './scheduleTest/index';
 import StudentScore from './studentscore/index';
 import ExamBlock from './examBlock/index'
+import ListScoreStudent from './editScoreStudent/index';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/schedule-test" element={<ScheduleTest />} />
         <Route path="/student-score" element={<StudentScore />} />
         <Route path="/exam-block" element={<ExamBlock />} />
+        <Route path="/edit-score" element={<ListScoreStudent />} />
       </Routes>
     </BrowserRouter>
   );
