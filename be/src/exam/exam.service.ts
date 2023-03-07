@@ -47,8 +47,8 @@ export class ExamService {
       return dataAll;
     } catch (error) {
       throw new BadGatewayException({
-        status: "error",
-        message: "Server error "
+        status: 'error',
+        message: 'Server error ',
       });
     }
   }

@@ -1,4 +1,3 @@
-import { Class } from 'src/class/entities/class.entity';
 import { TableExamBigBlockClass } from 'src/table_exam_big_block_class/entities/table_exam_big_block_class.entity';
 import {
   Column,

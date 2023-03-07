@@ -16,6 +16,7 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { csvFileFilter, csvFileName, getCSVFile } from 'src/csvLogic';
+import { CreateStudentDto } from './dto/create-student.dto';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const XLSX = require('xlsx');
 
@@ -190,14 +191,27 @@ export class StudentsController {
   // findOne(@Param('id') id: string) {
   //   return this.studentsService.findOne(+id);
   // }
+  @Post('/create')
+  createSCoreStudent(@Body() createDto: CreateStudentDto, @Res() res: any) {
+    return this.studentsService.createScoreStudent(createDto, res);
+  }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
-    return this.studentsService.update(+id, updateStudentDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateStudentDto: UpdateStudentDto,
+    @Res() res: any,
+  ) {
+    return this.studentsService.update(+id, updateStudentDto, res);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.studentsService.remove(+id);
+  }
+
+  @Post('/tt-score-studnet')
+  ttScore(@Body() data: any, @Res() res: any) {
+    return this.studentsService.ttScoreStudent(data, res);
   }
 }

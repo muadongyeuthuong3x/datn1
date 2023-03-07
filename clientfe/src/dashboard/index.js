@@ -79,6 +79,11 @@ const DashBoard = ({ ComponentProps, loading }) => {
                Sửa điểm thi
             </Link>, '10', <FormOutlined />), isAdmin: false
         },
+        {
+            slider: getItem(<Link to="/tt-score-student">
+               Thống kế điểm thi sinh viên
+            </Link>, '11', <FormOutlined />), isAdmin: false
+        },
         
     ];
     

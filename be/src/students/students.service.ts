@@ -5,7 +5,6 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
-import { UpdateStudentDto } from './dto/update-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Student } from './entities/student.entity';
@@ -82,6 +81,32 @@ export class StudentsService {
       // you need to release a queryRunner which was manually instantiated
       await queryRunner.release();
     }
+  }
+
+  async createScoreStudent(data: CreateStudentDto, res: any) {
+    // try {
+    //   const { point_diligence
+    //     point_beetween
+    //     point_end
+    //     point_end_end
+    //     why_edit_point_end   } = data;
+    //   if (
+    //     getValue[3] > 10 ||
+    //     getValue[3] < 0 ||
+    //     getValue[4] > 10 ||
+    //     getValue[4] < 0
+    //   ) {
+    //     res.status(500).json({
+    //       status: 'error',
+    //       message: `Điểm cần phải lớn hơn 0 hoặc bằng không hoặc nhỏ hơn 10`,
+    //     });
+    //   }
+    // } catch (error) {
+    //   res.status(500).json({
+    //     status: 'error',
+    //     message: `Server error`,
+    //   });
+    // }
   }
 
   async findDataIsExit(code_student: string, id_exam_query: any) {
@@ -263,7 +288,6 @@ export class StudentsService {
         id_exam_where,
         time_year_start,
       });
-      console.log(getDataExam);
       const id_exam_query_find: any = getDataExam?.id;
       if (!id_exam_query_find) {
         return res.status(200).json({
@@ -309,12 +333,183 @@ export class StudentsService {
   findOne(code_student: number) {
     return this.studentRepository.findOneBy({ id: code_student });
   }
-
-  update(id: number, updateStudentDto: UpdateStudentDto) {
-    return `This action updates a #${id} student`;
+  findOneScore(id: string, res: any) {
+    try {
+      return this.studentRepository.findOneBy({ id_exam_query: id });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'server error',
+      });
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} student`;
+  async update(id: number, updateStudentDto: any, res: any) {
+    try {
+      const {
+        point_beetween,
+        point_diligence,
+        point_end,
+        point_end_end,
+        why_edit_point_end,
+        why_edit_point_end_end,
+      } = updateStudentDto;
+
+      if (
+        point_beetween > 10 ||
+        point_beetween < 0 ||
+        point_diligence > 10 ||
+        point_diligence < 0 ||
+        point_end > 10 ||
+        point_end < 0 ||
+        point_end_end > 10 ||
+        point_end_end < 0
+      ) {
+        res.status(500).json({
+          status: 'error',
+          message: `Điểm cần phải lớn hơn 0 hoặc bằng không hoặc nhỏ hơn 10`,
+        });
+      }
+
+      await this.studentRepository.update(id, {
+        point_beetween: point_beetween,
+        point_diligence: point_diligence,
+        point_end: point_end,
+        point_end_end: point_end_end,
+        why_edit_point_end: why_edit_point_end,
+        why_edit_point_end_end: why_edit_point_end_end,
+      });
+      return res.status(200).json({
+        status: 'succes',
+        message: 'Sửa điểm thành công',
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'server error',
+      });
+    }
+  }
+
+  async remove(id: number) {
+    try {
+      const dataAll = await this.studentRepository.delete(id);
+      return dataAll;
+    } catch (error) {
+      throw new BadGatewayException({
+        status: 'error',
+        message: 'Server error ',
+      });
+    }
+  }
+
+  async findOneCountScoreStudent(
+    id: number,
+    scoreStart: number,
+    scoreEnd: number,
+    res: any,
+  ) {
+    try {
+      const data = await this.studentRepository
+        .createQueryBuilder('student')
+        .where('student.id_exam_query=:id', {
+          id,
+        })
+        .andWhere(
+          'student.point_end > :scoreStart AND student.point_end <= :scoreEnd',
+          {
+            scoreStart: scoreStart,
+            scoreEnd: scoreEnd,
+          },
+        )
+        .orWhere(
+          'student.point_end > :scoreStart AND student.point_end_end <= :scoreEnd',
+          {
+            scoreStart: scoreStart,
+            scoreEnd: scoreEnd,
+          },
+        )
+        .getCount();
+      return data;
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'server error',
+      });
+    }
+  }
+  async findOneCountScoreStudentOne(id: number, res: any) {
+    try {
+      return await this.studentRepository
+        .createQueryBuilder('student')
+        .where('student.id_exam_query=:id', {
+          id,
+        })
+        .andWhere('student.point_end >= :scoreStart', {
+          scoreStart: 0,
+        })
+        .andWhere('student.point_end <= :scoreEnd', { scoreEnd: 1 })
+        .orWhere('student.point_end_end <= :scoreEnd', {
+          scoreStart: 0,
+        })
+        .getCount();
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'server error',
+      });
+    }
+  }
+
+  async ttScoreStudent(data: any, res: any) {
+    const { time_start, id_exam_where } = data;
+    try {
+      const dataQuery: any = await this.examBigClassRepository.findOneData({
+        id_exam_where: id_exam_where,
+        time_year_start: time_start,
+      });
+      if (!time_start || !id_exam_where) {
+        return res.status(500).json({
+          status: 'error',
+          message: 'Cần chọn đủ môn thi và năm thi',
+        });
+      }
+
+      if (!dataQuery) {
+        return res.status(500).json({
+          status: 'error',
+          message: 'Chưa có điểm môn thi này',
+        });
+      }
+      const { id: idQuery } = dataQuery;
+      const dataFindScore = await this.findOneScore(idQuery, res);
+      if (!dataFindScore) {
+        return res.status(500).json({
+          status: 'error',
+          message: 'Chưa có điểm môn thi này',
+        });
+      }
+      const dataAll = await Promise.all([
+        await this.findOneCountScoreStudentOne(idQuery, res),
+        await this.findOneCountScoreStudent(idQuery, 1, 2, res),
+        await this.findOneCountScoreStudent(idQuery, 2, 3, res),
+        await this.findOneCountScoreStudent(idQuery, 3, 4, res),
+        await this.findOneCountScoreStudent(idQuery, 4, 5, res),
+        await this.findOneCountScoreStudent(idQuery, 5, 6, res),
+        await this.findOneCountScoreStudent(idQuery, 6, 7, res),
+        await this.findOneCountScoreStudent(idQuery, 7, 8, res),
+        await this.findOneCountScoreStudent(idQuery, 8, 9, res),
+        await this.findOneCountScoreStudent(idQuery, 9, 10, res),
+      ]);
+      return res.status(200).json({
+        status: 'success',
+        message: dataAll,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'server error',
+      });
+    }
   }
 }
