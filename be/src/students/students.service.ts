@@ -403,62 +403,76 @@ export class StudentsService {
     }
   }
 
-  async findOneCountScoreStudent(
-    id: number,
-    scoreStart: number,
-    scoreEnd: number,
-    res: any,
-  ) {
-    try {
-      const data = await this.studentRepository
-        .createQueryBuilder('student')
-        .where('student.id_exam_query=:id', {
-          id,
-        })
-        .andWhere(
-          'student.point_end > :scoreStart AND student.point_end <= :scoreEnd',
-          {
-            scoreStart: scoreStart,
-            scoreEnd: scoreEnd,
-          },
-        )
-        .orWhere(
-          'student.point_end > :scoreStart AND student.point_end_end <= :scoreEnd',
-          {
-            scoreStart: scoreStart,
-            scoreEnd: scoreEnd,
-          },
-        )
-        .getCount();
-      return data;
-    } catch (error) {
-      return res.status(500).json({
-        status: 'error',
-        message: 'server error',
-      });
+  // async findOneCountScoreStudent(
+  //   id: number,
+  //   scoreStart: number,
+  //   scoreEnd: number,
+  //   res: any,
+  // ) {
+  //   try {
+  //     const data = await this.studentRepository
+  //       .createQueryBuilder('student')
+  //       .where('student.id_exam_query=:id', {
+  //         id,
+  //       })
+  //       .andWhere(
+  //         'student.point_end > :scoreStart AND student.point_end <= :scoreEnd',
+  //         {
+  //           scoreStart: scoreStart,
+  //           scoreEnd: scoreEnd,
+  //         },
+  //       )
+  //       .orWhere(
+  //         'student.point_end > :scoreStart AND student.point_end_end <= :scoreEnd',
+  //         {
+  //           scoreStart: scoreStart,
+  //           scoreEnd: scoreEnd,
+  //         },
+  //       )
+  //       .getCount();
+  //     return data;
+  //   } catch (error) {
+  //     return res.status(500).json({
+  //       status: 'error',
+  //       message: 'server error',
+  //     });
+  //   }
+  // }
+  // async findOneCountScoreStudentOne(id: number, res: any) {
+  //   try {
+  //     return await this.studentRepository
+  //       .createQueryBuilder('student')
+  //       .where('student.id_exam_query=:id', {
+  //         id,
+  //       })
+  //       .andWhere('student.point_end >= :scoreStart', {
+  //         scoreStart: 0,
+  //       })
+  //       .andWhere('student.point_end <= :scoreEnd', { scoreEnd: 1 })
+  //       .orWhere('student.point_end_end <= :scoreEnd', {
+  //         scoreStart: 0,
+  //       })
+  //       .getCount();
+  //   } catch (error) {
+  //     return res.status(500).json({
+  //       status: 'error',
+  //       message: 'server error',
+  //     });
+  //   }
+  // }
+   
+  dataArray0 = (array , score , score_start  , score_end)=>{
+    if(score_start == 0 && score  <= score_end &&  score >= score_start){
+      array[0] = array[0]+1
     }
+    return array;
   }
-  async findOneCountScoreStudentOne(id: number, res: any) {
-    try {
-      return await this.studentRepository
-        .createQueryBuilder('student')
-        .where('student.id_exam_query=:id', {
-          id,
-        })
-        .andWhere('student.point_end >= :scoreStart', {
-          scoreStart: 0,
-        })
-        .andWhere('student.point_end <= :scoreEnd', { scoreEnd: 1 })
-        .orWhere('student.point_end_end <= :scoreEnd', {
-          scoreStart: 0,
-        })
-        .getCount();
-    } catch (error) {
-      return res.status(500).json({
-        status: 'error',
-        message: 'server error',
-      });
+
+   dataArray = (array , score , score_start  , score_end)=>{
+    if(score  <= score_end &&   score > score_start){
+      array[score_start] = array[score_start]+1
     }
+    return array;
   }
 
   async ttScoreStudent(data: any, res: any) {
@@ -489,18 +503,30 @@ export class StudentsService {
           message: 'Chưa có điểm môn thi này',
         });
       }
-      const dataAll = await Promise.all([
-        await this.findOneCountScoreStudentOne(idQuery, res),
-        await this.findOneCountScoreStudent(idQuery, 1, 2, res),
-        await this.findOneCountScoreStudent(idQuery, 2, 3, res),
-        await this.findOneCountScoreStudent(idQuery, 3, 4, res),
-        await this.findOneCountScoreStudent(idQuery, 4, 5, res),
-        await this.findOneCountScoreStudent(idQuery, 5, 6, res),
-        await this.findOneCountScoreStudent(idQuery, 6, 7, res),
-        await this.findOneCountScoreStudent(idQuery, 7, 8, res),
-        await this.findOneCountScoreStudent(idQuery, 8, 9, res),
-        await this.findOneCountScoreStudent(idQuery, 9, 10, res),
-      ]);
+
+      let dataAll = [0,0,0,0,0,0,0,0,0,0];
+      const findAllData = await this.studentRepository.findBy({
+        id_exam_query: idQuery
+      });
+
+      findAllData.map((item : any)=>{
+        let scoreStusentEnd = Number(item.point_end)
+        let scoreStudentEndEnd = Number(item.point_end_end)
+        console.log(item.point_end_end)
+        if(item.point_end_end != -1){
+          dataAll = this.dataArray0(dataAll ,scoreStudentEndEnd , 0 ,1 )
+          for(let i =1 ; i < 10 ; i++ ){
+            dataAll = this.dataArray(dataAll ,scoreStudentEndEnd , i ,i+1 )
+          }
+        }else if(item.point_end_end == -1){
+          dataAll = this.dataArray0(dataAll ,scoreStusentEnd , 0 ,1 )
+          for(let i =1 ; i < 10 ; i++ ){
+            dataAll = this.dataArray(dataAll ,scoreStusentEnd , i ,i+1 )
+          }
+        }
+      })
+      console.log(dataAll)
+    
       return res.status(200).json({
         status: 'success',
         message: dataAll,

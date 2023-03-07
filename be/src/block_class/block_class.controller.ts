@@ -3,7 +3,7 @@ import { JoiValidatePipe } from 'src/users/helpers/joi_validate.pipe';
 import { BlockClassSchema } from 'src/users/helpers/validate_schema_block_class';
 import { BlockClassService } from './block_class.service';
 import { CreateBlockClassDto } from './dto/create-block_class.dto';
-import { UpdateBlockClassDto } from './dto/update-block_class.dto';
+import { UpdateBlockClassDto } from './dto/update-block_class.dto'; 
 
 @Controller('block-class')
 export class BlockClassController {
