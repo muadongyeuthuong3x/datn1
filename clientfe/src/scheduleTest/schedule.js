@@ -141,16 +141,13 @@ const ScheduleComponent = () => {
 
     const onChangeSearchYear = (e) => {
         const [time_start, time_end] = e.split('-');
-        const dataOld = { ...onFormCreate };
+        const dataOld = onFormCreate;
         dataOld.timeExamAndFormExam.time_year_start = time_start;
         dataOld.timeExamAndFormExam.time_year_end = time_end;
         const dataFind = getYear.find(e => (e.time_year_start === time_start && e.time_year_end === time_end))
         dataOld.bigBlockClassExam = getClassBigExam(dataFind.id_big_class_exam);
-        console.log(dataOld);
-        console.log(e);
         setOnchangeFormCreate(dataOld)
     }
-
     const onChangeExam = (e) => {
         const dataOld = { ...onFormCreate };
         dataOld.timeExamAndFormExam.id_exam = e;
@@ -233,7 +230,6 @@ const ScheduleComponent = () => {
 
 
     const changeRoomExam = (e) => {
-
         setOnchangeFormCreate(prev => {
             return {
                 ...prev,
@@ -257,10 +253,20 @@ const ScheduleComponent = () => {
     }
 
     const changeTeacherRooms = (e, index) => {
-        console.log(e, index)
         const dataOld = { ...onFormCreate }
         dataOld.roomExamAndTeacher[index].teacher_exam = e;
         setOnchangeFormCreate(dataOld);
+    }
+   
+    const fun_disableData = (e)=>{
+        let check = false;
+        if(onFormCreate.roomExam.length > Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax))-1){
+            check = true;
+        }
+        if(onFormCreate.roomExam.includes(e)){
+            check = false;
+        }
+        return check;
     }
 
 
@@ -374,7 +380,7 @@ const ScheduleComponent = () => {
                                 {
                                     listTimeSelect.map((e, index) => {
                                         return (
-                                            <Option value={e} label={e} key={index}>
+                                            <Option value={e} label={e} key={e}>
                                                 <Space>
                                                     {e}
                                                 </Space>
@@ -461,7 +467,6 @@ const ScheduleComponent = () => {
                                 style={{ width: '100%' }}
                                 mode="multiple"
                                 placeholder="Chọn phòng thi"
-                                optionFilterProp="children"
                                 filterOption={(input, option) => (option?.label ?? '').includes(input)}
                                 filterSort={(optionA, optionB) =>
                                     (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
@@ -472,7 +477,7 @@ const ScheduleComponent = () => {
                                 {
                                     rooms.map((e, index) => {
                                         return (
-                                            <Option value={e.id} label={e.name} key={index}>
+                                            <Option value={e.id} label={e.name} key={index} disabled={fun_disableData(e.id)}>
                                                 <Space>
                                                     {e.name}-{e.form_room}
                                                 </Space>
@@ -573,7 +578,7 @@ const ScheduleComponent = () => {
                         </Form.Item>
 
                         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                            <Button type="primary" htmlType="submit" onClick={handleOkCreate} disabled={ onFormCreate.countPeopleExam  < 1 ? true : false}>
+                            <Button type="primary" htmlType="submit" onClick={handleOkCreate} disabled={onFormCreate.countPeopleExam < 1 ? true : false}>
                                 Submit
                             </Button>
                         </Form.Item>
