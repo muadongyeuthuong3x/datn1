@@ -8,7 +8,8 @@ export const initialState = {
     teachers: [],
     rooms: [],
     examForms: [],
-    exams : []
+    exams : [],
+    countStudnetExam : 0
 
 }
 
@@ -67,10 +68,14 @@ const listSchedule = createSlice({
             dataOld[indexEdit] = payload;
             state.data = dataOld
         },
+        setCount: (state, { payload }) => {
+            state.loading = false
+            state.countStudnetExam = payload
+        },
     },
 })
 
-export const { loadding, getListDataSuccess, deleteScheduleInList, loaddingFailes, createScheduleReducer, searchData, editData } = listSchedule.actions
+export const { loadding, getListDataSuccess, deleteScheduleInList, loaddingFailes, createScheduleReducer, searchData, editData, setCount } = listSchedule.actions
 
 export function apiGetListDataApi(alert) {
     return async dispatch => {
@@ -166,6 +171,21 @@ export function editDataScheduleApi(data) {
             const dataRes = await instance.patch(`/teacher/${id}`, formUpload);
             dispatch(editData(data))
             toast.success(dataRes.data.message)
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
+
+export function setCountExamApi(data) {
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const { exam , time_start} = data
+            const dataRes = await instance.get(`/students/count/${exam}/${time_start}`);
+            dispatch(setCount(dataRes.data.message))
+            console.log(dataRes.data.message)
         } catch (error) {
             toast.error(error.response.data.message)
             dispatch(loaddingFailes())

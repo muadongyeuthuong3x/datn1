@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListDataApi } from '../slices/scheduleTest';
 import { apiGetListExamBlock, callDataGetYear } from "../slices/examBlock";
+import { setCountExamApi } from "../slices/scheduleTest";
 import './styleTeacher.modules.scss'
 import { toast } from 'react-toastify'
 const { Option } = Select;
@@ -10,7 +11,7 @@ const ScheduleComponent = () => {
     const dispatch = useDispatch();
 
 
-    const { rooms, examForms, teachers } = useSelector(state => state.listSchedule);
+    const { rooms, examForms, teachers, countStudnetExam } = useSelector(state => state.listSchedule);
     const { dataOldSearchView, getYear } = useSelector(state => state.listExamBlock);
     const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
     // hình thức thi + môn thi + time => array name  timeExamAndFormExam
@@ -27,9 +28,18 @@ const ScheduleComponent = () => {
         mode: 1,
         bigBlockClassExam: '',
         roomPeopleMax: 0,
-        countPeopleExam: 100,
+        countPeopleExam: 0,
         time_exam: 0
     });
+
+    useEffect(() => {
+        setOnchangeFormCreate(prev => {
+            return {
+                ...prev,
+                countPeopleExam: countStudnetExam,
+            }
+        })
+    }, [countStudnetExam])
 
     const options = [
         {
@@ -73,19 +83,15 @@ const ScheduleComponent = () => {
                 setOnchangeFormCreate(dataOld);
             }
         });
-
         return data;
     }, [onFormCreate, getYear])
 
-
     useEffect(() => {
-        dispatch(apiGetListExamBlock())
-    }, [dispatch])
-
-
-    useEffect(() => {
+        dispatch(apiGetListExamBlock());
         dispatch(apiGetListDataApi())
     }, [dispatch])
+
+
 
 
     // hande create
@@ -108,15 +114,9 @@ const ScheduleComponent = () => {
             return toast.error("Thiếu hình thức thi")
         }
 
-
-
         if (!onFormCreate.roomPeopleMax || onFormCreate.roomPeopleMax < 1) {
             return toast.error("Thiếu số lượng sinh viên tối đa của một phòng")
         }
-
-        console.log(Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax)))
-
-        console.log(onFormCreate.roomExam.length, Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax) !== onFormCreate.roomExam.length))
 
         if (Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax)) !== onFormCreate.roomExam.length) {
             return toast.error("Tổng số phòng thi chưa đủ")
@@ -125,9 +125,6 @@ const ScheduleComponent = () => {
         if (!onFormCreate.time_exam || onFormCreate.time_exam < 1) {
             return toast.error("Thời gian thi phải lớn hơn 0 ")
         }
-
-
-
 
         setIsModalOpenCreate(false);
     };
@@ -140,7 +137,6 @@ const ScheduleComponent = () => {
 
     const onRangeChange = (date) => {
         console.log(onFormCreate)
-        console.log(date)
     };
 
     const onChangeSearchYear = (e) => {
@@ -150,9 +146,10 @@ const ScheduleComponent = () => {
         dataOld.timeExamAndFormExam.time_year_end = time_end;
         const dataFind = getYear.find(e => (e.time_year_start === time_start && e.time_year_end === time_end))
         dataOld.bigBlockClassExam = getClassBigExam(dataFind.id_big_class_exam);
-        setOnchangeFormCreate(dataOld);
+        console.log(dataOld);
+        console.log(e);
+        setOnchangeFormCreate(dataOld)
     }
-
 
     const onChangeExam = (e) => {
         const dataOld = { ...onFormCreate };
@@ -160,6 +157,17 @@ const ScheduleComponent = () => {
         setOnchangeFormCreate(dataOld);
         dispatch(callDataGetYear(e));
     }
+
+    useEffect(() => {
+        if (!onFormCreate.timeExamAndFormExam.time_year_start) {
+            return
+        }
+        const formSearchCountStudent = {
+            exam: onFormCreate.timeExamAndFormExam.id_exam,
+            time_start: getYear[0].time_year_start,
+        }
+        dispatch(setCountExamApi(formSearchCountStudent))
+    }, [onFormCreate.timeExamAndFormExam.time_year_start, onFormCreate.timeExamAndFormExam.id_exam])
 
     const listExamSelect = useMemo(() => {
         const data = [];
@@ -254,6 +262,7 @@ const ScheduleComponent = () => {
         dataOld.roomExamAndTeacher[index].teacher_exam = e;
         setOnchangeFormCreate(dataOld);
     }
+
 
     return (
         <div>
@@ -412,9 +421,9 @@ const ScheduleComponent = () => {
 
                                 >
                                     {
-                                        examForms.map(e => {
+                                        examForms.map((e, index) => {
                                             return (
-                                                <Option value={e.id} label={e.name}>
+                                                <Option value={e.id} label={e.name} key={index}>
                                                     <Space>
                                                         {e.name}
                                                     </Space>
@@ -461,9 +470,9 @@ const ScheduleComponent = () => {
                                 onChange={changeRoomExam}
                             >
                                 {
-                                    rooms.map(e => {
+                                    rooms.map((e, index) => {
                                         return (
-                                            <Option value={e.id} label={e.name}>
+                                            <Option value={e.id} label={e.name} key={index}>
                                                 <Space>
                                                     {e.name}-{e.form_room}
                                                 </Space>
@@ -491,7 +500,7 @@ const ScheduleComponent = () => {
                     {
                         onFormCreate?.time_exam > 0 && (onFormCreate.roomExam).map((e, index) => {
                             return (
-                                <div>
+                                <div key={index}>
                                     <p className='ex_room_item'>Phòng thi : {renderTextRoom(e)} </p>
                                     <Form.Item
                                         label="Thời gian bắt đầu thi"
@@ -506,46 +515,46 @@ const ScheduleComponent = () => {
 
                                         <div className="time_start_end">Thời gian kết thúc thi : </div>
                                     </Form.Item>
-                                       <div className="teacher_exam">Giáo Viên Coi Thi : </div>
-                                        <Select
-                                            showSearch
-                                            labelCol={{ span: 0 }}
-                                            wrapperCol={{ span: 20 }}
-                                            style={{ width: '100%'  , marginBottom:"10px"}}
-                                            placeholder="Chọn giáo viên coi thi"
-                                            mode="multiple"
-                                            optionFilterProp="children"
-                                            optionLabelProp="label"
-                                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                                            filterSort={(optionA, optionB) =>
-                                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                                            }
-                                            value={onFormCreate?.roomExamAndTeacher[index]?.teacher_exam}
-                                            onChange={(e) => changeTeacherRooms(e, index)}
-                                            className="select_teacher"
-                                        >
-                                            {
-                                                teachers.map(e => {
-                                                    return (
-                                                        <Option value={e.id} label={e.name}>
-                                                            <div className='option_teacher'>
-                                                                <Space>
-                                                                    {e.name}
-                                                                </Space>
-                                                                <Image
-                                                                    width={50}
-                                                                    height={50}
-                                                                    src={e.avatar}
-                                                                    aria-label={e.name}
-                                                                />
-                                                            </div>
-                                                        </Option>
-                                                    )
-                                                })
-                                            }
+                                    <div className="teacher_exam">Giáo Viên Coi Thi : </div>
+                                    <Select
+                                        showSearch
+                                        labelCol={{ span: 0 }}
+                                        wrapperCol={{ span: 20 }}
+                                        style={{ width: '100%', marginBottom: "10px" }}
+                                        placeholder="Chọn giáo viên coi thi"
+                                        mode="multiple"
+                                        optionFilterProp="children"
+                                        optionLabelProp="label"
+                                        filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                        filterSort={(optionA, optionB) =>
+                                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                        }
+                                        value={onFormCreate?.roomExamAndTeacher[index]?.teacher_exam}
+                                        onChange={(e) => changeTeacherRooms(e, index)}
+                                        className="select_teacher"
+                                    >
+                                        {
+                                            teachers.map(e => {
+                                                return (
+                                                    <Option value={e.id} label={e.name}>
+                                                        <div className='option_teacher'>
+                                                            <Space>
+                                                                {e.name}
+                                                            </Space>
+                                                            <Image
+                                                                width={50}
+                                                                height={50}
+                                                                src={e.avatar}
+                                                                aria-label={e.name}
+                                                            />
+                                                        </div>
+                                                    </Option>
+                                                )
+                                            })
+                                        }
 
-                                        </Select>
-                                        </div>
+                                    </Select>
+                                </div>
                             )
                         })
                     }
@@ -564,7 +573,7 @@ const ScheduleComponent = () => {
                         </Form.Item>
 
                         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                            <Button type="primary" htmlType="submit" onClick={handleOkCreate}>
+                            <Button type="primary" htmlType="submit" onClick={handleOkCreate} disabled={ onFormCreate.countPeopleExam  < 1 ? true : false}>
                                 Submit
                             </Button>
                         </Form.Item>

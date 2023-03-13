@@ -22,7 +22,7 @@ const XLSX = require('xlsx');
 
 @Controller('students')
 export class StudentsController {
-  constructor(private readonly studentsService: StudentsService) {}
+  constructor(private readonly studentsService: StudentsService) { }
 
   @Post('/import-csv/beet-ween')
   @UseInterceptors(
@@ -212,5 +212,9 @@ export class StudentsController {
   @Post('/tt-score-studnet')
   ttScore(@Body() data: any, @Res() res: any) {
     return this.studentsService.ttScoreStudent(data, res);
+  }
+  @Get('/count/:exam/:time_start')
+  findAndCountData(@Param('exam') exam: string, @Param('time_start') time_start: string , @Res() res: any) {
+    return this.studentsService.countStudent(exam, time_start , res);
   }
 }

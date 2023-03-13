@@ -20,7 +20,7 @@ export class StudentsService {
     private readonly classService: ClassService,
     private dataSource: DataSource,
     private examBigClassRepository: TableExamBigBlockClassService,
-  ) {}
+  ) { }
 
   async create(
     id_exam: TableExamBigBlockClass,
@@ -460,17 +460,17 @@ export class StudentsService {
   //     });
   //   }
   // }
-   
-  dataArray0 = (array , score , score_start  , score_end)=>{
-    if(score_start == 0 && score  <= score_end &&  score >= score_start){
-      array[0] = array[0]+1
+
+  dataArray0 = (array, score, score_start, score_end) => {
+    if (score_start == 0 && score <= score_end && score >= score_start) {
+      array[0] = array[0] + 1
     }
     return array;
   }
 
-   dataArray = (array , score , score_start  , score_end)=>{
-    if(score  <= score_end &&   score > score_start){
-      array[score_start] = array[score_start]+1
+  dataArray = (array, score, score_start, score_end) => {
+    if (score <= score_end && score > score_start) {
+      array[score_start] = array[score_start] + 1
     }
     return array;
   }
@@ -504,27 +504,27 @@ export class StudentsService {
         });
       }
 
-      let dataAll = [0,0,0,0,0,0,0,0,0,0];
+      let dataAll = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
       const findAllData = await this.studentRepository.findBy({
         id_exam_query: idQuery
       });
 
-      findAllData.map((item : any)=>{
+      findAllData.map((item: any) => {
         let scoreStusentEnd = Number(item.point_end)
         let scoreStudentEndEnd = Number(item.point_end_end)
-        if(item.point_end_end != -1){
-          dataAll = this.dataArray0(dataAll ,scoreStudentEndEnd , 0 ,1 )
-          for(let i =1 ; i < 10 ; i++ ){
-            dataAll = this.dataArray(dataAll ,scoreStudentEndEnd , i ,i+1 )
+        if (item.point_end_end != -1) {
+          dataAll = this.dataArray0(dataAll, scoreStudentEndEnd, 0, 1)
+          for (let i = 1; i < 10; i++) {
+            dataAll = this.dataArray(dataAll, scoreStudentEndEnd, i, i + 1)
           }
-        }else if(item.point_end_end == -1){
-          dataAll = this.dataArray0(dataAll ,scoreStusentEnd , 0 ,1 )
-          for(let i =1 ; i < 10 ; i++ ){
-            dataAll = this.dataArray(dataAll ,scoreStusentEnd , i ,i+1 )
+        } else if (item.point_end_end == -1) {
+          dataAll = this.dataArray0(dataAll, scoreStusentEnd, 0, 1)
+          for (let i = 1; i < 10; i++) {
+            dataAll = this.dataArray(dataAll, scoreStusentEnd, i, i + 1)
           }
         }
       })
-    
+
       return res.status(200).json({
         status: 'success',
         message: dataAll,
@@ -535,5 +535,37 @@ export class StudentsService {
         message: 'server error',
       });
     }
+  }
+
+  async countStudent(exam: string, time_start: string, res: any) {
+    try {
+      const dataQuery: any = await this.examBigClassRepository.findOneData({
+        id_exam_where: exam,
+        time_year_start: time_start,
+      });
+      if (!dataQuery) {
+        return res.status(200).json({
+          status: 'success',
+          message:0,
+        });
+      }
+      const countFind = await this.studentRepository.count({
+        where: {
+          id_exam_query: dataQuery.id
+        }
+      })
+      console.log(countFind)
+      return res.status(200).json({
+        status: 'success',
+        message: countFind,
+      })
+
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'server error',
+      });
+    }
+
   }
 }
