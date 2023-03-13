@@ -60,7 +60,6 @@ export class RoomController {
       })
 
     } catch (error) {
-      console.log(error)
       return res.status(500).json({
         status: "error",
         message: "Server error"

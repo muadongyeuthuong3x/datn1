@@ -34,6 +34,7 @@ export function apiGetListCountScore(data) {
             const response = await instance.post('/students/tt-score-studnet' ,data);
             dispatch(getListCountScoreSuccess(response.data.message))
         } catch (error) {
+            dispatch(getListCountScoreSuccess([0,0,0,0,0,0,0,0,0,0]))
             toast.error(error.response.data.message)
             dispatch(loaddingFailes())
         }

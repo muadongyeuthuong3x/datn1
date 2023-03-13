@@ -178,7 +178,6 @@ export class StudentsController {
     },
     @Res() res: any,
   ) {
-    console.log(data);
     return await this.studentsService.searchScoreStudent(data, res);
   }
 

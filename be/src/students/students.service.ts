@@ -512,7 +512,6 @@ export class StudentsService {
       findAllData.map((item : any)=>{
         let scoreStusentEnd = Number(item.point_end)
         let scoreStudentEndEnd = Number(item.point_end_end)
-        console.log(item.point_end_end)
         if(item.point_end_end != -1){
           dataAll = this.dataArray0(dataAll ,scoreStudentEndEnd , 0 ,1 )
           for(let i =1 ; i < 10 ; i++ ){
@@ -525,7 +524,6 @@ export class StudentsService {
           }
         }
       })
-      console.log(dataAll)
     
       return res.status(200).json({
         status: 'success',

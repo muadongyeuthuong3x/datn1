@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes ,Switch } from 'react-router-dom';
 import Users from "./users/index"
 import Login from './login';
 import ListSubject from './listSubject/index'
@@ -19,6 +19,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        
         <Route path="/dashboard" element={<Users />} />
         <Route path="/login" element={<Login />} />
         <Route path="/list-khoi" element={<ListSubject />} />

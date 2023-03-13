@@ -1,5 +1,6 @@
 import { FormOutlined, UserOutlined } from '@ant-design/icons';
 import './Dashboard.modules.scss'
+import { NavLink, useLocation } from 'react-router-dom';
 import { Breadcrumb, Layout, Menu, theme, Image } from 'antd';
 import Loadding from '../loadding/index'
 import {
@@ -20,73 +21,154 @@ function getItem(label, key, icon, children) {
 
 const DashBoard = ({ ComponentProps, loading }) => {
     const [collapsed, setCollapsed] = useState(false);
+    const location = useLocation();
     const {
         token: { colorBgContainer },
     } = theme.useToken();
     const checkRole = JSON.parse(localStorage.getItem('datawebkma')).role || '';
-    const [stateRenderClickId , setRenderClickId] = useState(1)
-   
+    const [stateRenderClickId, setRenderClickId] = useState(-1)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // const items = [
+    //     {
+    //         slider: getItem(<NavLink to="/dashboard">
+    //             Danh sách user
+    //         </NavLink >, '1', < UserOutlined />), isAdmin: true
+    //     },
+    //     {
+    //         slider: getItem(<NavLink to="/list-teacher">
+    //             Danh sách  giáo viên
+    //         </NavLink >, '7', <FormOutlined />), isAdmin: false
+    //     },
+    //     {
+    //         slider: getItem(<NavLink to="/list-khoi">
+    //             Danh sách khối
+    //         </NavLink >, '2', <FormOutlined />), isAdmin: false
+    //     },
+    //     {
+    //         slider: getItem(<NavLink to="/list-exam">
+    //             Môn Học
+    //         </NavLink >, '3', <FormOutlined />), isAdmin: false
+    //     },
+    //     {
+    //         slider: getItem(<NavLink to="/exam-form">
+    //             Hình thức thi
+    //         </NavLink >, '4', <FormOutlined />), isAdmin: false
+    //     },
+    //     {
+    //         slider: getItem(<NavLink to="/form-room">
+    //             Phòng Thi
+    //         </NavLink >, '5', <FormOutlined />), isAdmin: false
+    //     },
+    //     {
+    //         slider: getItem(<NavLink to="/schedule-test">
+    //             Lên Lịch Thi
+    //         </NavLink >, '6', <FormOutlined />), isAdmin: false
+    //     },
+    //     {
+    //         slider: getItem(<NavLink to="/student-score">
+    //             Lên Điểm Thi
+    //         </NavLink >, '8', <FormOutlined />), isAdmin: false
+    //     },
+
+    //     {
+    //         slider: getItem(<NavLink to="/exam-block">
+    //             Môn Thi Của Khối
+    //         </NavLink >, '9', <FormOutlined />), isAdmin: false
+    //     },
+    //     {
+    //         slider: getItem(<NavLink to="/edit-score">
+    //             Sửa điểm thi
+    //         </NavLink >, '10', <FormOutlined />), isAdmin: false
+    //     },
+    //     {
+    //         slider: getItem(<NavLink to="/tt-score-student">
+    //             Thống kế điểm thi sinh viên
+    //         </NavLink >, '11', <FormOutlined />), isAdmin: false
+    //     },
+
+    // ];
+
     const items = [
         {
-            slider: getItem(<Link to="/dashboard">
-                Danh sách user
-            </Link>, '1', < UserOutlined />), isAdmin: true
+            link: "/dashboard",
+            text: "Danh sách user",
+            icon: < UserOutlined />,
+            isAdmin: true,
+            key: 0
         },
         {
-            slider: getItem(<Link to="/list-teacher">
-                Danh sách  giáo viên
-            </Link>, '7', <FormOutlined />), isAdmin: false
+            link: "/list-teacher",
+            text: "Danh sách  giáo viên",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 1
         },
         {
-            slider: getItem(<Link to="/list-khoi">
-                Danh sách khối
-            </Link>, '2', <FormOutlined />), isAdmin: false
+            link: "/list-khoi",
+            text: "Danh sách khối",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 2
         },
         {
-            slider: getItem(<Link to="/list-exam">
-              Môn Học
-            </Link>, '3', <FormOutlined />), isAdmin: false
+            link: "/list-exam",
+            text: "Môn Học",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 3
         },
         {
-            slider: getItem(<Link to="/exam-form">
-                Hình thức thi
-            </Link>, '4', <FormOutlined />), isAdmin: false
+            link: "/exam-form",
+            text: "Hình thức thi",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 4
         },
         {
-            slider: getItem(<Link to="/form-room">
-               Phòng Thi
-            </Link>, '5', <FormOutlined />), isAdmin: false
-        },
-          {
-            slider: getItem(<Link to="/schedule-test">
-               Lên Lịch Thi
-            </Link>, '6', <FormOutlined />), isAdmin: false
+            link: "/form-room",
+            text: "Phòng Thi",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 5
         },
         {
-            slider: getItem(<Link to="/student-score">
-               Lên Điểm Thi
-            </Link>, '8', <FormOutlined />), isAdmin: false
+            link: "/schedule-test",
+            text: "Lên Lịch Thi",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 6
         },
+        {
+            link: "/student-score",
+            text: "Lên Điểm Thi",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 7
+        },
+        {
+            link: "/edit-score",
+            text: "Sửa điểm thi",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 8
+        },
+        {
+            link: "/exam-block",
+            text: "Môn Thi Của Khối",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 9
+        },
+        {
+            link: "/tt-score-student",
+            text: "Thống kế điểm thi sinh viên",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 10
+        },
+    ]
 
-        {
-            slider: getItem(<Link to="/exam-block">
-                Môn Thi Của Khối
-            </Link>, '9', <FormOutlined />), isAdmin: false
-        },
-        {
-            slider: getItem(<Link to="/edit-score">
-               Sửa điểm thi
-            </Link>, '10', <FormOutlined />), isAdmin: false
-        },
-        {
-            slider: getItem(<Link to="/tt-score-student">
-               Thống kế điểm thi sinh viên
-            </Link>, '11', <FormOutlined />), isAdmin: false
-        },
-        
-    ];
-    
 
     const listData = useMemo(() => {
         if (checkRole.length < 0) {
@@ -95,19 +177,46 @@ const DashBoard = ({ ComponentProps, loading }) => {
         const itemsList = [];
         // eslint-disable-next-line array-callback-return
         items.map(data => {
-            const { isAdmin } = data
+            const { isAdmin, link, text, icon, key } = data
             if (checkRole === "admin" && isAdmin) {
-                itemsList.push(data.slider)
+                itemsList.push({
+                    link: link,
+                    text: text,
+                    icon: icon,
+                    key: key
+                })
             } else if ((checkRole === "user" && !isAdmin) || checkRole === "admin") {
-                itemsList.push(data.slider)
+                itemsList.push({
+                    link: link,
+                    text: text,
+                    icon: icon,
+                    key: key
+                })
             }
         })
         return itemsList;
-    }, [checkRole ,items])
+    }, [checkRole, items])
 
+    // const listData = useMemo(() => {
+    //     if (checkRole.length < 0) {
+    //         return
+    //     }
+    //     const itemsList = [];
+    //     // eslint-disable-next-line array-callback-return
+    //     items.map(data => {
+    //         const { isAdmin } = data
+    //         if (checkRole === "admin" && isAdmin) {
+    //             itemsList.push(data.slider)
+    //         } else if ((checkRole === "user" && !isAdmin) || checkRole === "admin") {
+    //             itemsList.push(data.slider)
+    //         }
+    //     })
+    //     return itemsList;
+    // }, [checkRole, items])
 
 
     const openTabMenu = (e) => {
+        console.log(e)
         setRenderClickId(e.key)
     }
     return (
@@ -135,7 +244,29 @@ const DashBoard = ({ ComponentProps, loading }) => {
                     </div>
 
 
-                    <Menu theme="dark" onClick={openTabMenu}  defaultSelectedKeys={listData[0].key}    mode="inline" items={listData} />
+                    {/* <Menu theme="dark" onClick={openTabMenu} defaultSelectedKeys={stateRenderClickId < 0 ? listData[0].key : stateRenderClickId} selectedKeys={stateRenderClickId < 0 ? listData[0].key : stateRenderClickId} mode="inline" items={listData} /> */}
+                    <Menu
+                        theme="dark"
+                        mode="inline"
+                        defaultSelectedKeys={[stateRenderClickId]}
+                        style={{ width: 250 }}
+                        selectedKeys={[stateRenderClickId]}
+                    >
+                        {
+                            listData.map(e => {
+                                return <Menu.Item key={e.key} onClick={openTabMenu} className={({ isActive }) => (isActive ? 'active' : 'inactive')} >
+                                    <NavLink to={e.link}  className={({ isActive }) => (isActive ? 'active' : 'inactive')}>
+                                        <div className='flexLink'>
+                                            <span>  {e.icon}</span>
+                                            <span className='text_link'>{e.text} </span>
+                                        </div>
+                                    </NavLink>
+                                </Menu.Item>
+                            })
+                        }
+                    </Menu>
+
+
                 </Sider>
                 <Layout className="site-layout">
                     <Header

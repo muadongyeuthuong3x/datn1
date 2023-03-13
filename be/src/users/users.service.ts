@@ -99,7 +99,6 @@ export class UsersService {
       if (regex.test(password)) {
         const salt = await bcrypt.genSalt();
         const hash = await bcrypt.hash(password, salt);
-        console.log(hash);
         return this.usersRepository.update(id, {
           role: role,
           name: name,

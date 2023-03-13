@@ -5,3 +5,23 @@
 .content{
   height: auto;
 }
+
+.ant-layout-sider.ant-layout-sider-dark.ant-layout-sider-has-trigger{
+  min-width: 250px !important;
+  max-width: 250px !important;
+}
+.float-link {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 5px;
+}
+
+.flexLink{
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 10px;
+}
+.active .flexLink{
+  background-color: #1677ff;
+  border-radius: 10px;
+}
