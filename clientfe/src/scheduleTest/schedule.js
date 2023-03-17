@@ -1,11 +1,12 @@
 import { Button, Table, Modal, Input, Form, DatePicker, Space, Select, Image } from 'antd';
 import { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-import { apiGetListDataApi } from '../slices/scheduleTest';
+import { apiGetListDataApi, setCountExamApiTl } from '../slices/scheduleTest';
 import { apiGetListExamBlock, callDataGetYear } from "../slices/examBlock";
 import { setCountExamApi } from "../slices/scheduleTest";
 import './styleTeacher.modules.scss'
 import { toast } from 'react-toastify'
+import dayjs from 'dayjs'
 const { Option } = Select;
 const ScheduleComponent = () => {
     const dispatch = useDispatch();
@@ -25,7 +26,7 @@ const ScheduleComponent = () => {
             id_exam: '',
         }],
         exam: '',
-        mode: 1,
+        mode: '',
         bigBlockClassExam: '',
         roomPeopleMax: 0,
         countPeopleExam: 0,
@@ -65,7 +66,7 @@ const ScheduleComponent = () => {
 
 
     const listTimeSelect = useMemo(() => {
-        if (onFormCreate.timeExamAndFormExam?.id_exam?.length < 1) {
+        if (onFormCreate.timeExamAndFormExam[0]?.id_exam?.length < 1) {
             return [];
         }
         const data = [];
@@ -77,8 +78,8 @@ const ScheduleComponent = () => {
             }
             if (index === 0) {
                 const dataOld = onFormCreate;
-                dataOld.timeExamAndFormExam.time_year_start = e.time_year_start;
-                dataOld.timeExamAndFormExam.time_year_end = e.time_year_end;
+                dataOld.timeExamAndFormExam[0].time_year_start = e.time_year_start;
+                dataOld.timeExamAndFormExam[0].time_year_end = e.time_year_end;
                 dataOld.bigBlockClassExam = getClassBigExam(e.id_big_class_exam);
                 setOnchangeFormCreate(dataOld);
             }
@@ -102,15 +103,14 @@ const ScheduleComponent = () => {
     };
 
     const handleOkCreate = () => {
-        // dispatch(createSubject(formSubjectCreate))
         // check room submit 
 
         //check tt 
-        if (!onFormCreate.timeExamAndFormExam.id_exam) {
+        if (!onFormCreate.timeExamAndFormExam[0].id_exam) {
             return toast.error("Thiếu thông tin môn thi")
         }
 
-        if (!onFormCreate.timeExamAndFormExam.form_exam) {
+        if (!onFormCreate.timeExamAndFormExam[0].form_exam) {
             return toast.error("Thiếu hình thức thi")
         }
 
@@ -133,38 +133,43 @@ const ScheduleComponent = () => {
         setIsModalOpenCreate(false);
     };
 
-
-
-    const onRangeChange = (date) => {
-        console.log(onFormCreate)
-    };
-
     const onChangeSearchYear = (e) => {
         const [time_start, time_end] = e.split('-');
         const dataOld = onFormCreate;
-        dataOld.timeExamAndFormExam.time_year_start = time_start;
-        dataOld.timeExamAndFormExam.time_year_end = time_end;
+        dataOld.timeExamAndFormExam[0].time_year_start = time_start;
+        dataOld.timeExamAndFormExam[0].time_year_end = time_end;
         const dataFind = getYear.find(e => (e.time_year_start === time_start && e.time_year_end === time_end))
         dataOld.bigBlockClassExam = getClassBigExam(dataFind.id_big_class_exam);
         setOnchangeFormCreate(dataOld)
+        if (!onFormCreate.timeExamAndFormExam[0].time_year_start ) {
+            return
+        }
     }
     const onChangeExam = (e) => {
-        const dataOld = { ...onFormCreate };
-        dataOld.timeExamAndFormExam.id_exam = e;
+        let dataOld = onFormCreate;
+        if (dataOld.timeExamAndFormExam[0].id_exam) {
+            dataOld = {
+                roomExam: [],
+                timeExamAndFormExam: [{
+                    time_year_start: "",
+                    time_year_end: "",
+                    form_exam: '',
+                    systemForm_Exam: '',
+                    id_exam: '',
+                }],
+                exam: '',
+                mode: '',
+                bigBlockClassExam: '',
+                roomPeopleMax: 0,
+                countPeopleExam: 0,
+                time_exam: 0
+            }
+        }
+        dataOld.timeExamAndFormExam[0].id_exam = e;
         setOnchangeFormCreate(dataOld);
         dispatch(callDataGetYear(e));
     }
 
-    useEffect(() => {
-        if (!onFormCreate.timeExamAndFormExam.time_year_start) {
-            return
-        }
-        const formSearchCountStudent = {
-            exam: onFormCreate.timeExamAndFormExam.id_exam,
-            time_start: getYear[0].time_year_start,
-        }
-        dispatch(setCountExamApi(formSearchCountStudent))
-    }, [onFormCreate.timeExamAndFormExam.time_year_start, onFormCreate.timeExamAndFormExam.id_exam])
 
     const listExamSelect = useMemo(() => {
         const data = [];
@@ -184,12 +189,43 @@ const ScheduleComponent = () => {
 
 
     const handleChangeMode = (e) => {
-        setOnchangeFormCreate(prev => {
-            return {
-                ...prev,
-                mode: e
+        let dataOld = onFormCreate;
+        let id_exam_old = dataOld.timeExamAndFormExam[0].id_exam
+
+        if (e !== dataOld.mode) {
+            dataOld = {
+                roomExam: [],
+                timeExamAndFormExam: [{
+                    time_year_start: "",
+                    time_year_end: "",
+                    form_exam: '',
+                    systemForm_Exam: '',
+                    id_exam: id_exam_old,
+                }],
+                exam: '',
+                mode: '',
+                bigBlockClassExam: '',
+                roomPeopleMax: 0,
+                countPeopleExam: 0,
+                time_exam: 0
             }
-        })
+        }
+        dataOld.mode = e
+        setOnchangeFormCreate(dataOld) 
+        if (!onFormCreate.timeExamAndFormExam[0].time_year_start) {
+            return
+        }
+        const formSearchCountStudent = {
+            exam: onFormCreate.timeExamAndFormExam[0].id_exam,
+            time_start: getYear[0].time_year_start,
+        }
+        if(e == 1){
+            dispatch(setCountExamApi(formSearchCountStudent))
+        }else if(e==2){
+            dispatch(setCountExamApiTl(formSearchCountStudent))
+        }
+      
+
     }
 
 
@@ -199,7 +235,10 @@ const ScheduleComponent = () => {
             toast.error(` Số lượng sinh viên một lớp phải lớn hơn 0 `);
         }
         const dataOld = { ...onFormCreate };
-
+        if (dataOld.roomExamAndTeacher) {
+            delete dataOld.roomExamAndTeacher;
+            dataOld.roomExam = [];
+        }
 
         const dataArray = []
         const numberCell = Math.ceil((onFormCreate.countPeopleExam) / (valueGet));
@@ -224,7 +263,7 @@ const ScheduleComponent = () => {
 
     const changeFormExam = (e) => {
         const dataOld = { ...onFormCreate };
-        dataOld.timeExamAndFormExam.form_exam = e;
+        dataOld.timeExamAndFormExam[0].form_exam = e;
         setOnchangeFormCreate(dataOld);
     }
 
@@ -244,29 +283,38 @@ const ScheduleComponent = () => {
     }
 
     const changeTimeExam = (e) => {
-        setOnchangeFormCreate(prev => {
-            return {
-                ...prev,
-                time_exam: Number(e.target.value)
-            }
-        })
+        const dataOld = { ...onFormCreate }
+        for (let index = 0; index < dataOld.roomExamAndTeacher.length; index++) {
+            dataOld.roomExamAndTeacher[index].room_exam = dataOld.roomExam[index]
+        }
+        dataOld.time_exam = Number(e.target.value)
+        setOnchangeFormCreate(dataOld)
+
     }
 
     const changeTeacherRooms = (e, index) => {
         const dataOld = { ...onFormCreate }
         dataOld.roomExamAndTeacher[index].teacher_exam = e;
-        setOnchangeFormCreate(dataOld);
+        setOnchangeFormCreate(dataOld)
     }
-   
-    const fun_disableData = (e)=>{
+
+    const fun_disableData = (e) => {
         let check = false;
-        if(onFormCreate.roomExam.length > Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax))-1){
+        if (onFormCreate.roomExam.length > Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax)) - 1) {
             check = true;
         }
-        if(onFormCreate.roomExam.includes(e)){
+        if (onFormCreate.roomExam.includes(e)) {
             check = false;
         }
         return check;
+    }
+
+    const onConfirm = (e, index) => {
+        const dataOld = { ...onFormCreate };
+        const timeExam = dataOld.time_exam;
+        dataOld.roomExamAndTeacher[index].time_start_exam = dayjs(e).format('YYYY-MM-DD HH:mm');
+        dataOld.roomExamAndTeacher[index].time_end_exam = dayjs(e).add(timeExam, 'minute').format('YYYY-MM-DD HH:mm');
+        setOnchangeFormCreate(dataOld);
     }
 
 
@@ -291,7 +339,7 @@ const ScheduleComponent = () => {
                     fields={[
                         {
                             name: ["id_exam"],
-                            value: onFormCreate.timeExamAndFormExam.id_exam,
+                            value: onFormCreate.timeExamAndFormExam[0].id_exam,
                         },
                         {
                             name: ["mode"],
@@ -299,7 +347,7 @@ const ScheduleComponent = () => {
                         },
                         {
                             name: ["year"],
-                            value: onFormCreate.timeExamAndFormExam.time_year_start + "-" + onFormCreate.timeExamAndFormExam.time_year_end,
+                            value: onFormCreate.timeExamAndFormExam[0].time_year_start + "-" + onFormCreate.timeExamAndFormExam[0].time_year_end,
                         },
                         {
                             name: ["roomExam"],
@@ -325,7 +373,7 @@ const ScheduleComponent = () => {
                             showSearch
                             style={{ width: '100%' }}
                             placeholder="Chọn Môn Thi"
-                            value={onFormCreate.timeExamAndFormExam.id_exam}
+                            value={onFormCreate.timeExamAndFormExam[0].id_exam}
                             optionFilterProp="children"
                             filterOption={(input, option) => (option?.label ?? '').includes(input)}
                             filterSort={(optionA, optionB) =>
@@ -361,7 +409,7 @@ const ScheduleComponent = () => {
                     </Form.Item>
 
                     {
-                        onFormCreate.timeExamAndFormExam.id_exam > 0 && <Form.Item
+                        onFormCreate.timeExamAndFormExam[0].id_exam > 0 && <Form.Item
                             label="Năm học"
                             name="year"
                         >
@@ -369,7 +417,7 @@ const ScheduleComponent = () => {
                                 showSearch
                                 style={{ width: '100%' }}
                                 placeholder="Năm học"
-                                value={onFormCreate.timeExamAndFormExam.time_year_start + "-" + onFormCreate.timeExamAndFormExam.time_year_end}
+                                value={onFormCreate.timeExamAndFormExam[0].time_year_start + "-" + onFormCreate.timeExamAndFormExam[0].time_year_end}
                                 optionFilterProp="children"
                                 filterOption={(input, option) => (option?.label ?? '').includes(input)}
                                 filterSort={(optionA, optionB) =>
@@ -394,7 +442,7 @@ const ScheduleComponent = () => {
 
 
                     {
-                        onFormCreate.timeExamAndFormExam.id_exam > 0 && <Form.Item
+                        onFormCreate.timeExamAndFormExam[0].id_exam > 0 && <Form.Item
                             label="Khóa Dự Thi"
                             name="bigBlockClass"
                         >
@@ -406,7 +454,7 @@ const ScheduleComponent = () => {
 
 
                     {
-                        onFormCreate.timeExamAndFormExam.id_exam > 0 &&
+                        onFormCreate.timeExamAndFormExam[0].id_exam > 0 &&
                         <div>
                             <div className='count_exam'> Có tổng cộng {onFormCreate.countPeopleExam} sinh viên đăng kí học môn</div>
                             <Form.Item
@@ -417,7 +465,7 @@ const ScheduleComponent = () => {
                                     showSearch
                                     style={{ width: '100%' }}
                                     placeholder="Chọn hình thức thi"
-                                    value={onFormCreate.timeExamAndFormExam.form_exam}
+                                    value={onFormCreate.timeExamAndFormExam[0].form_exam}
                                     optionFilterProp="children"
                                     filterOption={(input, option) => (option?.label ?? '').includes(input)}
                                     filterSort={(optionA, optionB) =>
@@ -445,7 +493,7 @@ const ScheduleComponent = () => {
 
 
                     {
-                        (onFormCreate.timeExamAndFormExam?.form_exam) > 0 && <Form.Item
+                        (onFormCreate.timeExamAndFormExam[0]?.form_exam) > 0 && <Form.Item
                             label="Số lượng sinh viên tối đa của 1 phòng"
                             name="roomPeopleMax"
                         >
@@ -492,7 +540,7 @@ const ScheduleComponent = () => {
 
 
                     {
-                        (onFormCreate.timeExamAndFormExam?.form_exam) > 0 && <Form.Item
+                        (onFormCreate.timeExamAndFormExam[0]?.form_exam) > 0 && <Form.Item
                             label="Tổng thời gian thi môn (Phút)"
                             name="time_exam"
                         >
@@ -514,11 +562,12 @@ const ScheduleComponent = () => {
                                         <DatePicker
                                             showTime
                                             format="YYYY/MM/DD HH:mm"
-                                            onChange={() => onRangeChange(e)}
                                             className="time_start_begin"
+                                            onOk={(e) => onConfirm(e, index)}
+                                            allowClear={false}
                                         />
 
-                                        <div className="time_start_end">Thời gian kết thúc thi : </div>
+                                        <div className="time_start_end">Thời gian kết thúc thi :  {onFormCreate.roomExamAndTeacher[index].time_end_exam}</div>
                                     </Form.Item>
                                     <div className="teacher_exam">Giáo Viên Coi Thi : </div>
                                     <Select

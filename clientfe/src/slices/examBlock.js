@@ -162,7 +162,6 @@ export function callDataGetYear(data){
     return async dispatch => {
         dispatch(loadding())
         try {   
-            console.log(data)
                 dispatch(getYearStore(data))
         } catch (error) {
             toast.error(error.response.data.message)

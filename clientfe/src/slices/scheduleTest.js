@@ -185,7 +185,20 @@ export function setCountExamApi(data) {
             const { exam , time_start} = data
             const dataRes = await instance.get(`/students/count/${exam}/${time_start}`);
             dispatch(setCount(dataRes.data.message))
-            console.log(dataRes.data.message)
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
+
+export function setCountExamApiTl(data) {
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const { exam , time_start} = data
+            const dataRes = await instance.get(`/students/count/tl/${exam}/${time_start}`);
+            dispatch(setCount(dataRes.data.message))
         } catch (error) {
             toast.error(error.response.data.message)
             dispatch(loaddingFailes())
