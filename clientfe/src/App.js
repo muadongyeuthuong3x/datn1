@@ -14,7 +14,7 @@ import StudentScore from './studentscore/index';
 import ExamBlock from './examBlock/index'
 import ListScoreStudent from './editScoreStudent/index';
 import ScoreStatistic from './scoreStatistics/index';
-
+import Department from './department/index'
 function App() {
   return (
     <BrowserRouter>
@@ -32,6 +32,8 @@ function App() {
         <Route path="/exam-block" element={<ExamBlock />} />
         <Route path="/edit-score" element={<ListScoreStudent />} />
         <Route path="/tt-score-student" element={<ScoreStatistic />} />
+        <Route path="/department" element={<Department />} />
+        
       </Routes>
     </BrowserRouter>
   );

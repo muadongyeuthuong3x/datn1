@@ -134,17 +134,20 @@ const ScheduleComponent = () => {
     };
 
     const onChangeSearchYear = (e) => {
+        console.log(e)
         const [time_start, time_end] = e.split('-');
         const dataOld = onFormCreate;
         dataOld.timeExamAndFormExam[0].time_year_start = time_start;
         dataOld.timeExamAndFormExam[0].time_year_end = time_end;
         const dataFind = getYear.find(e => (e.time_year_start === time_start && e.time_year_end === time_end))
         dataOld.bigBlockClassExam = getClassBigExam(dataFind.id_big_class_exam);
+        console.log(dataOld)
         setOnchangeFormCreate(dataOld)
         if (!onFormCreate.timeExamAndFormExam[0].time_year_start ) {
             return
         }
     }
+    console.log(onFormCreate)
     const onChangeExam = (e) => {
         let dataOld = onFormCreate;
         if (dataOld.timeExamAndFormExam[0].id_exam) {

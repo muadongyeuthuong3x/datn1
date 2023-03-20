@@ -1,5 +1,6 @@
 
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Department } from 'src/department/entities/department.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne } from 'typeorm';
 
 @Entity('teacher')
 
@@ -19,6 +20,9 @@ export class Teacher {
 
     @Column()
     phone_number: string;
+
+    @ManyToOne(() => Department, item => item.idDepartment)
+    id_teacher_department: Department;
 
 
     @CreateDateColumn({ name: 'created_at', default: new Date() })

@@ -282,12 +282,20 @@ return (
                 ]}
 
             >
+                 <Form.Item
+                    label="Khoa"
+                    name="department"
+                >
+                    <Input value={formTeacherCreate.id_teacher} onChange={onChanheFormCreate} name="id_teacher" />
+                </Form.Item>
+
                 <Form.Item
                     label="ID Giáo Viên"
                     name="id_teacher"
                 >
                     <Input value={formTeacherCreate.id_teacher} onChange={onChanheFormCreate} name="id_teacher" />
                 </Form.Item>
+
 
                 <Form.Item
                     label="Name"

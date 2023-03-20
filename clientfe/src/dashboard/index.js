@@ -162,10 +162,17 @@ const DashBoard = ({ ComponentProps, loading }) => {
         },
         {
             link: "/tt-score-student",
-            text: "Thống kế điểm thi sinh viên",
+            text: "Thống kế điểm thi",
             icon: < UserOutlined />,
             isAdmin: false,
             key: 10
+        },
+        {
+            link: "/department",
+            text: "Khoa",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 11
         },
     ]
 

@@ -11,7 +11,7 @@ import listSchedule from './scheduleTest'
 import listExamBlockForm from './examBlock'
 import listScoreStudent from './editScore'
 import ttScoreStudent from './scoreStatic'
-
+import listDepartment from './department'
 const rootReducer = combineReducers({
   login: loginWeb,
   listUsers: listUsers,
@@ -23,7 +23,8 @@ const rootReducer = combineReducers({
   listSchedule:listSchedule,
   listExamBlock: listExamBlockForm,
   listScoreStudent : listScoreStudent,
-  ttScoreStudent:ttScoreStudent
+  ttScoreStudent:ttScoreStudent,
+  listDepartment : listDepartment
 })
 
 export default rootReducer

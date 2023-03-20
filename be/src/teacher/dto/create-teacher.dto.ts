@@ -1,5 +1,6 @@
 
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IS_ALPHA } from 'class-validator';
+import { Department } from 'src/department/entities/department.entity';
 import { Entity } from 'typeorm';
 
 @Entity('teacher')
@@ -15,4 +16,6 @@ export class CreateTeacherDto {
     readonly avatar: string;
     @IsNotEmpty()
     readonly phone_number: string;
+    @IsNotEmpty()
+    id_teacher_department : Department
 }
