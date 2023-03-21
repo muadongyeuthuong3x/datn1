@@ -17,5 +17,7 @@ export class CreateTeacherDto {
     @IsNotEmpty()
     readonly phone_number: string;
     @IsNotEmpty()
-    id_teacher_department : Department
+    idDepartment : any
+    @IsNotEmpty()
+    id_teacher_department_query : string
 }

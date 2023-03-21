@@ -1,8 +1,9 @@
 import { Button, Table, Modal, Input, Form, DatePicker, Space, Select, Image, Radio } from 'antd';
 import { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-import { apiGetListDataApi, setCountExamApiTl } from '../slices/scheduleTest';
+import { apiGetListDataApi, setCountExamApiTl, callApiGetTeacherDepartment } from '../slices/scheduleTest';
 import { apiGetListExamBlock, callDataGetYear } from "../slices/examBlock";
+import { apiGetListDepartment} from '../slices/department'
 import { setCountExamApi } from "../slices/scheduleTest";
 import './styleTeacher.modules.scss'
 import { toast } from 'react-toastify'
@@ -10,7 +11,8 @@ import dayjs from 'dayjs'
 const { Option } = Select;
 const ScheduleSComponent = () => {
     const dispatch = useDispatch();
-    const { rooms, examForms, teachers, countStudnetExam } = useSelector(state => state.listSchedule);
+    const { data : listDepartment } = useSelector(state => state.listDepartment)
+    const { rooms, examForms, teachers, countStudnetExam ,teacher_department } = useSelector(state => state.listSchedule);
     const { dataOldSearchView, getYear } = useSelector(state => state.listExamBlock);
     const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
     // hình thức thi + môn thi + time => array name  timeExamAndFormExam
@@ -27,9 +29,13 @@ const ScheduleSComponent = () => {
         roomPeopleMax: 0,
         countPeopleExam: 0,
         time_exam: 0,
-        button_submit: false,
+        button_submit: true,
         grading_exam: ''
     });
+
+    const [arrayRoom , setArrayRoom] = useState([]);
+    const [idDepartment  ,setidDepartment ] = useState('');
+    const [arrayTeacher_mark , setarrayeacher_mark] = useState([]);
 
     useEffect(() => {
         setOnchangeFormCreate(prev => {
@@ -39,17 +45,6 @@ const ScheduleSComponent = () => {
             }
         })
     }, [countStudnetExam])
-
-    // useEffect(() => {
-    //     if(examForms.length > 0 ){
-    //         setOnchangeFormCreate(prev => {
-    //             return {
-    //                 ...prev,
-    //                 form_exam: examForms[0].id,
-    //             }
-    //         })
-    //     }
-    // }, [examForms])
 
     const options = [
         {
@@ -103,7 +98,8 @@ const ScheduleSComponent = () => {
 
     useEffect(() => {
         dispatch(apiGetListExamBlock());
-        dispatch(apiGetListDataApi())
+        dispatch(apiGetListDataApi());
+        dispatch(apiGetListDepartment());
     }, [dispatch])
 
 
@@ -140,7 +136,7 @@ const ScheduleSComponent = () => {
                roomPeopleMax: 0,
                countPeopleExam: 0,
                time_exam: 0,
-               button_submit: false,
+               button_submit: true,
                grading_exam: ''
            }
         dataOld.id_exam = onFormCreate.id_exam;
@@ -171,7 +167,7 @@ const ScheduleSComponent = () => {
                 roomPeopleMax: 0,
                 countPeopleExam: 0,
                 time_exam: 0,
-                button_submit: false,
+                button_submit: true,
                 grading_exam: ''
             }
            
@@ -213,7 +209,7 @@ const ScheduleSComponent = () => {
                roomPeopleMax: 0,
                countPeopleExam: 0,
                time_exam: 0,
-               button_submit: false,
+               button_submit: true,
                grading_exam: ''
            }
         dataOld.mode = e
@@ -237,6 +233,10 @@ const ScheduleSComponent = () => {
 
     }, [onFormCreate.mode, onFormCreate.id_exam, onFormCreate.timeYearExamStart])
 
+    useEffect(()=>{
+        listDepartment.length > 0 && setidDepartment(listDepartment[0]?.id)
+    },[listDepartment])
+
 
     const changeFormExam = (e) => {
         const dataOld = { ...onFormCreate };
@@ -255,20 +255,23 @@ const ScheduleSComponent = () => {
             delete dataOld.roomExamAndTeacher;
             dataOld.roomExam = [];
         }
-        const dataArray = []
+        const dataArray = [];
+        const dataArrayRoom = [];
         const numberCell = Math.ceil((onFormCreate.countPeopleExam) / (valueGet));
         for (let index = 0; index < numberCell; index++) {
             const formObject = {
                 time_start_exam: '',
                 time_end_exam: '',
                 teacher_exam: [],
-                teacher_score_student: [],
+                teacher_score_student: '',
                 room_exam: '',
             }
+            dataArrayRoom.push('')
             dataArray.push(formObject);
         }
         dataOld.roomPeopleMax = valueGet;
         dataOld.roomExamAndTeacher = dataArray;
+        dataOld.roomExam = dataArrayRoom;
         setOnchangeFormCreate(dataOld);
     }
 
@@ -304,36 +307,73 @@ const ScheduleSComponent = () => {
         const timeExam = dataOld.time_exam;
         dataOld.roomExamAndTeacher[index].time_start_exam = dayjs(e).format('YYYY-MM-DD HH:mm');
         dataOld.roomExamAndTeacher[index].time_end_exam = dayjs(e).add(timeExam, 'minute').format('YYYY-MM-DD HH:mm');
+        // dispatch()
         setOnchangeFormCreate(dataOld);
     }
 
     const changeTeacherRooms = (e, index) => {
-        const dataOld = { ...onFormCreate }
+        const dataOld = { ...onFormCreate };
         dataOld.roomExamAndTeacher[index].teacher_exam = e;
+        if(dataOld.grading_exam === 2 && index == Math.ceil((dataOld.countPeopleExam) / (dataOld.roomPeopleMax)) -1){
+          dataOld.button_submit = false
+        }
+        setOnchangeFormCreate(dataOld)
+    }
+    const changeTeacherRoomsScoreStudent = (e, index) => {
+        const dataOld = { ...onFormCreate };
+        dataOld.roomExamAndTeacher[index].teacher_score_student = e;
+        if (dataOld.grading_exam === 1 && index == Math.ceil((dataOld.countPeopleExam) / (dataOld.roomPeopleMax))-1){
+            dataOld.button_submit = false 
+        }
         setOnchangeFormCreate(dataOld)
     }
 
-
     const fun_disableData = (e) => {
         let check = false;
-        if (onFormCreate.roomExam.length > Math.ceil((onFormCreate.countPeopleExam) / (onFormCreate.roomPeopleMax)) - 1) {
-            check = true;
-        }
         if (onFormCreate.roomExam.includes(e)) {
+            check = true;
+        }else {
             check = false;
         }
         return check;
     }
 
-    const changeRoomExam = (e) => {
+    const fun_disableData_Teacher = (e) => {
+        let check = false;
+        // if (onFormCreate.teachers_check.includes(e)) {
+        //     check = true;
+        // }else {
+        //     check = false;
+        // }
+        return check;
+    }
+
+    const changeRoomExam = (e , index) => {
+        const dataOld = {...onFormCreate}
+        const rooms = dataOld.roomExam;
+        rooms[index] = e 
+        dataOld.roomExamAndTeacher[index].room_exam = e;
         setOnchangeFormCreate(prev => {
             return {
                 ...prev,
-                roomExam: e
+                roomExam: rooms
             }
         })
     }
 
+    useEffect(()=>{
+        idDepartment && dispatch(callApiGetTeacherDepartment(idDepartment))
+    },[idDepartment])
+    
+    const onChangeCallDepartment  = (e) =>{
+        const dataOld = {...onFormCreate}
+        const {roomExamAndTeacher} = dataOld;
+
+        for(let i = 0  ; i < roomExamAndTeacher.length ; i ++){
+            roomExamAndTeacher[i].teacher_score_student = '';
+        }
+        setidDepartment(e)
+    }
     console.log(333333333, onFormCreate)
 
     return (
@@ -387,6 +427,10 @@ const ScheduleSComponent = () => {
                         {
                             name: ["grading_exam"],
                             value: onFormCreate.grading_exam
+                        },
+                        {
+                            name: ["idDepartment"],
+                            value: idDepartment
                         }
                     ]}
 
@@ -535,7 +579,7 @@ const ScheduleSComponent = () => {
 
                             {
                                 (onFormCreate.roomPeopleMax) > 0 && <Form.Item
-                                    label="Tổng thời gian thi môn (Phút)"
+                                    label="Tổng thời gian thi môn (Phút) : "
                                     name="time_exam"
                                 >
                                     <Input name="time_exam" value={onFormCreate.time_exam} onChange={changeTimeExam} type="number" />
@@ -557,16 +601,61 @@ const ScheduleSComponent = () => {
                             }
 
                             {
+
+                                onFormCreate.grading_exam === 1 && onFormCreate.roomExamAndTeacher.length > 0 &&
+                                <div>
+
+                                    <Form.Item
+                                                        label=" Khoa chấm thi :"
+                                                        name="idDepartment"
+                                                    >
+                                    <Select
+                                        showSearch
+                                        labelCol={{ span: 0 }}
+                                        wrapperCol={{ span: 20 }}
+                                        style={{ width: '100%', marginBottom: "10px" }}
+                                        placeholder="Chọn khoa"
+                                        optionFilterProp="children"
+                                        optionLabelProp="label"
+                                        filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                        filterSort={(optionA, optionB) =>
+                                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                        }
+                                        value={idDepartment}
+                                        onChange={(e) => onChangeCallDepartment(e)}
+                                        className="select_teacher"
+                                    >
+                                        {
+                                            listDepartment.map(e => {
+                                                return (
+                                                    <Option value={e.id} label={e.department}>
+                                                        <div className='option_teacher'>
+                                                            <Space>
+                                                                {e.department}
+                                                            </Space>
+                                                        </div>
+                                                    </Option>
+                                                )
+                                            })
+                                        }
+
+                                    </Select>
+                                    </Form.Item>
+                                </div>
+                            }
+
+
+                            {
                                 <div>
                                     {
-                                        onFormCreate.grading_exam && onFormCreate.roomExamAndTeacher.length > 0 &&
+                                        onFormCreate.grading_exam && onFormCreate.roomExamAndTeacher.length > 0 &&  idDepartment &&
                                         <div>
                                             <p className='room_noti'>Vui lòng chọn theo thứ tự  ( thời gian thi - phòng thi - giáo viên coi {onFormCreate.grading_exam == 1 ? "-giáo viên chấm thi" : ""})</p>
                                             {onFormCreate.roomExamAndTeacher.map((item, index) => {
                                                 return <div>
                                                     <p className='room_noti'> Phòng thi thứ  {index + 1}:</p>
                                                     <Form.Item
-                                                        label="Thời gian bắt đầu thi"
+                                                        label="Thời gian bắt đầu thi :"
                                                         name="time_start_exam"
                                                     >
                                                         <DatePicker
@@ -583,22 +672,19 @@ const ScheduleSComponent = () => {
                                                     {/* phòng thi */}
 
                                                     {
-                                                      <Form.Item
-                                                            label={`Phòng thi : `}
-                                                            name="roomExam"
-                                                        >
+                                                        <div> 
+                                                            <div className="teacher_exam">Phòng thi : </div>
                                                             <Select
                                                                 showSearch
                                                                 style={{ width: '100%' }}
                                                                 disabled={onFormCreate.roomExamAndTeacher[index].time_start_exam ? false : true}
-                                                                mode="multiple"
                                                                 placeholder="Chọn phòng thi"
                                                                 filterOption={(input, option) => (option?.label ?? '').includes(input)}
                                                                 filterSort={(optionA, optionB) =>
                                                                     (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                                                 }
-                                                                value={onFormCreate.roomExam}
-                                                                onChange={changeRoomExam}
+                                                                value={onFormCreate.roomExamAndTeacher[index].room_exam}
+                                                                onChange={(e)=>changeRoomExam(e,index)}
                                                             >
                                                                 {
                                                                     rooms.map((e, index) => {
@@ -613,7 +699,8 @@ const ScheduleSComponent = () => {
                                                                 }
 
                                                             </Select>
-                                                        </Form.Item>
+                                                            </div>
+                                                    
                                                     }
 
                                                     {
@@ -640,7 +727,7 @@ const ScheduleSComponent = () => {
                                                                 {
                                                                     teachers.map(e => {
                                                                         return (
-                                                                            <Option value={e.id} label={e.name}>
+                                                                            <Option value={e.id} label={e.name} disabled={fun_disableData_Teacher(e.id)}>
                                                                                 <div className='option_teacher'>
                                                                                     <Space>
                                                                                         {e.name}
@@ -662,31 +749,31 @@ const ScheduleSComponent = () => {
 
                                                     }
 
+                                                  
 
                                                     {/* giao vien chấm thi */}
                                                     {
-                                                      onFormCreate.grading_exam === 1 &&  <div>
+                                                      onFormCreate.grading_exam === 1  && <div>
                                                             <div className="teacher_exam">Giáo Viên Chấm  Thi : </div>
                                                             <Select
                                                                 showSearch
-                                                                disabled={onFormCreate.roomExamAndTeacher[index].time_start_exam ? false : true}
+                                                                disabled={onFormCreate?.roomExamAndTeacher[index]?.teacher_exam.length > 0 ? false : true}
                                                                 labelCol={{ span: 0 }}
                                                                 wrapperCol={{ span: 20 }}
                                                                 style={{ width: '100%', marginBottom: "10px" }}
                                                                 placeholder="Chọn giáo viên chấm thi"
-                                                                mode="multiple"
                                                                 optionFilterProp="children"
                                                                 optionLabelProp="label"
                                                                 filterOption={(input, option) => (option?.label ?? '').includes(input)}
                                                                 filterSort={(optionA, optionB) =>
                                                                     (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                                                 }
-                                                                value={onFormCreate?.roomExamAndTeacher[index]?.teacher_exam}
-                                                                onChange={(e) => changeTeacherRooms(e, index)}
+                                                                value={onFormCreate?.roomExamAndTeacher[index]?.teacher_score_student}
+                                                                onChange={(e) => changeTeacherRoomsScoreStudent(e, index)}
                                                                 className="select_teacher"
                                                             >
                                                                 {
-                                                                    teachers.map(e => {
+                                                                    teacher_department.map(e => {
                                                                         return (
                                                                             <Option value={e.id} label={e.name}>
                                                                                 <div className='option_teacher'>
@@ -732,7 +819,7 @@ const ScheduleSComponent = () => {
                         </Form.Item>
 
                         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                            <Button type="primary" htmlType="submit" onClick={handleOkCreate} disabled={!onFormCreate.button_submit ? true : false}>
+                            <Button type="primary" htmlType="submit" onClick={handleOkCreate} disabled={onFormCreate.button_submit ? true : false}>
                                 Submit
                             </Button>
                         </Form.Item>

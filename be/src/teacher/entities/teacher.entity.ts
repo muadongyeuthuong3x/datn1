@@ -21,6 +21,9 @@ export class Teacher {
     @Column()
     phone_number: string;
 
+    @Column()
+    id_teacher_department_query: string;
+
     @ManyToOne(() => Department, item => item.idDepartment)
     id_teacher_department: Department;
 

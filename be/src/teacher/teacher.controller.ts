@@ -5,13 +5,21 @@ import { UpdateTeacherDto } from './dto/update-teacher.dto';
 
 @Controller('teacher')
 export class TeacherController {
-  constructor(private readonly teacherService: TeacherService) { }
+  constructor(private readonly teacherService: TeacherService) { } 
 
   @Post()
   async create(@Body() createTeacherDto: CreateTeacherDto, @Res() res: any) {
     try {
       const data = await this.teacherService.findOneTeacher(createTeacherDto.id_teacher);
+      
+
       if (!data) {
+        if( !createTeacherDto.id_teacher || !createTeacherDto.avatar || !createTeacherDto.idDepartment || !createTeacherDto.name || !createTeacherDto.phone_number){
+          return res.status(500).json({
+            status: "error",
+            message: "Vui lòng điền đầy đủ thông tin" 
+          });
+        }
         const dataCreate = await this.teacherService.create(createTeacherDto);
         return res.status(200).json({
           status: "success",

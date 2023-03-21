@@ -57,6 +57,17 @@ export class DepartmentService {
     return this.departmentRepository.findOneBy({ department: department });
   }
 
+  findDepartmentById(id: number) {
+    return this.departmentRepository.findOne({
+     where :  {
+        id,
+      },
+      relations : {
+        idDepartment : true
+      }
+    });
+}
+
   async remove(id: number) {
     try {
       const dataRemove = await this.departmentRepository.delete(id);

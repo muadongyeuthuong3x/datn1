@@ -18,6 +18,8 @@ export class TeacherService {
     teacherCreate.name = createTeacherDto.name;
     teacherCreate.avatar = createTeacherDto.avatar;
     teacherCreate.phone_number = createTeacherDto.phone_number;
+    teacherCreate.id_teacher_department  =createTeacherDto.idDepartment;
+    teacherCreate.id_teacher_department_query = createTeacherDto.idDepartment ;
     return this.teacherRepository.save(teacherCreate);
   }
 
@@ -39,12 +41,14 @@ export class TeacherService {
 
 
   update(id: number, updateTeacherDto: UpdateTeacherDto) {
-    const { id_teacher, name, avatar, phone_number } = updateTeacherDto;
+    const { id_teacher, name, avatar, phone_number  ,idDepartment} = updateTeacherDto;
     return this.teacherRepository.update(id, {
       id_teacher: id_teacher,
       name: name,
       avatar: avatar,
       phone_number: phone_number,
+      id_teacher_department: idDepartment,
+      id_teacher_department_query : idDepartment
     });
   }
 

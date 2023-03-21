@@ -21,73 +21,12 @@ function getItem(label, key, icon, children) {
 
 const DashBoard = ({ ComponentProps, loading }) => {
     const [collapsed, setCollapsed] = useState(false);
-    const location = useLocation();
     const {
         token: { colorBgContainer },
     } = theme.useToken();
     const checkRole = JSON.parse(localStorage.getItem('datawebkma')).role || '';
     const [stateRenderClickId, setRenderClickId] = useState(-1)
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // const items = [
-    //     {
-    //         slider: getItem(<NavLink to="/dashboard">
-    //             Danh sách user
-    //         </NavLink >, '1', < UserOutlined />), isAdmin: true
-    //     },
-    //     {
-    //         slider: getItem(<NavLink to="/list-teacher">
-    //             Danh sách  giáo viên
-    //         </NavLink >, '7', <FormOutlined />), isAdmin: false
-    //     },
-    //     {
-    //         slider: getItem(<NavLink to="/list-khoi">
-    //             Danh sách khối
-    //         </NavLink >, '2', <FormOutlined />), isAdmin: false
-    //     },
-    //     {
-    //         slider: getItem(<NavLink to="/list-exam">
-    //             Môn Học
-    //         </NavLink >, '3', <FormOutlined />), isAdmin: false
-    //     },
-    //     {
-    //         slider: getItem(<NavLink to="/exam-form">
-    //             Hình thức thi
-    //         </NavLink >, '4', <FormOutlined />), isAdmin: false
-    //     },
-    //     {
-    //         slider: getItem(<NavLink to="/form-room">
-    //             Phòng Thi
-    //         </NavLink >, '5', <FormOutlined />), isAdmin: false
-    //     },
-    //     {
-    //         slider: getItem(<NavLink to="/schedule-test">
-    //             Lên Lịch Thi
-    //         </NavLink >, '6', <FormOutlined />), isAdmin: false
-    //     },
-    //     {
-    //         slider: getItem(<NavLink to="/student-score">
-    //             Lên Điểm Thi
-    //         </NavLink >, '8', <FormOutlined />), isAdmin: false
-    //     },
-
-    //     {
-    //         slider: getItem(<NavLink to="/exam-block">
-    //             Môn Thi Của Khối
-    //         </NavLink >, '9', <FormOutlined />), isAdmin: false
-    //     },
-    //     {
-    //         slider: getItem(<NavLink to="/edit-score">
-    //             Sửa điểm thi
-    //         </NavLink >, '10', <FormOutlined />), isAdmin: false
-    //     },
-    //     {
-    //         slider: getItem(<NavLink to="/tt-score-student">
-    //             Thống kế điểm thi sinh viên
-    //         </NavLink >, '11', <FormOutlined />), isAdmin: false
-    //     },
-
-    // ];
 
     const items = [
         {
@@ -98,68 +37,70 @@ const DashBoard = ({ ComponentProps, loading }) => {
             key: 0
         },
         {
+            link: "/department",
+            text: "Khoa",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 1
+        },
+        {
             link: "/list-teacher",
             text: "Danh sách  giáo viên",
             icon: < UserOutlined />,
             isAdmin: false,
-            key: 1
+            key: 2
         },
         {
             link: "/list-khoi",
             text: "Danh sách khối",
             icon: < UserOutlined />,
             isAdmin: false,
-            key: 2
+            key: 3
         },
         {
             link: "/list-exam",
             text: "Môn Học",
             icon: < UserOutlined />,
             isAdmin: false,
-            key: 3
+            key: 4
         },
         {
             link: "/exam-form",
             text: "Hình thức thi",
             icon: < UserOutlined />,
             isAdmin: false,
-            key: 4
-        },
-        {
-            link: "/form-room",
-            text: "Phòng Thi",
-            icon: < UserOutlined />,
-            isAdmin: false,
             key: 5
         },
         {
-            link: "/schedule-test",
-            text: "Lên Lịch Thi",
+            link: "/form-room",
+            text: "Phòng thi",
             icon: < UserOutlined />,
             isAdmin: false,
             key: 6
-        },
-        {
-            link: "/student-score",
-            text: "Lên Điểm Thi",
-            icon: < UserOutlined />,
-            isAdmin: false,
-            key: 7
-        },
-        {
-            link: "/edit-score",
-            text: "Sửa điểm thi",
-            icon: < UserOutlined />,
-            isAdmin: false,
-            key: 8
         },
         {
             link: "/exam-block",
             text: "Môn Thi Của Khối",
             icon: < UserOutlined />,
             isAdmin: false,
+            key: 7
+        },
+      
+        {
+            link: "/student-score",
+            text: "Lên Điểm Thi",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 8
+        },
+        {
+            link: "/edit-score",
+            text: "Sửa điểm thi",
+            icon: < UserOutlined />,
+            isAdmin: false,
             key: 9
         },
+       
         {
             link: "/tt-score-student",
             text: "Thống kế điểm thi",
@@ -168,12 +109,13 @@ const DashBoard = ({ ComponentProps, loading }) => {
             key: 10
         },
         {
-            link: "/department",
-            text: "Khoa",
+            link: "/schedule-test",
+            text: "Lên Lịch Thi",
             icon: < UserOutlined />,
             isAdmin: false,
             key: 11
         },
+        
     ]
 
 
@@ -280,8 +222,11 @@ const DashBoard = ({ ComponentProps, loading }) => {
                         style={{
                             padding: 0,
                             background: colorBgContainer,
+                            overflow : 'hidden'
                         }}
-                    />
+                    >
+                           <div className='animation_noti'> Hãy để mỗi ngày trôi qua đều trở nên đáng nhớ và ý nghĩa. Chúc bạn có một ngày làm việc tuyệt vời!  </div>
+                        </Header>
                     <Content
                         style={{
                             margin: '0 16px',

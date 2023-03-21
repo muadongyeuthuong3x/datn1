@@ -43,6 +43,19 @@ export class DepartmentController {
         })
       }
   }
+  
+  @Get('/query_teacher/:id')
+    async findDepartment(@Param('id') id: string) {
+      try {
+        const data = await this.departmentService.findDepartmentById(+id);
+        return data;
+      } catch (error) {
+        throw new BadGatewayException({
+          error: "error",
+          message: "Error Token"
+        })
+      }
+  }
 
   @Post('/search')
   async findExam(@Body() data: { department: string }) {

@@ -102,8 +102,11 @@ export function createTeacherApi(data) {
             const formUpload = {...data}
             formUpload.avatar = urlImage[0];
             const dataRes = await instance.post(`/teacher`, formUpload);
-            toast.success(dataRes.data.message)
-            dispatch(createTeacherReducer(dataRes.data.message))
+            if (dataRes) {
+                dispatch(createTeacherReducer(dataRes.data.message))
+                toast.success("Tạo thành công");
+            }
+          
         } catch (error) {
             toast.error(error.response.data.message)
             dispatch(loaddingFailes())

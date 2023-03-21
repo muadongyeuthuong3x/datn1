@@ -12,16 +12,34 @@
 }
 .float-link {
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
   padding: 0 5px;
 }
 
 .flexLink{
-  display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
   padding: 0px 10px;
+  display: flex;
+  
 }
 .active .flexLink{
+
   background-color: #1677ff;
   border-radius: 10px;
+}
+
+.text_link {
+  margin-left: 10px;
+}
+.animation_noti{
+  font-weight: bold;
+  font-size: 20px;
+  color: aqua;
+  position: relative;
+  animation: example 35s infinite;
+}
+
+@keyframes example {
+  from { left: 0px; top:0px;}
+  to { left: 100%; top:0px;}
 }
