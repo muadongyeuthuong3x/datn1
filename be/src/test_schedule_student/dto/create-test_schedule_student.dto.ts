@@ -8,7 +8,7 @@ import { Entity } from 'typeorm';
 
 export class CreateTestScheduleStudentDto {
     @IsNotEmpty()
-    readonly name: string;
+    readonly form_exam: string;
     @IsNotEmpty()
     readonly form_exam : string;
     @IsNotEmpty()
