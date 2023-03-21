@@ -122,7 +122,7 @@ export function editDataDepartmentApi(data) {
         dispatch(loadding())
         try {
             const {id , name} = data
-            const dataRes = await instance.patch(`/department/${id}`, {name});
+            const dataRes = await instance.patch(`/department/${id}`, data);
             dispatch(editData(data))
             toast.success(dataRes.data.message)
         } catch (error) {

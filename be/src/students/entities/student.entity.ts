@@ -19,17 +19,17 @@ export class Student {
   @Column()
   name: string;
 
-  @Column({ default: '0' })
-  point_diligence: string;
+  @Column('numeric',{ default: 0  })
+  point_diligence: number ;
 
-  @Column({ default: '0' })
-  point_beetween: string;
+  @Column('numeric',{ default: 0  })
+  point_beetween: number;
 
-  @Column({ default: '0' })
-  point_end: string;
+  @Column('numeric',{ default: 0  })
+  point_end: number;
 
-  @Column({ default: '-1' })
-  point_end_end: string;
+  @Column('numeric',{ default: -1 })
+  point_end_end: number;
 
   @Column({ default: '' })
   why_edit_point_end_end: string;

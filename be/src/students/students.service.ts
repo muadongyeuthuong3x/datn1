@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, MoreThan, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { Student } from './entities/student.entity';
 import { ClassService } from 'src/class/class.service';
 import { TableExamBigBlockClass } from 'src/table_exam_big_block_class/entities/table_exam_big_block_class.entity';
@@ -551,7 +551,41 @@ export class StudentsService {
       }
       const countFind = await this.studentRepository.count({
         where: {
-          id_exam_query: dataQuery.id
+          id_exam_query: dataQuery.id,
+          point_beetween : MoreThanOrEqual(4),
+          point_diligence : MoreThanOrEqual(4),
+        } as any
+      })
+      return res.status(200).json({
+        status: 'success',
+        message: countFind,
+      })
+
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'server error',
+      });
+    }
+  }
+
+
+  async countStudentTl(exam: string, time_start: string, res: any) {
+    try {
+      const dataQuery: any = await this.examBigClassRepository.findOneData({
+        id_exam_where: exam,
+        time_year_start: time_start,
+      });
+      if (!dataQuery) {
+        return res.status(200).json({
+          status: 'success',
+          message:0,
+        });
+      }
+      const countFind = await this.studentRepository.count({
+        where: {
+          id_exam_query: dataQuery.id,
+          point_end : MoreThanOrEqual(4),
         }
       })
       return res.status(200).json({
@@ -565,6 +599,5 @@ export class StudentsService {
         message: 'server error',
       });
     }
-
   }
 }

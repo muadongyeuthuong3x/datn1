@@ -232,7 +232,7 @@ const DepartmentComponent = () => {
                         label="Name"
                         name="department"
                     >
-                        <Input onChange={onChanheFormEdit} name="name" value={formDataEdit.department}/>
+                        <Input onChange={onChanheFormEdit} name="department" value={formDataEdit.department}/>
                     </Form.Item>
 
                     <div className='form_button_group'>

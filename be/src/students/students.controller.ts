@@ -185,6 +185,10 @@ export class StudentsController {
   findAll() {
     return this.studentsService.findAll();
   }
+  @Get('/count/tl/:exam/:time_start')
+  findAllTl(@Param('exam') exam: string, @Param('time_start') time_start: string , @Res() res: any) {
+    return this.studentsService.countStudentTl(exam, time_start , res);
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {

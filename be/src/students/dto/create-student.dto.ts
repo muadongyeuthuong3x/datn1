@@ -10,16 +10,16 @@ export class CreateStudentDto {
   readonly name: string;
 
   @Column()
-  readonly point_diligence: string;
+  readonly point_diligence: number;
 
   @Column()
-  readonly point_beetween: string;
+  readonly point_beetween: number;
 
   @Column()
-  readonly point_end: string;
+  readonly point_end: number;
 
   @Column()
-  readonly point_end_end: string;
+  readonly point_end_end: number;
 
   @Column()
   readonly why_edit_point_end_end: string;

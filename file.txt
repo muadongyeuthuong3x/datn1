@@ -100,3 +100,8 @@ https://blog.logrocket.com/using-typeorms-querybuilder-nestjs/
 
 
 https://beta.reactjs.org/reference/react/useRef   
+
+
+
+numberric
+https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-data-types/

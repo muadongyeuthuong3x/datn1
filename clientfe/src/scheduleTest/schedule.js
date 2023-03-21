@@ -64,7 +64,7 @@ const ScheduleComponent = () => {
         return listBigClassExam;
     }
 
-
+   
     const listTimeSelect = useMemo(() => {
         if (onFormCreate.timeExamAndFormExam[0]?.id_exam?.length < 1) {
             return [];
@@ -85,7 +85,7 @@ const ScheduleComponent = () => {
             }
         });
         return data;
-    }, [onFormCreate, getYear])
+    }, [getYear])
 
     useEffect(() => {
         dispatch(apiGetListExamBlock());
@@ -136,38 +136,24 @@ const ScheduleComponent = () => {
     const onChangeSearchYear = (e) => {
         console.log(e)
         const [time_start, time_end] = e.split('-');
-        const dataOld = onFormCreate;
-        dataOld.timeExamAndFormExam[0].time_year_start = time_start;
-        dataOld.timeExamAndFormExam[0].time_year_end = time_end;
+        const dataOld = { ...onFormCreate }; 
+        const {form_exam , systemForm_Exam , id_exam} = dataOld
         const dataFind = getYear.find(e => (e.time_year_start === time_start && e.time_year_end === time_end))
         dataOld.bigBlockClassExam = getClassBigExam(dataFind.id_big_class_exam);
-        console.log(dataOld)
-        setOnchangeFormCreate(dataOld)
-        if (!onFormCreate.timeExamAndFormExam[0].time_year_start ) {
-            return
-        }
+        dataOld.timeExamAndFormExam[0].time_year_end = time_end;
+        dataOld.timeExamAndFormExam[0].time_year_start = time_start;
+        dataOld.timeExamAndFormExam[0]= [{
+            time_year_start: time_start,
+            time_year_end: time_end,
+            form_exam: form_exam,
+            systemForm_Exam: systemForm_Exam,
+            id_exam: id_exam,
+        }]
+        setOnchangeFormCreate(dataOld);
     }
     console.log(onFormCreate)
     const onChangeExam = (e) => {
         let dataOld = onFormCreate;
-        if (dataOld.timeExamAndFormExam[0].id_exam) {
-            dataOld = {
-                roomExam: [],
-                timeExamAndFormExam: [{
-                    time_year_start: "",
-                    time_year_end: "",
-                    form_exam: '',
-                    systemForm_Exam: '',
-                    id_exam: '',
-                }],
-                exam: '',
-                mode: '',
-                bigBlockClassExam: '',
-                roomPeopleMax: 0,
-                countPeopleExam: 0,
-                time_exam: 0
-            }
-        }
         dataOld.timeExamAndFormExam[0].id_exam = e;
         setOnchangeFormCreate(dataOld);
         dispatch(callDataGetYear(e));
@@ -193,43 +179,27 @@ const ScheduleComponent = () => {
 
     const handleChangeMode = (e) => {
         let dataOld = onFormCreate;
-        let id_exam_old = dataOld.timeExamAndFormExam[0].id_exam
-
-        if (e !== dataOld.mode) {
-            dataOld = {
-                roomExam: [],
-                timeExamAndFormExam: [{
-                    time_year_start: "",
-                    time_year_end: "",
-                    form_exam: '',
-                    systemForm_Exam: '',
-                    id_exam: id_exam_old,
-                }],
-                exam: '',
-                mode: '',
-                bigBlockClassExam: '',
-                roomPeopleMax: 0,
-                countPeopleExam: 0,
-                time_exam: 0
-            }
-        }
         dataOld.mode = e
         setOnchangeFormCreate(dataOld) 
-        if (!onFormCreate.timeExamAndFormExam[0].time_year_start) {
+       
+       
+    }
+    useEffect(()=>{
+        if (!onFormCreate.timeExamAndFormExam[0].time_year_start || !onFormCreate.mode || !onFormCreate.timeExamAndFormExam[0].id_exam) {
             return
         }
+
         const formSearchCountStudent = {
             exam: onFormCreate.timeExamAndFormExam[0].id_exam,
             time_start: getYear[0].time_year_start,
         }
-        if(e == 1){
+        if(onFormCreate.mode === 1) {
             dispatch(setCountExamApi(formSearchCountStudent))
-        }else if(e==2){
+        }else {
             dispatch(setCountExamApiTl(formSearchCountStudent))
         }
-      
 
-    }
+    }, [onFormCreate.mode , onFormCreate.timeExamAndFormExam[0].id_exam,onFormCreate.timeExamAndFormExam[0].time_year_start ])
 
 
     const changeMaxPeople = (e) => {
@@ -431,7 +401,7 @@ const ScheduleComponent = () => {
                                 {
                                     listTimeSelect.map((e, index) => {
                                         return (
-                                            <Option value={e} label={e} key={e}>
+                                            <Option value={e} label={e} key={index}>
                                                 <Space>
                                                     {e}
                                                 </Space>
