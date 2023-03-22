@@ -223,5 +223,21 @@ export function callApiGetTeacherDepartment(id){
     }
 }
 
+
+export function canlenderApiExamStudent(id){
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const dataRes = await instance.get(`/department/query_teacher/${id}`);
+           if(dataRes){
+            toast.success("Tạo dữ liệu thành công");
+           }
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
+
 export const postsSelector = state => state.posts
 export default listSchedule.reducer

@@ -21,10 +21,8 @@ import { ExamModule } from './exam/exam.module';
 import { ExamFormModule } from './exam_form/exam_form.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { RoomModule } from './room/room.module';
-import { SystemNumberModule } from './system_number/system_number.module';
 import { TimeTestModule } from './time_test/time_test.module';
 import { FormManagementModule } from './form_management/form_management.module';
-import { RoomTestModule } from './room_test/room_test.module';
 import { TableTeacherRoomModule } from './table_teacher_room/table_teacher_room.module';
 import { TableExamBigBlockClassModule } from './table_exam_big_block_class/table_exam_big_block_class.module';
 import { TableBigClassExamModule } from './table-big-class-exam/table-big-class-exam.module';
@@ -59,10 +57,8 @@ import { TestScheduleStudentModule } from './test_schedule_student/test_schedule
     ExamFormModule,
     TeacherModule,
     RoomModule,
-    SystemNumberModule,
     TimeTestModule,
     FormManagementModule,
-    RoomTestModule,
     TableTeacherRoomModule,
     TableExamBigBlockClassModule,
     TableBigClassExamModule,

@@ -1,22 +1,44 @@
 
 import { IsNotEmpty } from 'class-validator';
+import { ExamForm } from 'src/exam_form/entities/exam_form.entity';
+import { TableExamBigBlockClass } from 'src/table_exam_big_block_class/entities/table_exam_big_block_class.entity';
 import { Entity } from 'typeorm';
 
-@Entity('teacher')
-
+export type roomExam = {
+    room_exam: number;
+    teacher_exam: number[];
+    teacher_score_student?: number[],
+    time_start_exam: Date;
+    time_end_exam: Date;
+}
+@Entity('test-schedule-student')
 
 
 export class CreateTestScheduleStudentDto {
+
     @IsNotEmpty()
-    readonly form_exam: string;
+    roomPeopleMax: string;
     @IsNotEmpty()
-    readonly form_exam : string;
+    
+    mode: number;
     @IsNotEmpty()
-    readonly avatar: string;
+
+    id_query_exam_big_class: TableExamBigBlockClass;
     @IsNotEmpty()
-    readonly phone_number: string;
+
+    id_exam_big_class: TableExamBigBlockClass;
     @IsNotEmpty()
-    idDepartment : any
+
+    time_exam: number;
     @IsNotEmpty()
-    id_teacher_department_query : string
+
+    id_query_form_exam: ExamForm;
+    @IsNotEmpty()
+    id_form_exam: ExamForm;
+
+    @IsNotEmpty()
+    form_exam : number;
+
+    @IsNotEmpty()
+    roomExamAndTeacher: roomExam[]
 }

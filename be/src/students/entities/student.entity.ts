@@ -1,4 +1,6 @@
+import { ItemRoomExamAndTeacher } from 'src/item-room-exam-and-teacher/entities/item-room-exam-and-teacher.entity';
 import { TableExamBigBlockClass } from 'src/table_exam_big_block_class/entities/table_exam_big_block_class.entity';
+import { TestScheduleStudent } from 'src/test_schedule_student/entities/test_schedule_student.entity';
 import {
   Column,
   CreateDateColumn,
@@ -44,6 +46,11 @@ export class Student {
     onDelete: 'CASCADE',
   })
   id_exam_big_class: TableExamBigBlockClass;
+
+  @ManyToOne(() => ItemRoomExamAndTeacher, (item) => item.id_student_exam, {
+    onDelete: 'CASCADE',
+  })
+  id_test_schedule_student: ItemRoomExamAndTeacher;
 
   @CreateDateColumn({ name: 'created_at', default: new Date() })
   createdAt?: Date;
