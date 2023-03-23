@@ -239,6 +239,7 @@ const TeacherComponent = () => {
 
 
     const showModalEdit = (data) => {
+         console.log(data)
         setIsModalOpenEdit(true);
         const { name, id, id_teacher, avatar, phone_number ,id_teacher_department_query  } = data
         setFormDataEdit({
@@ -530,6 +531,9 @@ const TeacherComponent = () => {
                             onPreview={handlePreview}
                             accept=".png,.jpeg"
                             onChange={handleChangeEdit}
+                            beforeUpload={() => {
+                                return false;
+                            }}
 
                         >
                             {fileEdit.length >= 1 ? null : uploadButton}

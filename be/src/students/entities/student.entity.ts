@@ -50,7 +50,7 @@ export class Student {
   @ManyToOne(() => ItemRoomExamAndTeacher, (item) => item.id_student_exam, {
     onDelete: 'CASCADE',
   })
-  id_test_schedule_student: ItemRoomExamAndTeacher;
+  id_test_schedule_students: ItemRoomExamAndTeacher;
 
   @CreateDateColumn({ name: 'created_at', default: new Date() })
   createdAt?: Date;

@@ -19,7 +19,7 @@ export class CreateTestScheduleStudentDto {
     @IsNotEmpty()
     roomPeopleMax: string;
     @IsNotEmpty()
-    
+
     mode: number;
     @IsNotEmpty()
 
@@ -41,4 +41,11 @@ export class CreateTestScheduleStudentDto {
 
     @IsNotEmpty()
     roomExamAndTeacher: roomExam[]
+
+    @IsNotEmpty()
+    timeYearExamStart: string
+    
+    @IsNotEmpty()
+    id_exam: string
+    
 }

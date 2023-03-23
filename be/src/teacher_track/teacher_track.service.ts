@@ -1,11 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateTeacherTrackDto } from './dto/create-teacher_track.dto';
 import { UpdateTeacherTrackDto } from './dto/update-teacher_track.dto';
+import { TeacherTrack } from './entities/teacher_track.entity';
 
 @Injectable()
 export class TeacherTrackService {
-  create(createTeacherTrackDto: CreateTeacherTrackDto) {
-    return 'This action adds a new teacherTrack';
+  constructor(
+    @InjectRepository(TeacherTrack)
+    private readonly teacherTrackRepository: Repository<TeacherTrack>,
+  ) { }
+  async create(createTeacherTrackDto: CreateTeacherTrackDto) {
+    for (let i = 0; i < createTeacherTrackDto.list_teacher.length; i++) {
+      const createData = new TeacherTrack();
+      createData.id_itemRoomExamAndTeacher = createTeacherTrackDto.idDataCreate;
+      createData.id_Teacher =createTeacherTrackDto.list_teacher[i];
+      await this.teacherTrackRepository.save(createData)
+    }
   }
 
   findAll() {

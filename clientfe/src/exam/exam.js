@@ -160,7 +160,7 @@ const ExamComponent = () => {
 
 
             {/* Modal Create */}
-            <Modal title="Tạo Khối" open={isModalOpenCreate} footer={null}>
+            <Modal title="Tạo Môn Thi" open={isModalOpenCreate} footer={null}>
 
                 <Form
                     name="basic"

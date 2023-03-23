@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import DashBoard from "../dashboard";
 
 const ScoreStatistic = () => {
-    const { loading } = useSelector(state => state.ttScoreStudent)
+    const { loading } = useSelector(state => state.ttScoreStudent);
     return <DashBoard ComponentProps={ScoreStatis} loading={loading} />
 }
 

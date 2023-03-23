@@ -26,7 +26,6 @@ export default function ScoreStatis() {
         time_start_two: '',
         time_year_two: ''
     });
-    const { dataOldSearchView } = useSelector(state => state.listExamBlock);
     const [dataTT, setDataTT] = useState([
         {
             name: "Khoảng điểm 1",
@@ -70,6 +69,7 @@ export default function ScoreStatis() {
         },
     ]);
     const { data } = useSelector(state => state.ttScoreStudent);
+        const { dataOldSearchView } = useSelector(state => state.listExamBlock);
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(apiGetListExamBlock())

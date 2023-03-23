@@ -1,7 +1,7 @@
 import { Button, Table, Modal, Input, Form, DatePicker, Space, Select, Image, Radio } from 'antd';
 import { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-import { apiGetListDataApi, setCountExamApiTl, callApiGetTeacherDepartment } from '../slices/scheduleTest';
+import { apiGetListDataApi, setCountExamApiTl, callApiGetTeacherDepartment,createDataTestScheduleStudent } from '../slices/scheduleTest';
 import { apiGetListExamBlock, callDataGetYear } from "../slices/examBlock";
 import { apiGetListDepartment} from '../slices/department'
 import { setCountExamApi } from "../slices/scheduleTest";
@@ -113,10 +113,8 @@ const ScheduleSComponent = () => {
     };
 
     const handleOkCreate = () => {
-
-        console.log(onFormCreate)
+         dispatch(createDataTestScheduleStudent(onFormCreate))
         // check room submit 
-
     };
 
     const handleCancelCreate = () => {

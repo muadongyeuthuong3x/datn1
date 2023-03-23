@@ -9,7 +9,7 @@ export const initialState = {
 
 
 const ttScoreStudent = createSlice({
-    name: 'getListScore',
+    name: 'ttScoreStudent',
     initialState,
     reducers: {
         loadding: state => {
@@ -32,11 +32,12 @@ export function apiGetListCountScore(data) {
         dispatch(loadding())
         try {
             const response = await instance.post('/students/tt-score-studnet' ,data);
-            dispatch(getListCountScoreSuccess(response.data.message))
+            if(response){
+                dispatch(getListCountScoreSuccess(response.data.message))
+            }
         } catch (error) {
             dispatch(getListCountScoreSuccess([0,0,0,0,0,0,0,0,0,0]))
             toast.error(error.response.data.message)
-            dispatch(loaddingFailes())
         }
     }
 } 

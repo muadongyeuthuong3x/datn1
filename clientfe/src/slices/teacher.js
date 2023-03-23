@@ -53,8 +53,10 @@ const listTeacher = createSlice({
             state.loading = false
             const dataOld = state.data
             const { id } = payload;
-            const indexEdit = dataOld.findIndex(item => item.id === id);
+            const indexEdit = dataOld.findIndex(item => item.id === id);           
             dataOld[indexEdit] = payload;
+            dataOld[indexEdit].id_teacher_department_query = dataOld[indexEdit].idDepartment
+            delete dataOld[indexEdit].idDepartment;
             state.data = dataOld
         },
     },
@@ -141,7 +143,8 @@ export function editDataTeacherApi(data) {
             }
             delete formUpload.avatar_new
             const dataRes = await instance.patch(`/teacher/${id}`,  formUpload );
-            dispatch(editData(data))
+            console.log(formUpload)
+            dispatch(editData(formUpload))
             toast.success(dataRes.data.message)
         } catch (error) {
             toast.error(error.response.data.message)

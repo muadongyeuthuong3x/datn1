@@ -27,7 +27,6 @@ export class UsersService {
   }
 
   async login(loginUserDto: LoginUserDto) {
-    try {
       const data = await this.usersRepository.findOne({
         where: {
           email: loginUserDto.email,
@@ -40,13 +39,6 @@ export class UsersService {
       if (isMatch) {
         return data;
       }
-    } catch (error) {
-      throw new BadGatewayException({
-        status: "error",
-        message: "Server error "
-      })
-    }
-
   }
 
   async createUser(createUserDto: CreateUserDto) {

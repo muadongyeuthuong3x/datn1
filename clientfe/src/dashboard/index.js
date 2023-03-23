@@ -59,7 +59,7 @@ const DashBoard = ({ ComponentProps, loading }) => {
         },
         {
             link: "/list-exam",
-            text: "Môn Học",
+            text: "Môn Thi",
             icon: < UserOutlined />,
             isAdmin: false,
             key: 4

@@ -239,5 +239,21 @@ export function canlenderApiExamStudent(id){
     }
 }
 
+
+export function createDataTestScheduleStudent(data){
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const dataRes = await instance.post(`/test-schedule-student`, data);
+           if(dataRes){
+            toast.success("Tạo dữ liệu thành công");
+           }
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
+
 export const postsSelector = state => state.posts
 export default listSchedule.reducer

@@ -9,6 +9,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 
 @Entity('class')
@@ -20,10 +21,10 @@ export class Class {
   class_kma: string;
 
 
-  @ManyToOne(() => ItemRoomExamAndTeacher, item => item.id_Class, {
+  @OneToMany(() => ItemRoomExamAndTeacher, item => item.id_Class, {
     cascade: true,
   })
-  id_test_schedule_student : ItemRoomExamAndTeacher;
+  id_ItemRoomExamAndTeacher : ItemRoomExamAndTeacher;
 
 
   @CreateDateColumn({ name: 'created_at', default: new Date() })

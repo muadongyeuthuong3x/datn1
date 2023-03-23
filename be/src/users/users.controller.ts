@@ -35,7 +35,7 @@ export class UsersController {
     const data: CreateUserDto = await this.usersService.login(loginUserDto);
     if (data != null) {
       const { email, role } = data;
-      const dataRes = this.usersService.generateJWT(data);
+      const dataRes = this.usersService.generateJWT(data); 
       const user = {
         email,
         token: dataRes,
@@ -45,7 +45,7 @@ export class UsersController {
     } else {
       throw new BadGatewayException({
         status: "error",
-        message: "Server error "
+        message: "Tài khoản hoặc mật khẩu không đúng"
       })
     }
   }

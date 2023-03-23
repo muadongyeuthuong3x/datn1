@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
 import { TestScheduleStudentService } from './test_schedule_student.service';
 import { CreateTestScheduleStudentDto } from './dto/create-test_schedule_student.dto';
 import { UpdateTestScheduleStudentDto } from './dto/update-test_schedule_student.dto';
@@ -8,8 +8,9 @@ export class TestScheduleStudentController {
   constructor(private readonly testScheduleStudentService: TestScheduleStudentService) {}
 
   @Post()
-  create(@Body() createTestScheduleStudentDto: CreateTestScheduleStudentDto) {
-    return this.testScheduleStudentService.create(createTestScheduleStudentDto);
+  create(@Body() createTestScheduleStudentDto: CreateTestScheduleStudentDto ,@Res() res: any,) {
+
+    return this.testScheduleStudentService.create(createTestScheduleStudentDto , res ); 
   }
 
   @Get()
