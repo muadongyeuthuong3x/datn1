@@ -7,7 +7,7 @@ import { Entity } from 'typeorm';
 export type roomExam = {
     room_exam: number;
     teacher_exam: number[];
-    teacher_score_student?: number[],
+    teacher_score_student?: number,
     time_start_exam: Date;
     time_end_exam: Date;
 }

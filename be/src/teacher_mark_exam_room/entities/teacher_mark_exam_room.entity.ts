@@ -17,8 +17,8 @@ export class TeacherMarkExamRoom {
     })
     id_teacher_mark_score : number;
 
-    @ManyToOne(() => ItemRoomExamAndTeacher, item => item.id_teacherMarkExamRoom, {
+    @ManyToOne(() => ItemRoomExamAndTeacher, item => item.id_teacher_mark_exam, {
         cascade: true,
     })
-    id_itemRoomExamAndTeacher : number;
+    id_item_room_exam : number; 
 }

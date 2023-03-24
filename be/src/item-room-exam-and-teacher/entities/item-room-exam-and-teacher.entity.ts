@@ -1,4 +1,5 @@
 import { Class } from 'src/class/entities/class.entity';
+import { Room } from 'src/room/entities/room.entity';
 import { Student } from 'src/students/entities/student.entity';
 import { Teacher } from 'src/teacher/entities/teacher.entity';
 import { TeacherMarkExamRoom } from 'src/teacher_mark_exam_room/entities/teacher_mark_exam_room.entity';
@@ -22,24 +23,19 @@ export class ItemRoomExamAndTeacher {
     @Column()
     id_class_query: number;
 
-    @ManyToOne(() => Class, item => item.id_ItemRoomExamAndTeacher)
-    id_Class : Class;
+    @ManyToOne(() => Room, item => item.id_ItemRoomExamAndTeacher)
+    id_Room : Room;
 
-
-    @OneToMany(() => Student, item => item.id_test_schedule_students,{
-            onDelete: 'CASCADE',
-        })
-    id_student_exam: Student;
 
     @OneToMany(() => TeacherTrack , item => item.id_itemRoomExamAndTeacher , {
             onDelete: 'CASCADE',
         })
     id_teacherTrack: TeacherTrack;
 
-    @OneToMany(() => TeacherMarkExamRoom , item => item.id_teacher_mark_score , {
+    @OneToMany(() => TeacherMarkExamRoom , item => item.id_item_room_exam , { 
             onDelete: 'CASCADE',
         })
-    id_teacherMarkExamRoom: TeacherMarkExamRoom;
+    id_teacher_mark_exam: TeacherMarkExamRoom;
 
 
     @ManyToOne(() => TestScheduleStudent, item => item.id_itemRoomExamAndTeacher, {

@@ -27,7 +27,7 @@ export class Student {
   @Column('numeric',{ default: 0  })
   point_beetween: number;
 
-  @Column('numeric',{ default: 0  })
+  @Column('numeric',{ default: -1 })
   point_end: number;
 
   @Column('numeric',{ default: -1 })
@@ -41,16 +41,21 @@ export class Student {
 
   @Column()
   id_exam_query: string;
+  
+  @Column({ default: -1 })
+  id_room_test: number;
+
+  @Column({ default: '' })
+  why_exam_break: string;
+
+  @Column({ default: '' })
+  why_retest: string;
 
   @ManyToOne(() => TableExamBigBlockClass, (item) => item.id_student, {
     onDelete: 'CASCADE',
   })
-  id_exam_big_class: TableExamBigBlockClass;
+  id_exam_big_class: number;
 
-  @ManyToOne(() => ItemRoomExamAndTeacher, (item) => item.id_student_exam, {
-    onDelete: 'CASCADE',
-  })
-  id_test_schedule_students: ItemRoomExamAndTeacher;
 
   @CreateDateColumn({ name: 'created_at', default: new Date() })
   createdAt?: Date;

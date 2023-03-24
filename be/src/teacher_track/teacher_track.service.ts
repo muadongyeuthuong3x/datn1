@@ -15,7 +15,7 @@ export class TeacherTrackService {
     for (let i = 0; i < createTeacherTrackDto.list_teacher.length; i++) {
       const createData = new TeacherTrack();
       createData.id_itemRoomExamAndTeacher = createTeacherTrackDto.idDataCreate;
-      createData.id_Teacher =createTeacherTrackDto.list_teacher[i];
+      createData.id_Teacher =createTeacherTrackDto.list_teacher[i] as any;
       await this.teacherTrackRepository.save(createData)
     }
   }

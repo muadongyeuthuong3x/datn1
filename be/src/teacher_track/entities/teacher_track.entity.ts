@@ -20,5 +20,5 @@ export class TeacherTrack {
     @ManyToOne(() => Teacher, item => item.id_teacherTrack, {
         cascade: true,
     })
-    id_Teacher : number;
+    id_Teacher : Teacher;
 }

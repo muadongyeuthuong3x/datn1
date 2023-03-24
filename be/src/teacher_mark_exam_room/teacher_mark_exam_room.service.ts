@@ -13,12 +13,18 @@ export class TeacherMarkExamRoomService {
     private readonly teacherMarkExamRoomRepository: Repository<TeacherMarkExamRoom>,
   ) { }
   async create(createTeacherMarkExamRoomDto: CreateTeacherMarkExamRoomDto) {
-    for (let i = 0; i < createTeacherMarkExamRoomDto.list_teacher.length; i++) {
-      const createData = new TeacherMarkExamRoom();
-      createData.id_teacher_mark_score =createTeacherMarkExamRoomDto.idDataCreate;
-      createData.id_teacher_mark_score =createTeacherMarkExamRoomDto.list_teacher[i];
-       await this.teacherMarkExamRoomRepository.save(createData)
+    try {
+      // for (let i = 0; i < createTeacherMarkExamRoomDto.list_teacher.length; i++) {
+        const createData = new TeacherMarkExamRoom();
+        createData.id_item_room_exam =createTeacherMarkExamRoomDto.idDataCreate;
+        createData.id_teacher_mark_score =createTeacherMarkExamRoomDto.teacher;   
+        return  await this.teacherMarkExamRoomRepository.save(createData); 
+      // }
+    } catch (error) {
+      
     }
+  
+   
   }
 
   findAll() {

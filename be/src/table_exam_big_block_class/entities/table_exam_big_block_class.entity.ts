@@ -1,6 +1,7 @@
 import { Exam } from 'src/exam/entities/exam.entity';
 import { Student } from 'src/students/entities/student.entity';
 import { TableBigClassExam } from 'src/table-big-class-exam/entities/table-big-class-exam.entity';
+import { TestScheduleStudent } from 'src/test_schedule_student/entities/test_schedule_student.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -39,6 +40,11 @@ export class TableExamBigBlockClass {
     onDelete: 'CASCADE',
   })
   id_student: TableBigClassExam;
+
+  @OneToMany(() => TestScheduleStudent, (item) => item.id_tableExamBigBlockClass, {
+    onDelete: 'CASCADE',
+  })
+  id_testScheduleStudent: TestScheduleStudent;
 
   @CreateDateColumn({ name: 'created_at', default: new Date() })
   createdAt?: Date;

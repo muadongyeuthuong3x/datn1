@@ -25,18 +25,22 @@ import { TeacherTrackModule } from 'src/teacher_track/teacher_track.module';
 import { TeacherMarkExamRoomModule } from 'src/teacher_mark_exam_room/teacher_mark_exam_room.module';
 import { TeacherTrack } from 'src/teacher_track/entities/teacher_track.entity';
 import { TeacherMarkExamRoom } from 'src/teacher_mark_exam_room/entities/teacher_mark_exam_room.entity';
+import { StudentsModule } from 'src/students/students.module';
+import { Student } from 'src/students/entities/student.entity';
+import { StudentsService } from 'src/students/students.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TestScheduleStudent , TableExamBigBlockClass , TableBigClassExam , Class,ItemRoomExamAndTeacher , TeacherTrack , TeacherMarkExamRoom ]),
+    TypeOrmModule.forFeature([TestScheduleStudent , TableExamBigBlockClass , TableBigClassExam , Class,ItemRoomExamAndTeacher , TeacherTrack , TeacherMarkExamRoom, Student ]),
     TableExamBigBlockClassModule,
     TableBigClassExamModule,
     ItemRoomExamAndTeacherModule,
     ClassModule,
     TeacherTrackModule,
-    TeacherMarkExamRoomModule
+    TeacherMarkExamRoomModule,
+    StudentsModule
   ],
   controllers: [TestScheduleStudentController ,TableExamBigBlockClassController, TableBigClassExamController  , ClassController , ItemRoomExamAndTeacherController],
-  providers: [TestScheduleStudentService ,TableExamBigBlockClassService,TableBigClassExamService  ,ItemRoomExamAndTeacherService , ClassService,TeacherTrackService , TeacherMarkExamRoomService]
+  providers: [TestScheduleStudentService ,TableExamBigBlockClassService,TableBigClassExamService  ,ItemRoomExamAndTeacherService , ClassService,TeacherTrackService , TeacherMarkExamRoomService, StudentsService]
 })
 export class TestScheduleStudentModule {}

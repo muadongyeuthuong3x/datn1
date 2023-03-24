@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, MoreThan, MoreThanOrEqual, Not, Repository } from 'typeorm';
+import { DataSource, In, MoreThan, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { Student } from './entities/student.entity';
 import { ClassService } from 'src/class/class.service';
 import { TableExamBigBlockClass } from 'src/table_exam_big_block_class/entities/table_exam_big_block_class.entity';
@@ -23,7 +23,7 @@ export class StudentsService {
   ) { }
 
   async create(
-    id_exam: TableExamBigBlockClass,
+    id_exam: number,
     createStudentDto: CreateStudentDto[],
     name: string,
     res: any,
@@ -72,6 +72,7 @@ export class StudentsService {
         message: `Upload thành công`,
       });
     } catch (error) {
+      console.log(error)
       await queryRunner.rollbackTransaction();
       throw new BadGatewayException({
         error: 'error',
@@ -599,5 +600,19 @@ export class StudentsService {
         message: 'server error',
       });
     }
+  }
+
+  async findIdGetExamBigClass(idExamBigClass : any){
+     const data =  await this.studentRepository.find({ where: { id_exam_query: idExamBigClass }, select: ["id"] ,order: {
+      'id': 'ASC',
+    } });
+     return data;
+  }
+
+  async updateIdRoomTest(arrayId: number[], id_room: any) {
+    return await this.studentRepository.createQueryBuilder('student').update(Student)
+      .set({ id_room_test: id_room })
+      .where({ id: In(arrayId) })
+      .execute();
   }
 }

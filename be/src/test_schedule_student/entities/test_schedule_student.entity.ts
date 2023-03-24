@@ -15,7 +15,7 @@ export class TestScheduleStudent {
     
     @Column()
     mode: number;
-
+    
     @Column()
     id_query_exam_big_class: string;
 
@@ -24,7 +24,12 @@ export class TestScheduleStudent {
 
     @Column()
     time_exam: number;
+    
+    @ManyToOne(() => TableExamBigBlockClass, (item) => item.id_testScheduleStudent, {
+        onDelete: 'CASCADE',
+    })
 
+    id_tableExamBigBlockClass: TableExamBigBlockClass;
 
     @OneToMany(() => ItemRoomExamAndTeacher, (item) => item.id_testScheduleStudent, {
         onDelete: 'CASCADE',

@@ -9,13 +9,12 @@ export class TestScheduleStudentController {
 
   @Post()
   create(@Body() createTestScheduleStudentDto: CreateTestScheduleStudentDto ,@Res() res: any,) {
-
     return this.testScheduleStudentService.create(createTestScheduleStudentDto , res ); 
   }
 
   @Get()
-  findAll() {
-    return this.testScheduleStudentService.findAll();
+  findAll(@Res() res: any) {
+    return this.testScheduleStudentService.findAll(res);
   }
 
   @Get(':id')

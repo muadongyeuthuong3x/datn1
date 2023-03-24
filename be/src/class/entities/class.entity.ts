@@ -21,11 +21,6 @@ export class Class {
   class_kma: string;
 
 
-  @OneToMany(() => ItemRoomExamAndTeacher, item => item.id_Class, {
-    cascade: true,
-  })
-  id_ItemRoomExamAndTeacher : ItemRoomExamAndTeacher;
-
 
   @CreateDateColumn({ name: 'created_at', default: new Date() })
   createdAt?: Date;
