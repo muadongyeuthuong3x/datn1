@@ -265,7 +265,23 @@ export function getAllTestScheduleStudent(){
         dispatch(loadding())
         try {
             const dataRes = await instance.get(`/test-schedule-student`);
-            dispatch(setGetAllTestStudent(dataRes))
+            dispatch(setGetAllTestStudent(dataRes.data.message))
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
+
+
+export function deleteItemTestScheduleStudent(id){
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const dataRes = await instance.delete(`/test-schedule-student/${id}`);
+            if(dataRes){
+                toast.success("Xóa dữ liệu thành công")
+            }
         } catch (error) {
             toast.error(error.response.data.message)
             dispatch(loaddingFailes())

@@ -1,7 +1,7 @@
 import { Button, Table, Modal, Input, Form, DatePicker, Space, Select, Image, Radio } from 'antd';
 import { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-import { apiGetListDataApi, setCountExamApiTl, callApiGetTeacherDepartment, createDataTestScheduleStudent, getAllTestScheduleStudent } from '../slices/scheduleTest';
+import { apiGetListDataApi, setCountExamApiTl, callApiGetTeacherDepartment, createDataTestScheduleStudent, getAllTestScheduleStudent, deleteItemTestScheduleStudent } from '../slices/scheduleTest';
 import { apiGetListExamBlock, callDataGetYear } from "../slices/examBlock";
 import { apiGetListDepartment } from '../slices/department'
 import { setCountExamApi } from "../slices/scheduleTest";
@@ -35,12 +35,20 @@ const columns = [
         dataIndex: 'yearExam',
     },
     {
+        title: 'Thời gian thi (Phút)',
+        dataIndex: 'time_exam',
+    },
+    {
         title: 'Edit',
         dataIndex: 'edit',
     },
     {
         title: 'Delete',
         dataIndex: 'delete',
+    },
+    {
+        title: 'Xuất File PDF',
+        dataIndex: 'export',
     },
 ];
 const ScheduleSComponent = () => {
@@ -428,6 +436,37 @@ const ScheduleSComponent = () => {
         setidDeleteScheduleExam(id)
     }
 
+    const handleOkDelete  = () =>{
+      dispatch(deleteItemTestScheduleStudent(idDeleteScheduleExam))
+      setisOpenDeleteModal(false)
+    }
+
+    const handleCancelDelete  = () =>{
+        setisOpenDeleteModal(false)
+    }
+
+    const resultMode = (mode)=>{
+        let result = ''
+        options.forEach(item => {
+          if(item.value == mode){
+            result = item.label
+          }
+        })
+     return result;
+    }
+
+    const resultFormExam = (mode)=>{
+        let result = ''
+        examForms.forEach(item => {
+          if(item.value == mode){
+            result = item.name
+          }
+        })
+     return result;
+    }
+
+   
+
     useEffect(() => {
         if (listDataTestSchedule.length > 0) {
             let dataList = [];
@@ -435,14 +474,20 @@ const ScheduleSComponent = () => {
                 dataList.push({
                     key: i,
                     index: i,
-                    name: item?.name,
+                    name: item?.id_exam?.name,
+                    form_exam : resultFormExam(item?.form_exam),
+                    mode : resultMode(item?.id_testScheduleStudent[0].mode),
+                    bigBlockClass: getClassBigExam(item?.id_big_class_exam),
+                    yearExam : item?.time_year_start + "-" + item?.time_year_end,
+                    time_exam: item?.id_testScheduleStudent[0].time_exam,
                     edit: <Button type='primary' onClick={() => showModalEdit(item)}>Edit</Button>,
-                    delete: <Button type='primary' danger onClick={() => showModalDelete(item?.id)}>Delete</Button>
+                    delete: <Button type='primary' danger onClick={() => showModalDelete(item?.id_testScheduleStudent[0].id)}>Delete</Button>,
+                    export: <Button type='primary'  onClick={() => showModalDelete(item?.id)}>Lấy danh sách thi</Button>
                 });
             })
             setlistScheduleExamStudent(dataList)
         }
-    }, [listDataTestSchedule])
+    }, [listDataTestSchedule , examForms])
 
     return (
         <div>
@@ -897,6 +942,12 @@ const ScheduleSComponent = () => {
                 </Form>
             </Modal>
             {/* End Modal Create */}
+
+              {/* Modal delete */}
+              <Modal title="Xóa Lịch Thi" open={isOpenDeleteModal} onOk={handleOkDelete} onCancel={handleCancelDelete}>
+                <p> Bạn chắc chắn xóa dữ liệu này chứ </p>
+            </Modal>
+            {/* End Modal delete */}
 
         </div >
     );

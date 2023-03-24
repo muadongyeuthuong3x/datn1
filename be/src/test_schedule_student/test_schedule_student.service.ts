@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { BadGatewayException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ItemRoomExamAndTeacherService } from 'src/item-room-exam-and-teacher/item-room-exam-and-teacher.service';
 import { TableBigClassExamService } from 'src/table-big-class-exam/table-big-class-exam.service';
@@ -76,7 +76,16 @@ export class TestScheduleStudentService {
     return `This action updates a #${id} testScheduleStudent`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} testScheduleStudent`;
+ async remove(id: number) {
+    try {
+      const dataAll = await this.testScheduleStudentRepository.delete(id);
+      return dataAll;
+    } catch (error) {
+      console.log(error)
+      throw new BadGatewayException({
+        status: 'error',
+        message: 'Server error ',
+      });
+    }
   }
 }

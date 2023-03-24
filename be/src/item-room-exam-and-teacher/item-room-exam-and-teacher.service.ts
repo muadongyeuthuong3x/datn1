@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { BadGatewayException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StudentsService } from 'src/students/students.service';
 import { TeacherMarkExamRoomService } from 'src/teacher_mark_exam_room/teacher_mark_exam_room.service';
@@ -66,7 +66,7 @@ export class ItemRoomExamAndTeacherService {
     return `This action updates a #${id} itemRoomExamAndTeacher`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} itemRoomExamAndTeacher`;
+  async remove(id: number) {
+ 
   }
 }
