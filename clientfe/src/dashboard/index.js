@@ -38,7 +38,7 @@ const DashBoard = ({ ComponentProps, loading }) => {
         },
         {
             link: "/department",
-            text: "Khoa",
+            text: "Danh  sách Khoa",
             icon: < UserOutlined />,
             isAdmin: false,
             key: 1

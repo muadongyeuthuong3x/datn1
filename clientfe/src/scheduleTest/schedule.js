@@ -208,14 +208,10 @@ const ScheduleComponent = () => {
             toast.error(` Số lượng sinh viên một lớp phải lớn hơn 0 `);
         }
         const dataOld = { ...onFormCreate };
-        if (dataOld.roomExamAndTeacher) {
-            delete dataOld.roomExamAndTeacher;
-            dataOld.roomExam = [];
-        }
-
+        delete dataOld.roomExamAndTeacher;
         const dataArray = []
         const numberCell = Math.ceil((onFormCreate.countPeopleExam) / (valueGet));
-        for (let index = 0; index < numberCell; index++) {
+        for (let i = 0; i < numberCell; i++) {
             const formObject = {
                 time_start_exam: '',
                 time_end_exam: '',
@@ -228,10 +224,7 @@ const ScheduleComponent = () => {
 
         dataOld.roomPeopleMax = valueGet;
         dataOld.roomExamAndTeacher = dataArray;
-
-
         setOnchangeFormCreate(dataOld);
-
     }
 
     const changeFormExam = (e) => {

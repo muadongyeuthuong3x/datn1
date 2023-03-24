@@ -10,7 +10,8 @@ export const initialState = {
     examForms: [],
     exams : [],
     countStudnetExam : 0,
-    teacher_department : []
+    teacher_department : [],
+    listDataTestSchedule : []
 }
 
 
@@ -76,10 +77,14 @@ const listSchedule = createSlice({
             state.loading = false
             state.teacher_department = payload
         },
+        setGetAllTestStudent: (state, {payload})=>{
+            state.loading = false;
+            state.listDataTestSchedule = payload
+        }
     },
 })
 
-export const { loadding, getListDataSuccess, deleteScheduleInList, loaddingFailes, createScheduleReducer, searchData, editData, setCount,setteacher_department } = listSchedule.actions
+export const { loadding, getListDataSuccess, deleteScheduleInList, loaddingFailes, createScheduleReducer, searchData, editData, setCount,setteacher_department ,setGetAllTestStudent} = listSchedule.actions
 
 export function apiGetListDataApi(alert) {
     return async dispatch => {
@@ -248,6 +253,19 @@ export function createDataTestScheduleStudent(data){
            if(dataRes){
             toast.success("Tạo dữ liệu thành công");
            }
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
+
+export function getAllTestScheduleStudent(){
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const dataRes = await instance.get(`/test-schedule-student`);
+            dispatch(setGetAllTestStudent(dataRes))
         } catch (error) {
             toast.error(error.response.data.message)
             dispatch(loaddingFailes())
