@@ -79,5 +79,17 @@ export class TeacherService {
       });
     }
   }
-
+   
+  async findTeacherExam ( array : any[]){
+    try {
+      const data =  await this.teacherRepository.createQueryBuilder('teacher')
+      .where('teacher.id <> ALL(:idarray) ' , { idarray: array })
+      .getMany();
+      return data;
+    } catch (error) {
+      console.log(error)
+    }
+  
+  }
+  
 }

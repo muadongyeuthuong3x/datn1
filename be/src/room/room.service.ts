@@ -61,4 +61,11 @@ export class RoomService {
       });
     }
   }
+
+  async findRoomExam( array : number[]) {
+    const data =  await this.roomRepository.createQueryBuilder('room')
+    .where('room.id <> ALL(:idarray) ' , { idarray: array })
+    .getMany();
+    return data;
+  }
 }

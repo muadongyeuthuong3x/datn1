@@ -28,7 +28,6 @@ import { TableExamBigBlockClassModule } from './table_exam_big_block_class/table
 import { TableBigClassExamModule } from './table-big-class-exam/table-big-class-exam.module';
 import { DepartmentModule } from './department/department.module';
 import { TestScheduleStudentModule } from './test_schedule_student/test_schedule_student.module';
-import { TableRoomStudentModule } from './table_room_student/table_room_student.module';
 @Module({
   imports: [
     JwtModule.register({
@@ -65,7 +64,6 @@ import { TableRoomStudentModule } from './table_room_student/table_room_student.
     TableBigClassExamModule,
     DepartmentModule,
     TestScheduleStudentModule,
-    TableRoomStudentModule,
   ],
 
   controllers: [AppController],

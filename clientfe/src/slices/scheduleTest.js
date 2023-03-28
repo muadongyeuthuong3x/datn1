@@ -11,7 +11,7 @@ export const initialState = {
     exams : [],
     countStudnetExam : 0,
     teacher_department : [],
-    listDataTestSchedule : []
+    listDataTestSchedule : [],
 }
 
 
@@ -80,11 +80,15 @@ const listSchedule = createSlice({
         setGetAllTestStudent: (state, {payload})=>{
             state.loading = false;
             state.listDataTestSchedule = payload
-        }
+        },
+        setTeachers: (state, {payload})=>{
+            state.loading = false;
+            state.teachersFind = payload
+        },
     },
 })
 
-export const { loadding, getListDataSuccess, deleteScheduleInList, loaddingFailes, createScheduleReducer, searchData, editData, setCount,setteacher_department ,setGetAllTestStudent} = listSchedule.actions
+export const { loadding, getListDataSuccess, deleteScheduleInList, loaddingFailes, createScheduleReducer, searchData, editData, setCount,setteacher_department ,setGetAllTestStudent ,setTeachers} = listSchedule.actions
 
 export function apiGetListDataApi(alert) {
     return async dispatch => {
@@ -193,6 +197,7 @@ export function setCountExamApi(data) {
         try {
             const { exam , time_start} = data
             const dataRes = await instance.get(`/students/count/${exam}/${time_start}`);
+            console.log(dataRes.data.message)
             dispatch(setCount(dataRes.data.message))
         } catch (error) {
             toast.error(error.response.data.message)
@@ -288,6 +293,24 @@ export function deleteItemTestScheduleStudent(id){
         }
     }
 }
+
+
+export function exportDataPDf(data){
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const dataRes = await instance.post(`/test-schedule-student/pdf`, data);
+            if(dataRes){
+                toast.success("Lấy dữ liệu sinh viên thi thành công")
+            }
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
+
+
 
 export const postsSelector = state => state.posts
 export default listSchedule.reducer

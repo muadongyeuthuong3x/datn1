@@ -310,7 +310,6 @@ const StudentComponent = () => {
         const listFile = formCreateBetween.files;
         // eslint-disable-next-line array-callback-return
         listFile.map(e => {
-            console.log(e.originFileObj)
             formUpload.append("files", e.originFileObj);
         })
         const { id_exam, time_year_end, time_year_start, name } = formCreateBetween
@@ -327,7 +326,6 @@ const StudentComponent = () => {
         const listFile = formCreateEndEnd.files;
         // eslint-disable-next-line array-callback-return
         listFile.map(e => {
-            console.log(e.originFileObj)
             formUpload.append("files", e.originFileObj);
         })
         const { id_exam, time_year_end, time_year_start, name } = formCreateEndEnd
@@ -344,7 +342,6 @@ const StudentComponent = () => {
         const listFile = formCreateEnd.files;
         // eslint-disable-next-line array-callback-return
         listFile.map(e => {
-            console.log(e.originFileObj)
             formUpload.append("files", e.originFileObj);
         })
         const { id_exam, time_year_end, time_year_start, name } = formCreateEnd

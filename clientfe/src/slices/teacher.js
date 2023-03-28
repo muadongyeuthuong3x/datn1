@@ -143,7 +143,6 @@ export function editDataTeacherApi(data) {
             }
             delete formUpload.avatar_new
             const dataRes = await instance.patch(`/teacher/${id}`,  formUpload );
-            console.log(formUpload)
             dispatch(editData(formUpload))
             toast.success(dataRes.data.message)
         } catch (error) {

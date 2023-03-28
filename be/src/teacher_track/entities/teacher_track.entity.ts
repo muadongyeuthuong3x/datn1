@@ -12,13 +12,15 @@ export class TeacherTrack {
     @PrimaryGeneratedColumn()
     id: number;  
     
-    @ManyToOne(() => ItemRoomExamAndTeacher, item => item.id_teacherTrack, {
-        cascade: true,
+    @Column()
+    id_teacher_track_query : string;
+    
+    @ManyToOne(() => ItemRoomExamAndTeacher, item => item.id_teacherTrack,{
+        onDelete: 'CASCADE',
     })
     id_itemRoomExamAndTeacher : number;
 
-    @ManyToOne(() => Teacher, item => item.id_teacherTrack, {
-        cascade: true,
-    })
+    @ManyToOne(() => Teacher, item => item.id_teacherTrack)
     id_Teacher : Teacher;
+
 }

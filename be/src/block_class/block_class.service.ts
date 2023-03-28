@@ -1,7 +1,7 @@
 import { Injectable, BadGatewayException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BlockClass } from './entities/block_class.entity';
-import { Not, Repository } from 'typeorm';
+import {  Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
 
 @Injectable()

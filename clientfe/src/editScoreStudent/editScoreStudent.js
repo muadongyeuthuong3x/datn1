@@ -205,7 +205,6 @@ const EditScore = () => {
     // delete
     // edit
     const handleOkEdit = () => {
-        console.log(dataEdit)
         dispatch(editScoreStudent(dataEdit));
         setIsModalOpenEdit(false)
     }
@@ -216,8 +215,6 @@ const EditScore = () => {
     // edit 
 
     const onChangeEditData = (e)=>{
-        console.log(e.target.value)
-        console.log(e.target.key)
         setDataEdit(prev=>{
             return{
                 ...prev,

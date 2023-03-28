@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { CreateTeacherTrackDto } from './dto/create-teacher_track.dto';
 import { UpdateTeacherTrackDto } from './dto/update-teacher_track.dto';
 import { TeacherTrack } from './entities/teacher_track.entity';
@@ -16,6 +16,7 @@ export class TeacherTrackService {
       const createData = new TeacherTrack();
       createData.id_itemRoomExamAndTeacher = createTeacherTrackDto.idDataCreate;
       createData.id_Teacher =createTeacherTrackDto.list_teacher[i] as any;
+      createData.id_teacher_track_query = createTeacherTrackDto.list_teacher[i] as any;
       await this.teacherTrackRepository.save(createData)
     }
   }
@@ -23,6 +24,8 @@ export class TeacherTrackService {
   findAll() {
     return `This action returns all teacherTrack`;
   }
+
+
 
   findOne(id: number) {
     return `This action returns a #${id} teacherTrack`;
@@ -35,4 +38,6 @@ export class TeacherTrackService {
   remove(id: number) {
     return `This action removes a #${id} teacherTrack`;
   }
+
+
 }

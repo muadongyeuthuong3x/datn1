@@ -8,18 +8,23 @@ export class TestScheduleStudentController {
   constructor(private readonly testScheduleStudentService: TestScheduleStudentService) {}
 
   @Post()
-  create(@Body() createTestScheduleStudentDto: CreateTestScheduleStudentDto ,@Res() res: any,) {
-    return this.testScheduleStudentService.create(createTestScheduleStudentDto , res ); 
+ async create(@Body() createTestScheduleStudentDto: CreateTestScheduleStudentDto ,@Res() res: any,) {
+    return await this.testScheduleStudentService.create(createTestScheduleStudentDto , res ); 
   }
 
   @Get()
-  findAll(@Res() res: any) {
-    return this.testScheduleStudentService.findAll(res);
+ async findAll(@Res() res: any) {
+    return  await this.testScheduleStudentService.findAll(res);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.testScheduleStudentService.findOne(+id);
+  }
+
+  @Post('/pdf')
+  async exportDataPDf(   @Body() dataPdf: { id : number , subject : string , mode : number , blokcclass : string ; form_exam : string  }) {
+    return  await this.testScheduleStudentService.exportPDf(dataPdf);
   }
 
   @Patch(':id')
@@ -28,7 +33,18 @@ export class TestScheduleStudentController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.testScheduleStudentService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.testScheduleStudentService.remove(+id);
   }
+
+  @Post('/:time_start/:time_end')
+  async findTeacherByDate(@Param('time_start') time_start: Date , @Param('time_end') time_end: Date  ,  @Body() idUnLess: number[]) {
+    return await this.testScheduleStudentService.findListTeacherByTime(time_start , time_end, idUnLess); 
+  }
+
+  @Post('rooms/:time_start/:time_end')
+  async findRoomsByDate(@Param('time_start') time_start: Date , @Param('time_end') time_end: Date  ,  @Body() idUnLess: number[]) {
+    return await this.testScheduleStudentService.findListRoomsByTime(time_start , time_end, idUnLess); 
+  }
+
 }

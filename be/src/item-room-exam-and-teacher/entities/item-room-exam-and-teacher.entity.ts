@@ -22,6 +22,7 @@ export class ItemRoomExamAndTeacher {
 
     @Column()
     id_class_query: number;
+    
 
     @ManyToOne(() => Room, item => item.id_ItemRoomExamAndTeacher)
     id_Room : Room;
@@ -38,8 +39,8 @@ export class ItemRoomExamAndTeacher {
     id_teacher_mark_exam: TeacherMarkExamRoom;
 
 
-    @ManyToOne(() => TestScheduleStudent, item => item.id_itemRoomExamAndTeacher, {
-        cascade: true,
+    @ManyToOne(() => TestScheduleStudent, item => item.id_itemRoomExamAndTeacher, { 
+        onDelete: 'CASCADE',
     })
     id_testScheduleStudent: TestScheduleStudent;
 

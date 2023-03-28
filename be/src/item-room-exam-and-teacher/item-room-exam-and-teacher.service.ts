@@ -1,11 +1,13 @@
 import { BadGatewayException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { RoomService } from 'src/room/room.service';
 import { StudentsService } from 'src/students/students.service';
+import { TeacherService } from 'src/teacher/teacher.service';
 import { TeacherMarkExamRoomService } from 'src/teacher_mark_exam_room/teacher_mark_exam_room.service';
 import { TeacherTrack } from 'src/teacher_track/entities/teacher_track.entity';
 import { TeacherTrackService } from 'src/teacher_track/teacher_track.service';
 import { TestScheduleStudentService } from 'src/test_schedule_student/test_schedule_student.service';
-import { Repository } from 'typeorm';
+import {  Repository } from 'typeorm';
 import { CreateItemRoomExamAndTeacherDto } from './dto/create-item-room-exam-and-teacher.dto';
 import { UpdateItemRoomExamAndTeacherDto } from './dto/update-item-room-exam-and-teacher.dto';
 import { ItemRoomExamAndTeacher } from './entities/item-room-exam-and-teacher.entity';
@@ -16,10 +18,13 @@ export class ItemRoomExamAndTeacherService {
     @InjectRepository(ItemRoomExamAndTeacher)
     @Inject(forwardRef(() => TestScheduleStudentService))
     @Inject(forwardRef(() => TeacherTrackService))
+    @Inject(forwardRef(() => RoomService))
     private readonly itemRoomExamAndTeacherRepository: Repository<ItemRoomExamAndTeacher>,
     private readonly teacherTrackRepository: TeacherTrackService,
     private readonly teacherMarkExamRoomRepository: TeacherMarkExamRoomService,
     private readonly studentRepository: StudentsService,
+    private readonly teacherS : TeacherService,
+    private readonly rooms : RoomService
   ) { }
 
   async create(createItemRoomExamAndTeacherDto: CreateItemRoomExamAndTeacherDto) {
@@ -68,5 +73,61 @@ export class ItemRoomExamAndTeacherService {
 
   async remove(id: number) {
  
+  }
+
+  async findStudentByRoom(id : number){
+    await this.studentRepository.findStudent(id);
+  }
+
+  async findListTeachers(time_start : Date , time_end : Date , idUnLess : number[]){
+    const arrayIdTeacherUnLess = []
+    const data : any = await this.itemRoomExamAndTeacherRepository.createQueryBuilder('item-room-exam-and-teacher')
+    .select([
+      'item-room-exam-and-teacher.id',
+      'teacher-track.id_teacher_track_query',
+    ])
+    .where('item-room-exam-and-teacher.time_start BETWEEN :startDate AND :endDate')
+    .orWhere('item-room-exam-and-teacher.time_end BETWEEN :startDate AND :endDate')
+    .innerJoin('item-room-exam-and-teacher.id_teacherTrack', 'teacher-track')
+    .setParameters({
+      startDate: new Date(time_start),
+      endDate: new Date(time_end),
+    })
+    .getMany();
+    for(let i = 0 ; i < data.length ; i ++){
+      for(let j = 0 ; j < data[i]?.id_teacherTrack.length ; j ++){
+      arrayIdTeacherUnLess.push(Number(data[i].id_teacherTrack[j].id_teacher_track_query));
+      }
+    }
+    const dataUnLess =arrayIdTeacherUnLess.concat(idUnLess);
+    const listTeachers = await this.teacherS.findTeacherExam(dataUnLess)
+    return listTeachers;
+
+  }
+
+
+  async findListRooms(time_start : Date , time_end : Date , idUnLess : number[]){
+    const arrayIdTeacherUnLess = []
+    const data : any = await this.itemRoomExamAndTeacherRepository.createQueryBuilder('item-room-exam-and-teacher')
+    .select([
+      'item-room-exam-and-teacher.id',
+      'item-room-exam-and-teacher.id_class_query',
+    ])
+    .where('item-room-exam-and-teacher.time_start BETWEEN :startDate AND :endDate')
+    .orWhere('item-room-exam-and-teacher.time_end BETWEEN :startDate AND :endDate')
+    .setParameters({
+      startDate: new Date(time_start),
+      endDate: new Date(time_end),
+    })
+    .getMany();
+   
+    for(let i = 0 ; i < data.length ; i ++){
+      arrayIdTeacherUnLess.push(Number(data[i].id_class_query));
+    }
+    console.log(new Date(time_start))
+    const dataUnLess =arrayIdTeacherUnLess.concat(idUnLess);
+    const rooms = await this.rooms.findRoomExam(dataUnLess)
+    return rooms;
+
   }
 }

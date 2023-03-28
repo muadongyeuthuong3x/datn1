@@ -18,6 +18,7 @@ export class TeacherMarkExamRoomService {
         const createData = new TeacherMarkExamRoom();
         createData.id_item_room_exam =createTeacherMarkExamRoomDto.idDataCreate;
         createData.id_teacher_mark_score =createTeacherMarkExamRoomDto.teacher;   
+        createData.id_teacher_mark_query = createTeacherMarkExamRoomDto.teacher as any;
         return  await this.teacherMarkExamRoomRepository.save(createData); 
       // }
     } catch (error) {

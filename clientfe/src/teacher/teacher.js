@@ -145,7 +145,6 @@ const TeacherComponent = () => {
         if (data.length > 0) {
             let dataList = [];
             data.forEach((item, i) => {
-                console.log(data)
                 dataList.push({
                     key: i,
                     index: i,
@@ -239,7 +238,6 @@ const TeacherComponent = () => {
 
 
     const showModalEdit = (data) => {
-         console.log(data)
         setIsModalOpenEdit(true);
         const { name, id, id_teacher, avatar, phone_number ,id_teacher_department_query  } = data
         setFormDataEdit({

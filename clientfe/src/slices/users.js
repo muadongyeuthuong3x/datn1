@@ -58,7 +58,6 @@ export function apiGetListUsers(alert) {
         dispatch(loadding())
         try {
             const response = await instance.get('/users');
-            console.log(response)
             dispatch(getListUserSuccess(response.data))
           
         } catch (error) {

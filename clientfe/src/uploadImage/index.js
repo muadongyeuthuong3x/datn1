@@ -1,7 +1,6 @@
 import axios from 'axios'
 export const UploadFileCloudinary = async (data) => {
     const formDataFile = new FormData();
-    console.log(data)
     formDataFile.append('file', data);
     formDataFile.append('upload_preset', `atx6ldkq`);
     const res = await axios.post(`https://api.cloudinary.com/v1_1/oke-nhe/image/upload`, formDataFile)

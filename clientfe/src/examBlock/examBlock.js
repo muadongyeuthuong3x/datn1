@@ -103,7 +103,6 @@ const ExamBlockComponent = () => {
     const getArrayIdBigClass = (data) => {
         const array = [];
         data.map(e => {
-            console.log(e)
             return array.push(e.id_big_class_exam.id);
         })
         return array;
@@ -505,9 +504,6 @@ const ExamBlockComponent = () => {
                     label="Môn học"
                     name="id_exam"
                 >
-                    {
-                        console.log(formEdit.id_big_class_exam)
-                    }
                     <Select
                         showSearch
                         style={{ width: '100%' }}

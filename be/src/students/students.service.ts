@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, MoreThan, MoreThanOrEqual, Not, Repository } from 'typeorm';
+import { DataSource, In, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { Student } from './entities/student.entity';
 import { ClassService } from 'src/class/class.service';
 import { TableExamBigBlockClass } from 'src/table_exam_big_block_class/entities/table_exam_big_block_class.entity';
@@ -547,14 +547,14 @@ export class StudentsService {
       if (!dataQuery) {
         return res.status(200).json({
           status: 'success',
-          message:0,
+          message: 0,
         });
       }
       const countFind = await this.studentRepository.count({
         where: {
           id_exam_query: dataQuery.id,
-          point_beetween : MoreThanOrEqual(4),
-          point_diligence : MoreThanOrEqual(4),
+          point_beetween: MoreThanOrEqual(4),
+          point_diligence: MoreThanOrEqual(4),
         } as any
       })
       return res.status(200).json({
@@ -580,13 +580,13 @@ export class StudentsService {
       if (!dataQuery) {
         return res.status(200).json({
           status: 'success',
-          message:0,
+          message: 0,
         });
       }
       const countFind = await this.studentRepository.count({
         where: {
           id_exam_query: dataQuery.id,
-          point_end : MoreThanOrEqual(4),
+          point_end: MoreThanOrEqual(4),
         }
       })
       return res.status(200).json({
@@ -602,11 +602,13 @@ export class StudentsService {
     }
   }
 
-  async findIdGetExamBigClass(idExamBigClass : any){
-     const data =  await this.studentRepository.find({ where: { id_exam_query: idExamBigClass }, select: ["id"] ,order: {
-      'id': 'ASC',
-    } });
-     return data;
+  async findIdGetExamBigClass(idExamBigClass: any) {
+    const data = await this.studentRepository.find({
+      where: { id_exam_query: idExamBigClass }, select: ["id"], order: {
+        'id': 'ASC',
+      }
+    });
+    return data;
   }
 
   async updateIdRoomTest(arrayId: number[], id_room: any) {
@@ -615,4 +617,15 @@ export class StudentsService {
       .where({ id: In(arrayId) })
       .execute();
   }
+
+  async findStudent(id: number) {
+    const data =  await this.studentRepository.find({
+      where: {
+        id_room_test: id
+      }
+    });
+    return data;
+  }
+
+  
 }

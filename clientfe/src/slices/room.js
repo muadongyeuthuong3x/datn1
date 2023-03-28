@@ -60,7 +60,6 @@ export function apiGetListRoom(alert) {
         dispatch(loadding())
         try {
             const response = await instance.get('/room');
-            console.log(response)
             dispatch(getListRoomSuccess(response.data))
           
         } catch (error) {
