@@ -60,7 +60,6 @@ const ScheduleSComponent = () => {
     const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
     // hình thức thi + môn thi + time => array name  timeExamAndFormExam
     const [onFormCreate, setOnchangeFormCreate] = useState({
-        roomExam: [],
         timeYearExamStart: "",
         timeYearExamEnd: "",
         form_exam: "",
@@ -161,7 +160,6 @@ const ScheduleSComponent = () => {
     const onChangeSearchYear = (e) => {
         const [time_start, time_end] = e.split('-');
         let dataOld = {
-            roomExam: [],
             timeYearExamStart: "",
             timeYearExamEnd: "",
             form_exam: "",
@@ -191,7 +189,6 @@ const ScheduleSComponent = () => {
 
         if (dataOld.id_exam) {
             dataOld = {
-                roomExam: [],
                 timeYearExamStart: "",
                 timeYearExamEnd: "",
                 form_exam: "",
@@ -232,7 +229,6 @@ const ScheduleSComponent = () => {
 
     const handleChangeMode = (e) => {
         let dataOld = {
-            roomExam: [],
             timeYearExamStart: "",
             timeYearExamEnd: "",
             form_exam: "",
@@ -327,25 +323,31 @@ const ScheduleSComponent = () => {
 
     const onSelectItemRoom = (id, i) => {
         const dataOld = { ...onFormCreate };
-        const itemRoomsSelectOld = rooms.find(e => e.id == id )
+      
         const dataTeacher = dataOld.roomExamAndTeacher;
         const time_start = dataOld.roomExamAndTeacher[i].time_start_exam;
         const time_end = dataOld.roomExamAndTeacher[i].time_end_exam;
+        let  idRoomsSelectOld = dataOld.roomExamAndTeacher[i].room_exam
+        const itemRoomsSelectOld = rooms.find(e => e.id == idRoomsSelectOld )
+        console.log(8888888888 ,itemRoomsSelectOld)
         if (dataTeacher.length > 1) {
             for (let index = 0; index < dataTeacher.length; index++) {
                 if (index === i) {
-                    continue;
+                   continue;
                 } else {
                     const { time_end_exam, time_start_exam } = dataTeacher[index]
                     if ((Date.parse(time_start) >= Date.parse(time_start_exam) && Date.parse(time_start) <= Date.parse(time_end_exam)) || (Date.parse(time_end) >= Date.parse(time_start_exam) && Date.parse(time_end) <= Date.parse(time_end_exam))) {
                         let dataRoomOld = dataOld.roomExamAndTeacher[index].rooms;
                         dataRoomOld.push(itemRoomsSelectOld);
+                        console.log(dataRoomOld)
                         let dataRoomsNew = dataRoomOld.filter(e=>e.id !== id);
                         dataOld.roomExamAndTeacher[index].rooms = dataRoomsNew;
                     }
                 }
             }
         }
+
+        console.log(6666666666666666, id)
         setOnchangeFormCreate(dataOld);
     }
         
@@ -353,16 +355,15 @@ const ScheduleSComponent = () => {
 // hander room exam 
 const changeMaxPeople = (e) => {
     const valueGet = e.target.value;
+    console.log(valueGet);
     if (valueGet < 1) {
-        toast.error(` Số lượng sinh viên một lớp phải lớn hơn 0 `);
+      return   toast.error(` Số lượng sinh viên một lớp phải lớn hơn 0 `);
     }
     const dataOld = { ...onFormCreate };
     if (dataOld.roomExamAndTeacher) {
         delete dataOld.roomExamAndTeacher;
-        dataOld.roomExam = [];
     }
     const dataArray = [];
-    const dataArrayRoom = [];
     const numberCell = Math.ceil((countStudnetExam) / (valueGet));
     for (let index = 0; index < numberCell; index++) {
         const formObject = {
@@ -374,12 +375,10 @@ const changeMaxPeople = (e) => {
             teachers: [],
             rooms : []
         }
-        dataArrayRoom.push('')
-        dataArray.push(formObject);
+        dataArray.push(formObject); 
     }
     dataOld.roomPeopleMax = valueGet;
     dataOld.roomExamAndTeacher = dataArray;
-    dataOld.roomExam = dataArrayRoom;
     setOnchangeFormCreate(dataOld);
 }
 
@@ -446,15 +445,8 @@ const changeTeacherRoomsScoreStudent = (e, index) => {
 
 const changeRoomExam = (e, index) => {
     const dataOld = { ...onFormCreate }
-    const rooms = dataOld.roomExam;
-    rooms[index] = e
     dataOld.roomExamAndTeacher[index].room_exam = e;
-    setOnchangeFormCreate(prev => {
-        return {
-            ...prev,
-            roomExam: rooms
-        }
-    })
+    setOnchangeFormCreate(dataOld)
 }
 
 useEffect(() => {
@@ -636,10 +628,6 @@ return (
                     {
                         name: ["year"],
                         value: onFormCreate.timeYearExamStart + "-" + onFormCreate.timeYearExamEnd,
-                    },
-                    {
-                        name: ["roomExam"],
-                        value: onFormCreate.roomExam,
                     },
                     {
                         name: ["form_exam"],
