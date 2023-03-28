@@ -380,6 +380,10 @@ const changeFormGradingExam = (e) => {
 
 
 const onConfirm = async (e, index) => {
+
+    if(Date.parse(new Date()) > Date.parse(e) ) {
+        return toast.error("Thời gian bạn chọn phải lớn hơn thời gian hiện tại");
+    }
     const dataOld = { ...onFormCreate };
     const timeExam = dataOld.time_exam;
     dataOld.roomExamAndTeacher[index].time_start_exam = dayjs(e).format('YYYY-MM-DD HH:mm');
