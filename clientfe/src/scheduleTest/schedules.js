@@ -321,36 +321,6 @@ const ScheduleSComponent = () => {
         setOnchangeFormCreate(dataOld);
     }
 
-    const onSelectItemRoom = (id, i) => {
-        const dataOld = { ...onFormCreate };
-      
-        const dataTeacher = dataOld.roomExamAndTeacher;
-        const time_start = dataOld.roomExamAndTeacher[i].time_start_exam;
-        const time_end = dataOld.roomExamAndTeacher[i].time_end_exam;
-        let  idRoomsSelectOld = dataOld.roomExamAndTeacher[i].room_exam
-        const itemRoomsSelectOld = rooms.find(e => e.id == idRoomsSelectOld )
-        console.log(8888888888 ,itemRoomsSelectOld)
-        if (dataTeacher.length > 1) {
-            for (let index = 0; index < dataTeacher.length; index++) {
-                if (index === i) {
-                   continue;
-                } else {
-                    const { time_end_exam, time_start_exam } = dataTeacher[index]
-                    if ((Date.parse(time_start) >= Date.parse(time_start_exam) && Date.parse(time_start) <= Date.parse(time_end_exam)) || (Date.parse(time_end) >= Date.parse(time_start_exam) && Date.parse(time_end) <= Date.parse(time_end_exam))) {
-                        let dataRoomOld = dataOld.roomExamAndTeacher[index].rooms;
-                        dataRoomOld.push(itemRoomsSelectOld);
-                        console.log(dataRoomOld)
-                        let dataRoomsNew = dataRoomOld.filter(e=>e.id !== id);
-                        dataOld.roomExamAndTeacher[index].rooms = dataRoomsNew;
-                    }
-                }
-            }
-        }
-
-        console.log(6666666666666666, id)
-        setOnchangeFormCreate(dataOld);
-    }
-        
    
 // hander room exam 
 const changeMaxPeople = (e) => {
@@ -441,11 +411,64 @@ const changeTeacherRoomsScoreStudent = (e, index) => {
 }
 
 
+const onSelectItemRooms = (idd , i) =>{
+    // const dataOld = { ...onFormCreate }
+    // const dataTeacher = dataOld.roomExamAndTeacher;
+    // const time_start = dataOld.roomExamAndTeacher[i].time_start_exam;
+    // const time_end = dataOld.roomExamAndTeacher[i].time_end_exam;
+    // const  idRoomsSelectOld = dataOld.roomExamAndTeacher[i].room_exam;
+    // const itemRoomsSelectOld = rooms.find(e => e.id == idRoomsSelectOld );
+    // dataOld.roomExamAndTeacher[i].room_exam = idd; 
+    // if (dataTeacher.length > 1) {
+    //     for (let index = 0; index < dataTeacher.length; index++) {
+    //         if (index === i) {
+    //            continue;
+    //         } else {
+    //             const { time_end_exam, time_start_exam } = dataTeacher[index]
+    //             if ((Date.parse(time_start) >= Date.parse(time_start_exam) && Date.parse(time_start) <= Date.parse(time_end_exam)) || (Date.parse(time_end) >= Date.parse(time_start_exam) && Date.parse(time_end) <= Date.parse(time_end_exam))) {
+    //                 const dataRoomOld = dataOld.roomExamAndTeacher[i].rooms;
+    //                 const dataNew =   dataRoomOld.filter(e=>e.id != idd);
+    //                 let dataNew1 = dataNew;
+    //                 if(itemRoomsSelectOld ){
+    //                     dataNew1 = dataNew.concat(itemRoomsSelectOld);
+    //                 }
+    //                 dataOld.roomExamAndTeacher[index].rooms = dataNew1;
+    //             }
+    //         }
+    //     }
+    // }
+}
 
 
-const changeRoomExam = (e, index) => {
+
+const changeRoomExam = (idd, i) => {
     const dataOld = { ...onFormCreate }
-    dataOld.roomExamAndTeacher[index].room_exam = e;
+    const dataTeacher = dataOld.roomExamAndTeacher;
+    const time_start = dataOld.roomExamAndTeacher[i].time_start_exam;
+    const time_end = dataOld.roomExamAndTeacher[i].time_end_exam;
+    const  idRoomsSelectOld = dataOld.roomExamAndTeacher[i].room_exam;
+    let  itemRoomsSelectOld = "";
+    if(dataTeacher.length > 1) { 
+     itemRoomsSelectOld = rooms.find(e => e.id == idRoomsSelectOld ); }
+    dataOld.roomExamAndTeacher[i].room_exam = idd; 
+    if (dataTeacher.length > 1) {
+        for (let index = 0; index < dataTeacher.length; index++) {
+            if (index === i) {
+               continue;
+            } else {
+                const { time_end_exam, time_start_exam } = dataTeacher[index]
+                if ((Date.parse(time_start) >= Date.parse(time_start_exam) && Date.parse(time_start) <= Date.parse(time_end_exam)) || (Date.parse(time_end) >= Date.parse(time_start_exam) && Date.parse(time_end) <= Date.parse(time_end_exam))) {
+                    const dataRoomOld = dataOld.roomExamAndTeacher[index].rooms;
+                    const dataNew =   dataRoomOld.filter(e=>e.id != idd);
+                    let dataNew1 = dataNew;
+                    if(itemRoomsSelectOld ){
+                        dataNew1 = dataNew.concat(itemRoomsSelectOld);
+                    }
+                    dataOld.roomExamAndTeacher[index].rooms = dataNew1;
+                }
+            }
+        }
+    }
     setOnchangeFormCreate(dataOld)
 }
 
@@ -807,12 +830,12 @@ return (
 
                         {
                             (onFormCreate.time_exam) > 0 && <Form.Item
-                                label="Hình thức chấm thi"
+                                label="Hình thức chấm thi : "
                                 name="grading_exam"
                             >
                                 <Radio.Group onChange={changeFormGradingExam} value={onFormCreate.grading_exam}>
                                     {
-                                        options_score_student.map(e => <Radio value={e.value}> {e.label}</Radio>)
+                                        options_score_student.map(e => <Radio value={e.value} key={e.value}> {e.label}</Radio>)
                                     }
                                 </Radio.Group>
                             </Form.Item>
@@ -903,7 +926,7 @@ return (
                                                             }
                                                             value={onFormCreate.roomExamAndTeacher[index].room_exam}
                                                             onChange={(e) => changeRoomExam(e, index)}
-                                                            onSelect={(e) => onSelectItemRoom(e, index)}
+                                                            onSelect={(e) => onSelectItemRooms(e, index)}
                                                         >
                                                             {
                                                                 onFormCreate?.roomExamAndTeacher[index]?.rooms.map((e, index) => {
