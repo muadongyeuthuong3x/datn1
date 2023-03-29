@@ -55,7 +55,7 @@ const columns = [
 const ScheduleSComponent = () => {
     const dispatch = useDispatch();
     const { data: listDepartment } = useSelector(state => state.listDepartment)
-    const { rooms, examForms, teachers, countStudnetExam, teacher_department, listDataTestSchedule, teachersFind } = useSelector(state => state.listSchedule);
+    const { rooms, examForms, teachers, countStudnetExam, teacher_department, teachersFind } = useSelector(state => state.listSchedule);
     const { dataOldSearchView, getYear } = useSelector(state => state.listExamBlock);
     const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
     // hình thức thi + môn thi + time => array name  timeExamAndFormExam
@@ -73,6 +73,8 @@ const ScheduleSComponent = () => {
         button_submit: true,
         grading_exam: ''
     });
+
+    const [listDataTestSchedule ,setlistDataTestSchedule] = useState([])
 
     const [callApiReset, setCallApiReset] = useState(false);
     const [isModalOpenPDF, setIsModalOpenPDF] = useState(false);
@@ -130,6 +132,21 @@ const ScheduleSComponent = () => {
         return data;
     }, [getYear, onFormCreate.id_exam, onFormCreate.mode])
 
+    useEffect( () => {
+        async function getData(){
+            try {
+                const dataRes = await instance.get(`/test-schedule-student`);
+                // dispatch(setGetAllTestStudent(dataRes.data.message))
+                setlistDataTestSchedule(dataRes.data.message)
+            } catch (error) {
+     
+                toast.error(error.response.data.message)
+         }
+          
+        }
+        getData();
+    }, [dispatch, callApiReset])
+
     useEffect(() => {
         dispatch(apiGetListExamBlock());
         dispatch(apiGetListDataApi());
@@ -146,10 +163,21 @@ const ScheduleSComponent = () => {
         setIsModalOpenCreate(true);
     };
 
-    const handleOkCreate = () => {
-        dispatch(createDataTestScheduleStudent(onFormCreate))
-        setIsModalOpenCreate(false);
-        setCallApiReset(!callApiReset)
+    const handleOkCreate = async() => {
+     //   dispatch(createDataTestScheduleStudent(onFormCreate))
+     try {
+        const dataRes = await instance.post(`/test-schedule-student`, onFormCreate);
+        if(dataRes){
+         toast.success("Tạo dữ liệu thành công");
+         setIsModalOpenCreate(false);
+         setCallApiReset(!callApiReset)
+        }
+     } catch (error) {
+     
+            toast.error(error.response.data.message)
+     }
+   
+      
         // check room submit 
     };
 
@@ -489,9 +517,7 @@ const onChangeCallDepartment = (e) => {
     }
     setidDepartment(e)
 }
-useEffect(() => {
-    dispatch(getAllTestScheduleStudent())
-}, [dispatch, callApiReset])
+
 
 
 const [listScheduleExamStudent, setlistScheduleExamStudent] = useState([]);
@@ -509,10 +535,20 @@ const showModalDelete = (id) => {
     setidDeleteScheduleExam(id)
 }
 
-const handleOkDelete = () => {
-    dispatch(deleteItemTestScheduleStudent(idDeleteScheduleExam))
-    setisOpenDeleteModal(false)
-    setCallApiReset(!callApiReset)
+const handleOkDelete = async() => {
+    try {
+        const response =await instance.delete(`/test-schedule-student/${idDeleteScheduleExam}`); 
+        if (response) {
+            toast.success("Xóa dữ liệu thành công");
+            setisOpenDeleteModal(false)
+            setCallApiReset(!callApiReset)
+        }
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+   
+    // dispatch(deleteItemTestScheduleStudent(idDeleteScheduleExam))
+
 }
 
 const handleCancelDelete = () => {
@@ -907,6 +943,8 @@ return (
                                                         showTime
                                                         format="YYYY/MM/DD HH:mm"
                                                         className="time_start_begin"
+                                                       // value ={onFormCreate.roomExamAndTeacher[index]?.time_start_exam}
+                                                        value={   onFormCreate.roomExamAndTeacher[index].time_start_exam && dayjs(onFormCreate.roomExamAndTeacher[index].time_start_exam)}
                                                         onOk={(e) => onConfirm(e, index)}
                                                         allowClear={false}
                                                     />

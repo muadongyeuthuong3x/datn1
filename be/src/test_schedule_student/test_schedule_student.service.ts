@@ -50,7 +50,7 @@ export class TestScheduleStudentService {
     }
     await this.itemRoomExamAndTeacherRepository.create(dataItemExam);
     return res.status(200).json({
-      status: "error",
+      status: "success",
       message: "Tạo thành công"
     })
 
@@ -76,17 +76,19 @@ export class TestScheduleStudentService {
     return `This action updates a #${id} testScheduleStudent`;
   }
 
-  async remove(id: number) {
+  async remove(id: number ,res : any) {
     try {
       const dataAll = await this.testScheduleStudentRepository.delete(id);
-      return dataAll;
+      return res.status(200).json({
+        status: "success",
+        message: "Xóa thành công"
+      })
     } catch (error) {
-      console.log(error)
-      throw new BadGatewayException({
-        status: 'error',
-        message: 'Server error ',
-      });
-    }
+      return res.status(200).json({
+        status: "error",
+        message: "Server error"
+      })
+    }  
   }
 
   async exportPDf(dataPdf: { id : number , subject : string , mode : number , blokcclass : string ; form_exam : string  }) {

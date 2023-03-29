@@ -8,7 +8,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import rootReducer from './slices'
 import logger from 'redux-logger'
 const root = ReactDOM.createRoot(document.getElementById('root'));
-const store = configureStore({ reducer: rootReducer, middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger), })
+const store = configureStore({ reducer: rootReducer, middleware: (middleware) => middleware() })
 root.render(
   <Provider store={store}>
     <App />

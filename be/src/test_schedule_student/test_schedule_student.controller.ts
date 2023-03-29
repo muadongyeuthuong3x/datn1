@@ -33,8 +33,8 @@ export class TestScheduleStudentController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return await this.testScheduleStudentService.remove(+id);
+  async remove(@Param('id') id: string ,@Res() res: any) {
+    return await this.testScheduleStudentService.remove(+id ,res );
   }
 
   @Post('/:time_start/:time_end')
@@ -43,7 +43,7 @@ export class TestScheduleStudentController {
   }
 
   @Post('rooms/:time_start/:time_end')
-  async findRoomsByDate(@Param('time_start') time_start: Date , @Param('time_end') time_end: Date  ,  @Body() idUnLess: number[]) {
+  async findRoomsByDate(@Param('time_start') time_start: Date , @Param('time_end') time_end: Date  ,  @Body() idUnLess: number[]) { 
     return await this.testScheduleStudentService.findListRoomsByTime(time_start , time_end, idUnLess); 
   }
 
