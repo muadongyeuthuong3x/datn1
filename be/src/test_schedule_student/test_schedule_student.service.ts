@@ -34,6 +34,27 @@ export class TestScheduleStudentService {
         message: "Môn thi này đã được lên lịch"
       })
     }
+
+    let objectCheck = {
+      name_teacher : '',
+      room_name: ''
+    }
+
+     objectCheck  = await this.itemRoomExamAndTeacherRepository.findListExitRoomOrTeacherByTime(createTestScheduleStudentDto ,res );
+
+    if(objectCheck.name_teacher.length > 0) {
+      return res.status(500).json({
+        status: "error",
+        message: `Giáo viên ${objectCheck.name_teacher} đã có lịch thi trong thời gian thi`
+      })
+    }
+    if(objectCheck.room_name.length > 0) {
+      return res.status(500).json({
+        status: "error",
+        message: `Phòng ${objectCheck.room_name} đã lên lịch  trong thời gian thi`
+      })
+    }
+
     newTestSchedule.id_query_exam_big_class = (data.id).toString();
     newTestSchedule.roomPeopleMax = roomPeopleMax;
     newTestSchedule.time_exam = time_exam;
@@ -139,5 +160,9 @@ export class TestScheduleStudentService {
 
   async findListRoomsByTime ( time_start : Date , time_end : Date ,idUnLess : number []){
     return  await this.itemRoomExamAndTeacherRepository.findListRooms(time_start , time_end ,idUnLess);
+    }
+
+    async dowloadPDFSchedule (id : number){
+
     }
 }

@@ -24,7 +24,7 @@ export class ItemRoomExamAndTeacherService {
     private readonly teacherMarkExamRoomRepository: TeacherMarkExamRoomService,
     private readonly studentRepository: StudentsService,
     private readonly teacherS : TeacherService,
-    private readonly rooms : RoomService
+    private readonly rooms : RoomService,
   ) { }
 
   async create(createItemRoomExamAndTeacherDto: CreateItemRoomExamAndTeacherDto) {
@@ -124,10 +124,55 @@ export class ItemRoomExamAndTeacherService {
     for(let i = 0 ; i < data.length ; i ++){
       arrayIdTeacherUnLess.push(Number(data[i].id_class_query));
     }
-    console.log(new Date(time_start))
     const dataUnLess =arrayIdTeacherUnLess.concat(idUnLess);
     const rooms = await this.rooms.findRoomExam(dataUnLess)
     return rooms;
 
+  }
+  
+  async findListExitRoomOrTeacherByTime(dataProps: any, res: any) {
+    const { time_start_exam,
+      time_end_exam,
+      room_exam,
+      teacher_exam } = dataProps;
+
+    const data: any = await this.itemRoomExamAndTeacherRepository.createQueryBuilder('item-room-exam-and-teacher')
+      .select([
+        'item-room-exam-and-teacher.id',
+        'item-room-exam-and-teacher.id_class_query',
+        'teacher-track',
+        'teacher.name',
+      ])
+      .where('item-room-exam-and-teacher.time_start BETWEEN :startDate AND :endDate')
+      .orWhere('item-room-exam-and-teacher.time_end BETWEEN :startDate AND :endDate')
+      .innerJoin('item-room-exam-and-teacher.id_teacherTrack', 'teacher-track')
+      .innerJoin('teacher-track.id_Teacher', 'teacher')
+      .setParameters({
+        startDate: new Date(time_start_exam),
+        endDate: new Date(time_end_exam),
+      })
+      .getMany();
+
+      const objectCheck = {
+        name_teacher : '',
+        room_name: ''
+      }
+
+    for (let i = 0; i < data.length; i++) {
+      for (let j = 0; j < data[i]?.id_teacherTrack.length; j++) {
+        if (teacher_exam.includes(Number(data[i].id_teacherTrack[j].id_teacher_track_query))) {
+          objectCheck.name_teacher = data[i].id_teacherTrack[j].id_Teacher.name;
+        }
+      }
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      //room_exam
+      if(data[i].id_class_query == room_exam){
+       const data : any =  await this.rooms.findOne(room_exam);
+       objectCheck.room_name = data.name;
+      }
+    }
+     return objectCheck;
   }
 }

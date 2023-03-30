@@ -2,7 +2,7 @@ import { Button, Table, Modal, Input, Form, DatePicker, Space, Select, Image, Ra
 import { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import instance from '../configApi/axiosConfig'
-import { apiGetListDataApi, setCountExamApiTl, callApiGetTeacherDepartment, createDataTestScheduleStudent, getAllTestScheduleStudent, deleteItemTestScheduleStudent, exportDataPDf } from '../slices/scheduleTest';
+import { apiGetListDataApi, setCountExamApiTl, callApiGetTeacherDepartment, createDataTestScheduleStudent, getAllTestScheduleStudent, deleteItemTestScheduleStudent } from '../slices/scheduleTest';
 import { apiGetListExamBlock, callDataGetYear } from "../slices/examBlock";
 import { apiGetListDepartment } from '../slices/department'
 import { setCountExamApi } from "../slices/scheduleTest";
@@ -577,9 +577,9 @@ const resultFormExam = (mode) => {
 
 
 const [idPDF, setidPDF] = useState();
-const handleOkPDF = () => {
-    setIsModalOpenPDF(true)
-    dispatch(exportDataPDf(idPDF))
+const handleOkPDF = async() => {
+    setIsModalOpenPDF(false)
+    const response = await instance.get(`/test-schedule-student/schedule_pdf/${idPDF}`);
 }
 
 const handleCancelPDF = () => {
@@ -607,7 +607,8 @@ useEffect(() => {
             time_exam: item?.id_testScheduleStudent[0].time_exam,
             edit: <Button type='primary' onClick={() => showModalEdit(item)}>Edit</Button>,
             delete: <Button type='primary' danger onClick={() => showModalDelete(item?.id_testScheduleStudent[0].id)}>Delete</Button>,
-            export: <Button type='primary' onClick={() => showModalPDF({ id: item?.id_testScheduleStudent[0].id, subject: item?.id_exam?.name, mode: resultMode(item?.id_testScheduleStudent[0].mode), form_exam: resultFormExam(item?.form_exam), blokcclass: getClassBigExam(item?.id_big_class_exam) })}>Lấy danh sách thi</Button>
+            // export: <Button type='primary' onClick={() => showModalPDF({ id: item?.id_testScheduleStudent[0].id, subject: item?.id_exam?.name, mode: resultMode(item?.id_testScheduleStudent[0].mode), form_exam: resultFormExam(item?.form_exam), blokcclass: getClassBigExam(item?.id_big_class_exam) })}>Lấy danh sách thi</Button>
+          export: <Button type='primary' onClick={() => showModalPDF(item?.id_testScheduleStudent[0].id, )}>Lấy danh sách thi</Button>
         });
     })
     setlistScheduleExamStudent(dataList)

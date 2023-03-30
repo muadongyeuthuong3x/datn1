@@ -1,0 +1,111 @@
+body{
+    width: 1000px;
+}
+header{
+    display: flex;
+    justify-content: space-around;
+}
+.left , .right , .left_p , .right_p {
+    color: black;
+    font-size: 35;
+    font-weight: bold;
+}
+.left_p {
+ margin-left: 37px;
+ border-bottom: 2px solid black;
+ width: 168px;
+}
+.right_p{
+    margin-left: 70px;
+    border-bottom: 2px solid black;
+    width: 200px;
+}
+.titile{
+    justify-content: center;
+    display: flex;
+    color: black;
+    font-size: 35;
+    font-weight: bold;
+    padding-right: 80px !important;
+}
+
+.exam{
+    display: flex;
+    margin-top: 20px;
+    justify-content: space-between;
+}
+
+.exam1{
+    color: black;
+    font-size: 35;
+    font-weight: bold;
+}
+
+.date_exam{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.room_exam{
+    color: black;
+    font-size: 35;
+    font-weight: bold;
+}
+
+.total_exam{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+
+table{
+    margin-top: 10px;
+}
+
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    text-align: center;
+  }
+  
+  .stt{
+    width: 25px;
+  }
+  .sbd{
+    width: 25px;
+  }
+  .msv{
+    width: 90px;
+  }
+  .hd{
+    width: 230px;
+  }
+  .name{
+    width: 90px;
+  }
+  .ds{
+    width: 50px;
+  }
+  .kn{
+    width: 70px;
+  }
+  .gc{
+    width: 80px;
+  }
+
+  .hndate{
+    margin: 10px 0px;
+    justify-content: end;
+    display: flex;
+    margin-right: 50px;
+  }
+  .footer{
+    display: flex;
+    justify-content: space-around;
+    color: black;
+    font-size: 30;
+    font-weight: bold;
+  }

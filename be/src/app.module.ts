@@ -28,6 +28,8 @@ import { TableExamBigBlockClassModule } from './table_exam_big_block_class/table
 import { TableBigClassExamModule } from './table-big-class-exam/table-big-class-exam.module';
 import { DepartmentModule } from './department/department.module';
 import { TestScheduleStudentModule } from './test_schedule_student/test_schedule_student.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 @Module({
   imports: [
     JwtModule.register({
@@ -35,6 +37,10 @@ import { TestScheduleStudentModule } from './test_schedule_student/test_schedule
       signOptions: {
         expiresIn: '1 hour',
       },
+    }),
+
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),   // <-- path to the static files
     }),
 
     DatabaseModule,

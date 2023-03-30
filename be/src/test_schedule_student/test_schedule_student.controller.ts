@@ -47,4 +47,9 @@ export class TestScheduleStudentController {
     return await this.testScheduleStudentService.findListRoomsByTime(time_start , time_end, idUnLess); 
   }
 
+  @Get('/schedule_pdf/:id')
+  async dowloadPDF(@Param('id') id: number) { 
+    return await this.testScheduleStudentService.dowloadPDFSchedule(id); 
+  }
+
 }

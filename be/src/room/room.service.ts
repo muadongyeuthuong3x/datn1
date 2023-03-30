@@ -41,8 +41,8 @@ export class RoomService {
     return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} room`;
+  findOne(id_room: number) {
+    return this.roomRepository.findOneBy({id : id_room});
   }
 
   async update(id: number, updateRoomDto: UpdateRoomDto) {

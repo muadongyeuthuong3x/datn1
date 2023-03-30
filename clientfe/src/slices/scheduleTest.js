@@ -295,20 +295,6 @@ export function deleteItemTestScheduleStudent(id){
 }
 
 
-export function exportDataPDf(data){
-    return async dispatch => {
-        dispatch(loadding())
-        try {
-            const dataRes = await instance.post(`/test-schedule-student/pdf`, data);
-            if(dataRes){
-                toast.success("Lấy dữ liệu sinh viên thi thành công")
-            }
-        } catch (error) {
-            toast.error(error.response.data.message)
-            dispatch(loaddingFailes())
-        }
-    }
-}
 
 
 
