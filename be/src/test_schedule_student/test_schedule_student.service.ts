@@ -28,55 +28,60 @@ export class TestScheduleStudentService {
   async create(createTestScheduleStudentDto: CreateTestScheduleStudentDto, res: any) {
     const { roomPeopleMax, mode, timeYearExamStart, id_exam, form_exam, time_exam, roomExamAndTeacher } = createTestScheduleStudentDto;
     const newTestSchedule = new TestScheduleStudent();
-    const data = await this.tableExamBigBlockClassServiceRepository.findOneData({ id_exam_where: id_exam, time_year_start: timeYearExamStart });
-    const dataCheck = await this.checkFindExitsExam((data.id).toString())
-    if (dataCheck != null && mode == dataCheck?.mode) {
-      return res.status(500).json({
-        status: "error",
-        message: "Môn thi này đã được lên lịch"
+    try {
+      const data = await this.tableExamBigBlockClassServiceRepository.findOneData({ id_exam_where: id_exam, time_year_start: timeYearExamStart });
+      const dataCheck = await this.checkFindExitsExam((data.id).toString())
+      if (dataCheck != null && mode == dataCheck?.mode) {
+        return res.status(500).json({
+          status: "error",
+          message: "Môn thi này đã được lên lịch"
+        })
+      }
+  
+      // let objectCheck = {
+      //   name_teacher : '',
+      //   room_name: ''
+      // }
+  
+      //  objectCheck  = await this.itemRoomExamAndTeacherRepository.findListExitRoomOrTeacherByTime(createTestScheduleStudentDto ,res );
+  
+      // if(objectCheck.name_teacher.length > 0) {
+      //   return res.status(500).json({
+      //     status: "error",
+      //     message: `Giáo viên ${objectCheck.name_teacher} đã có lịch thi trong thời gian thi`
+      //   })
+      // }
+      // if(objectCheck.room_name.length > 0) {
+      //   return res.status(500).json({
+      //     status: "error",
+      //     message: `Phòng ${objectCheck.room_name} đã lên lịch  trong thời gian thi`
+      //   })
+      // }
+  
+      newTestSchedule.id_query_exam_big_class = (data.id).toString();
+      newTestSchedule.roomPeopleMax = roomPeopleMax;
+      newTestSchedule.time_exam = time_exam;
+      newTestSchedule.mode = mode;
+      newTestSchedule.form_exam = form_exam;
+      newTestSchedule.id_tableExamBigBlockClass = data;
+      const dataCrete = await this.testScheduleStudentRepository.save(newTestSchedule);
+      const dataItemExam = {
+        id_query_test_schedule_student: dataCrete,
+        roomExamAndTeacher,
+        mode,
+        id_exam_big_class: data.id,
+        roomPeopleMax: Number(roomPeopleMax)
+      }
+      await this.itemRoomExamAndTeacherRepository.create(dataItemExam);
+      return res.status(200).json({
+        status: "success",
+        message: "Tạo thành công"
       })
+  
+    } catch (error) {
+      console.log(error)
     }
-
-    let objectCheck = {
-      name_teacher : '',
-      room_name: ''
-    }
-
-     objectCheck  = await this.itemRoomExamAndTeacherRepository.findListExitRoomOrTeacherByTime(createTestScheduleStudentDto ,res );
-
-    if(objectCheck.name_teacher.length > 0) {
-      return res.status(500).json({
-        status: "error",
-        message: `Giáo viên ${objectCheck.name_teacher} đã có lịch thi trong thời gian thi`
-      })
-    }
-    if(objectCheck.room_name.length > 0) {
-      return res.status(500).json({
-        status: "error",
-        message: `Phòng ${objectCheck.room_name} đã lên lịch  trong thời gian thi`
-      })
-    }
-
-    newTestSchedule.id_query_exam_big_class = (data.id).toString();
-    newTestSchedule.roomPeopleMax = roomPeopleMax;
-    newTestSchedule.time_exam = time_exam;
-    newTestSchedule.mode = mode;
-    newTestSchedule.form_exam = form_exam;
-    newTestSchedule.id_tableExamBigBlockClass = data;
-    const dataCrete = await this.testScheduleStudentRepository.save(newTestSchedule);
-    const dataItemExam = {
-      id_query_test_schedule_student: dataCrete,
-      roomExamAndTeacher,
-      mode,
-      id_exam_big_class: data.id,
-      roomPeopleMax: Number(roomPeopleMax)
-    }
-    await this.itemRoomExamAndTeacherRepository.create(dataItemExam);
-    return res.status(200).json({
-      status: "success",
-      message: "Tạo thành công"
-    })
-
+ 
   }
 
   async checkFindExitsExam(idFind: string) {

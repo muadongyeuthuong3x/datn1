@@ -106,10 +106,10 @@ export class TableExamBigBlockClassService {
           'table-big-class-exam.id',
           'big_block_class.bigBlockClass',
           'big_block_class.id',
-          'item-room-exam-and-teacher.time_start',
-          'item-room-exam-and-teacher.time_end',
+          'item-room-exam-and-teacher',
           'teacher-track.id',
           'teacher-mark-exam-room.id',
+          'room'
         ])
         .innerJoin('table_exam_big_block_class.id_exam', 'exam')
         .innerJoin(
@@ -123,6 +123,7 @@ export class TableExamBigBlockClassService {
         .innerJoinAndSelect('teacher-mark-exam-room.id_teacher_mark_score', 'teacher')
         .innerJoin('item-room-exam-and-teacher.id_teacherTrack', 'teacher-track') 
         .innerJoinAndSelect('teacher-track.id_Teacher', 'teacher AS alias_teacher')
+        .innerJoin('item-room-exam-and-teacher.id_Room', 'room') 
         .getMany();
         return  res.status(200).json({
           status: "success",
