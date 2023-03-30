@@ -3,13 +3,18 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as express from 'express';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule,
   );
+  ServeStaticModule.forRoot({
+    rootPath: join(__dirname, '..', 'public'),
+  }),
   app.useStaticAssets(join(__dirname, '..', 'public')); 
-  app.setViewEngine('html');
+  app.setViewEngine('ejs');
   app.enableCors({
     origin:true,
     methods: ["GET", "POST" , "PUT", "DELETE", "PATCH"],

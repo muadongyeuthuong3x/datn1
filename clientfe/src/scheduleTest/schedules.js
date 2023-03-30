@@ -579,7 +579,20 @@ const resultFormExam = (mode) => {
 const [idPDF, setidPDF] = useState();
 const handleOkPDF = async() => {
     setIsModalOpenPDF(false)
-    const response = await instance.get(`/test-schedule-student/schedule_pdf/${idPDF}`);
+    const response = await instance.get(`/test-schedule-student/schedule_pdf/${idPDF}` , {
+        responseType: 'blob',
+        dataType: "binary",
+    });
+
+    console.log(response);
+
+   const blob =  new Blob(
+        [response.data], 
+        {type: 'application/pdf'});
+        const link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = 'test.pdf'
+        link.click()
 }
 
 const handleCancelPDF = () => {

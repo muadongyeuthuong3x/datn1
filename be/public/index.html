@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=
+    , initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <style>
+        body {
+            width: 1000px;
+        }
+    
+        header {
+            display: flex;
+            justify-content: space-around;
+        }
+    
+        .left,
+        .right,
+        .left_p,
+        .right_p {
+            color: black;
+            font-size: 35;
+            font-weight: bold;
+        }
+    
+        .left_p {
+            margin-left: 37px;
+            border-bottom: 2px solid black;
+            width: 168px;
+        }
+    
+        .right_p {
+            margin-left: 70px;
+            border-bottom: 2px solid black;
+            width: 200px;
+        }
+    
+        .titile {
+            justify-content: center;
+            display: flex;
+            color: black;
+            font-size: 35;
+            font-weight: bold;
+            padding-right: 80px !important;
+        }
+    
+        .exam {
+            display: flex;
+            margin-top: 20px;
+            justify-content: space-between;
+        }
+    
+        .exam1 {
+            color: black;
+            font-size: 35;
+            font-weight: bold;
+        }
+    
+        .date_exam {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+    
+        .room_exam {
+            color: black;
+            font-size: 35;
+            font-weight: bold;
+        }
+    
+        .total_exam {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+    
+    
+        table {
+            margin-top: 10px;
+        }
+    
+    
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+    
+        .stt {
+            width: 25px;
+        }
+    
+        .sbd {
+            width: 25px;
+        }
+    
+        .msv {
+            width: 90px;
+        }
+    
+        .hd {
+            width: 230px;
+        }
+    
+        .name {
+            width: 90px;
+        }
+    
+        .ds {
+            width: 50px;
+        }
+    
+        .kn {
+            width: 70px;
+        }
+    
+        .gc {
+            width: 80px;
+        }
+    
+        .hndate {
+            margin: 10px 0px;
+            justify-content: end;
+            display: flex;
+            margin-right: 50px;
+        }
+    
+        .footer {
+            display: flex;
+            justify-content: space-around;
+            color: black;
+            font-size: 30;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<!-- 
+<body style="width: 1000px;">
+
+    <header style=" display: flex ;justify-content: space-around;">
+        <div class="left" style="color: black;
+        font-size: 35;
+        font-weight: bold;">
+            HỌC VIỆN KỸ THUẬT MẬT MÃ
+            <p class="left_p" style="color: black;
+            font-size: 35;
+            font-weight: bold;  margin-left: 37px;
+ border-bottom: 2px solid black;
+ width: 168px;">PHÒNG KT&ĐBCLĐT</p>
+        </div>
+
+        <div class="right" style="color: black;
+        font-size: 35;
+        font-weight: bold;">
+            CỘNG HÒA XÃ HÔI CHỦ NGHĨA VIỆT NAM
+            <p class="right_p" style="color: black;
+            font-size: 35;
+            font-weight: bold;    margin-left: 70px;
+    border-bottom: 2px solid black;
+    width: 200px;">Độc lập - Tự do - Hạnh phúc</p>
+        </div>
+
+
+    </header>
+
+    <div class="titile" style="  justify-content: center;
+    display: flex;
+    color: black;
+    font-size: 35;
+    font-weight: bold;
+    padding-right: 80px !important;">
+        DANH SÁCH THI LẠI
+    </div>
+    <div class="titile" style="  justify-content: center;
+    display: flex;
+    color: black;
+    font-size: 35;
+    font-weight: bold;
+    padding-right: 80px !important;">
+        Năm học 2022-2023 học kỳ 1 -AT15
+    </div>
+
+    <div class="exam" style="    display: flex;
+    margin-top: 20px;
+    justify-content: space-between;">
+        <div class="">
+            Tên học phần: <span class="exam1" style="  color: black;
+            font-size: 35;
+            font-weight: bold;">Quản trị an toàn hệ thống</span>
+        </div>
+        <div class="">
+            Số TC : 4
+        </div>
+    </div>
+
+    <div class="date_exam" style=" display: flex;
+    justify-content: space-between;
+    margin-top: 5px;">
+        <div class="">
+            Ngày thi : 16-03-2023
+        </div>
+        <div class="">
+            Hình thức : Thực hành
+        </div>
+        <div class="">
+            Ca thi : 8h
+        </div>
+        <div>
+            Thi tại : <span class="room_exam" style="color: black;
+            font-size: 35;
+            font-weight: bold;"> P301-TA3 </span>
+        </div>
+    </div>
+
+
+    <div class="total_exam" style=" display: flex;
+    justify-content: space-between;
+    margin-top: 5px;">
+        <div class="">
+            Tổng số sinh viên: ....
+        </div>
+        <div class="">
+            Số sinh viên dự thi: ....
+        </div>
+        <div class="">
+            Vắng : ..........
+        </div>
+        <div class="">
+            Có lý do : .......
+        </div>
+        <div class="">
+            Không lý do : .......
+        </div>
+    </div>
+
+    <table style="width:100% ; margin-top: 10px;   border: 1px solid black;
+    border-collapse: collapse;
+    text-align: center;">
+        <tr style="    border: 1px solid black;
+        border-collapse: collapse;
+        text-align: center;">
+            <th class="stt" style="    border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;">STT</th>
+            <th class="sbd" sty>SBD</th>
+            <th class="msv">Mã SV</th>
+            <th class="hd">Họ đệm</th>
+            <th class="name">Tên</th>
+            <th class="ds">Đề số </th>
+            <th class="score">Điểm số</th>
+            <th class="score">Điểm chữ</th>
+            <th class="kn">Ký nhận</th>
+            <th class="gc">Ghi chú</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>2</td>
+            <td>CT030209</td>
+            <td>Nguyễn Mạnh </td>
+            <td> Cường </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+        </tr>
+
+    </table>
+
+    <div class="hndate">
+        Hà Nội, ... tháng .... năm
+    </div>
+
+    <div class="footer">
+        <div> CBChT thứ nhất</div>
+        <div> CBChT thứ hai</div>
+        <div> Người nhận bài thi </div>
+    </div>
+
+</body> -->
+
+<body>
+
+    <header>
+        <div class="left">
+            HỌC VIỆN KỸ THUẬT MẬT MÃ
+            <p class="left_p">PHÒNG KT&ĐBCLĐT</p>
+        </div>
+
+        <div class="right">
+            CỘNG HÒA XÃ HÔI CHỦ NGHĨA VIỆT NAM
+            <p class="right_p">Độc lập - Tự do - Hạnh phúc</p>
+        </div>
+
+
+    </header>
+
+    <div class="titile">
+        DANH SÁCH THI LẠI
+    </div>
+    <div class="titile">
+        Năm học 2022-2023 học kỳ 1 -AT15
+    </div>
+
+    <div class="exam">
+        <div class="">
+            Tên học phần: <span class="exam1">Quản trị an toàn hệ thống</span>
+        </div>
+        <div class="">
+            Số TC : 4
+        </div>
+    </div>
+
+    <div class="date_exam">
+        <div class="">
+            Ngày thi : 16-03-2023
+        </div>
+        <div class="">
+            Hình thức : Thực hành
+        </div>
+        <div class="">
+            Ca thi : 8h
+        </div>
+        <div >
+            Thi tại :  <span class="room_exam"> P301-TA3 </span>
+        </div>
+    </div>
+
+
+    <div class="total_exam">
+        <div class="">
+            Tổng số sinh viên: ....
+        </div>
+        <div class="">
+            Số sinh viên dự thi: ....
+        </div>
+        <div class="">
+            Vắng : ..........
+        </div>
+        <div class="">
+            Có lý do : .......
+        </div>
+        <div class="">
+            Không lý do : .......
+        </div>
+    </div>
+
+    <table style="width:100%">
+        <tr>
+          <th class="stt">STT</th>
+          <th class="sbd">SBD</th> 
+          <th class="msv">Mã SV</th>
+          <th class="hd">Họ đệm</th>
+          <th class="name">Tên</th>
+          <th class="ds">Đề số </th>
+          <th class="score">Điểm số</th>
+          <th class="score">Điểm chữ</th>
+          <th class="kn">Ký nhận</th>
+          <th class="gc">Ghi chú</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>2</td>
+          <td>CT030209</td>
+          <td>Nguyễn Mạnh </td>
+          <td> Cường </td>
+          <td> </td>
+          <td> </td>
+          <td> </td>
+          <td> </td>
+        </tr>
+   
+      </table>
+
+      <div class="hndate">
+        Hà Nội, ... tháng .... năm
+      </div>
+
+      <div class="footer">
+        <div> CBChT thứ nhất</div>
+        <div> CBChT thứ hai</div>
+        <div> Người nhận bài thi </div>
+      </div>
+
+</body>
+
+</html>

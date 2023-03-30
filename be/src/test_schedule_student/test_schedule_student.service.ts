@@ -8,6 +8,8 @@ import { Repository } from 'typeorm';
 import { CreateTestScheduleStudentDto } from './dto/create-test_schedule_student.dto';
 import { UpdateTestScheduleStudentDto } from './dto/update-test_schedule_student.dto';
 import { TestScheduleStudent } from './entities/test_schedule_student.entity';
+const fs = require("fs");
+const PDFDocument = require("pdfkit-table"); 
 
 @Injectable()
 export class TestScheduleStudentService {
@@ -162,7 +164,26 @@ export class TestScheduleStudentService {
     return  await this.itemRoomExamAndTeacherRepository.findListRooms(time_start , time_end ,idUnLess);
     }
 
-    async dowloadPDFSchedule (id : number){
+    async dowloadPDFSchedule (id : number) : Promise<Buffer> {
+      
+      const pdfBuffer: Buffer = await new Promise( resolve =>{
+        const doc = new PDFDocument({ margin: 30, size: 'A4' });
 
+        doc.text("PDF GENNER en nues")
+        doc.moveDown();
+        doc.text("PDF GENNER en nues2222222222222222222")
+        const buffer = [];
+        doc.on('data', buffer.push.bind(buffer));
+        doc.on('end' , () => {
+          const data = Buffer.concat(buffer);
+          resolve(data)
+        })
+        doc.end();
+      })
+      
+      return pdfBuffer;
+      // todo
+
+      
     }
 }
