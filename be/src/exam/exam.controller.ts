@@ -54,7 +54,7 @@ export class ExamController {
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateExamDto: UpdateExamDto, @Res() res: any) {
-    const { name } = updateExamDto;
+    const { name,semester,year_learn ,tc_learn } = updateExamDto;
     try {
       const data = await this.examService.findOneExam(name);
       const idEdit: number = data?.id;
@@ -64,7 +64,7 @@ export class ExamController {
           message: "Đã tồn tại trong hệ thống"
         })
       }
-      await this.examService.update(+id, name);
+      await this.examService.update(+id, name ,semester ,year_learn ,tc_learn);
       return res.status(200).json({
         status: "success",
         message: "sửa thành công "

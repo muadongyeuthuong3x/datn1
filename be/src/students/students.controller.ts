@@ -221,4 +221,11 @@ export class StudentsController {
   findAndCountData(@Param('exam') exam: string, @Param('time_start') time_start: string , @Res() res: any) {
     return this.studentsService.countStudent(exam, time_start , res);
   }
+
+  @Post('/schedule_pdf/:id')
+  getPdfRoomExam(@Param('id') id: string, @Body() dataPDF: {mode : number , time_start : Date , big_class : string ; nameRoom  : string , name : string , time_exam : Date , form_exam : string}  , @Res() res: any) {
+    return this.studentsService.Pdf(+id,  dataPDF  , res);
+  }
+
+
 }

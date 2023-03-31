@@ -584,10 +584,14 @@ const handleOkPDF = async() => {
     for(let i = 0  ; i < dataGetPdf.arrayId.length ; i ++){
         const response = await instance.post(`/students/schedule_pdf/${dataGetPdf.arrayId[i].id}` ,
         {
-            big_class : dataGetPdf.big_class,
             mode : dataGetPdf.mode,
+            time_start : dataGetPdf.time_start,
+            big_class : dataGetPdf.big_class,
+            nameRoom:dataGetPdf.arrayId[i].nameRoom,
             name : dataGetPdf.name,
-            time_start : dataGetPdf.time_start
+            time_exam : dataGetPdf.arrayId[i].time_exam,
+            form_exam : dataGetPdf.form_exam,
+            
         },
          {
             responseType: 'blob',
@@ -601,7 +605,7 @@ const handleOkPDF = async() => {
             {type: 'application/pdf'});
             const link = document.createElement('a')
             link.href = window.URL.createObjectURL(blob)
-            link.download = 'test.pdf'
+            link.download = `${dataGetPdf.name}-${dataGetPdf.big_class}.pdf`
             link.click()
     }
 }
@@ -612,17 +616,18 @@ const handleCancelPDF = () => {
 
 const showModalPDF = (data) => {
     setIsModalOpenPDF(true);
-    const {id_room , big_class , mode , name , time_start} = data;
+    const {id_room , big_class , mode , name , time_start , form_exam } = data;
     const arrayId = []
     for(let i = 0 ; i <id_room.length ; i++){
-     arrayId.push( { id  : id_room[i].id , nameRoom : id_room[i].id_Room.name })
+     arrayId.push( { id  : id_room[i].id , nameRoom : id_room[i].id_Room.name , time_exam : id_room[i].time_start})
     }
      setidPDF({
         arrayId,
         big_class,
         mode,
         name,
-        time_start
+        time_start,
+        form_exam
      })
 }
 
@@ -642,7 +647,7 @@ useEffect(() => {
             edit: <Button type='primary' onClick={() => showModalEdit(item)}>Edit</Button>,
             delete: <Button type='primary' danger onClick={() => showModalDelete(item?.id_testScheduleStudent[0].id)}>Delete</Button>,
             // export: <Button type='primary' onClick={() => showModalPDF({ id: item?.id_testScheduleStudent[0].id, subject: item?.id_exam?.name, mode: resultMode(item?.id_testScheduleStudent[0].mode), form_exam: resultFormExam(item?.form_exam), blokcclass: getClassBigExam(item?.id_big_class_exam) })}>Lấy danh sách thi</Button>
-          export: <Button type='primary' onClick={() => showModalPDF({  id_room : item?.id_testScheduleStudent[0].id_itemRoomExamAndTeacher , time_start : item.time_year_start ,big_class: getClassBigExam(item?.id_big_class_exam) , name : item.id_exam.name   , mode :item.id_testScheduleStudent[0].mode , form_exam: resultFormExam(item?.form_exam) })}>Lấy danh sách thi</Button>
+          export: <Button type='primary' onClick={() => showModalPDF({  id_room : item?.id_testScheduleStudent[0].id_itemRoomExamAndTeacher   ,    time_start : item.time_year_start ,big_class: getClassBigExam(item?.id_big_class_exam) , name : item.id_exam.name   , mode :item.id_testScheduleStudent[0].mode , form_exam: item?.id_testScheduleStudent[0].id_ExamForm.name          })}>Lấy danh sách thi</Button>
         });
     })
     setlistScheduleExamStudent(dataList)

@@ -11,6 +11,15 @@ export class Exam {
 
     @Column({ unique: true })
     name: string;
+    
+    @Column()
+    semester: string;
+
+    @Column()
+    year_learn: string;
+
+    @Column()
+    tc_learn: number;
 
     @OneToMany(() => TableExamBigBlockClass, item => item.id_exam, {
         cascade: true,

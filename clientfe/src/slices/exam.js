@@ -45,9 +45,12 @@ const listExam = createSlice({
         editData: (state, { payload }) => {
             state.loading = false
             const dataOld = state.data
-            const { name , id } = payload;
+            const { name , id ,semester  ,year_learn,tc_learn } = payload;
             const indexEdit = dataOld.findIndex(item => item.id === id);
             dataOld[indexEdit].name = name;
+            dataOld[indexEdit].semester = semester;
+            dataOld[indexEdit].year_learn = year_learn;
+            dataOld[indexEdit].tc_learn = tc_learn;
             state.data = dataOld
         },
     },

@@ -11,6 +11,11 @@ import { Student } from './entities/student.entity';
 import { ClassService } from 'src/class/class.service';
 import { TableExamBigBlockClass } from 'src/table_exam_big_block_class/entities/table_exam_big_block_class.entity';
 import { TableExamBigBlockClassService } from 'src/table_exam_big_block_class/table_exam_big_block_class.service';
+import { Response } from 'express';
+var pdf1 = require('html-pdf');
+import moment  from 'moment';
+import dayjs from 'dayjs';
+
 @Injectable()
 export class StudentsService {
   constructor(
@@ -619,7 +624,7 @@ export class StudentsService {
   }
 
   async findStudent(id: number) {
-    const data =  await this.studentRepository.find({
+    const data = await this.studentRepository.find({
       where: {
         id_room_test: id
       }
@@ -627,5 +632,307 @@ export class StudentsService {
     return data;
   }
 
-  
+  async Pdf(id: number, dataPDF: { mode: number, time_start: Date, big_class: string, nameRoom: string, name: string , time_exam : Date  , form_exam : string}, res: Response) {
+    const dataStudent = await this.studentRepository.findBy({ id_room_test: id })
+    const { mode, time_start, big_class, name, nameRoom, time_exam  ,form_exam} = dataPDF;
+    console.log(time_exam)
+    const time_dd_start_exam =  dayjs(time_exam).format('DD/MM/YYYY');
+    const hours_exam = dayjs(time_exam).hour();
+    const splitName = (name2 : string)=>{
+       const array = name2.split(" ");
+       const name1 = array.pop();
+       const hd = array.join(" ")
+       const object =  {
+        hd,
+        name1 
+       }
+       return object
+    }
+    const data = `<!DOCTYPE html>
+    <html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=
+        , initial-scale=1.0">
+        <title>Document</title>
+        <style>
+          body {
+            padding: 20px 20px;
+            with : 100%;
+          }
+            header {
+                display: -webkit-box;
+                display: flex;
+                -webkit-box-pack: justify;
+                webkit-justify-content: space-around;
+                justify-content: space-around;
+            }
+        
+            .left,
+            .right,
+            .left_p,
+            .right_p {
+                color: black;
+                font-size: 35;
+                font-weight: bold;
+            }
+        
+            .left_p {
+                margin-left: 37px;
+                border-bottom: 2px solid black;
+                width: 168px;
+            }
+        
+            .right_p {
+                margin-left: 60px;
+                border-bottom: 2px solid black;
+                width: 200px;
+            }
+        
+            .titile {
+              display: -webkit-box;
+              display: flex;
+              -webkit-box-pack: center; 
+              webkit-justify-content: center;
+              justify-content: center;
+                color: black;
+                font-size: 35;
+                font-weight: bold;
+                padding-right: 70px !important;
+                padding-top: 10px !important;
+            }
+        
+            .exam {
+                display: -webkit-box;
+                margin-top: 20px;
+                -webkit-box-pack: justify;
+                display: -webkit-box;
+                display: flex;
+                -webkit-box-pack: justify;
+                webkit-justify-content: space-around;
+            }
+        
+            .exam1 {
+                color: black;
+                font-size: 35;
+                font-weight: bold;
+            }
+        
+            .date_exam {
+                display: -webkit-box;
+                -webkit-box-pack: justify
+                margin-top: 5px;
+                display: -webkit-box;
+                display: flex;
+                -webkit-box-pack: justify;
+                webkit-justify-content: space-around;
+            }
+        
+            .room_exam {
+                color: black;
+                font-size: 35;
+                font-weight: bold;
+            }
+        
+            .total_exam {
+                display: -webkit-box;
+                -webkit-box-pack: justify
+                margin-top: 5px;
+                display: -webkit-box;
+                display: flex;
+                -webkit-box-pack: justify;
+                webkit-justify-content: space-around;
+            }
+        
+        
+            table {
+                margin-top: 10px;
+            }
+        
+        
+            table,
+            th,
+            td {
+                border: 1px solid black;
+                border-collapse: collapse;
+                -ms-flex-pack: justify;
+                text-align: center;
+            }
+        
+            .stt {
+                width: 25px;
+            }
+        
+            .sbd {
+                width: 25px;
+            }
+        
+            .msv {
+                width: 90px;
+            }
+        
+            .hd {
+                width: 200px;
+            }
+        
+            .name {
+                width: 90px;
+            }
+        
+            .ds {
+                width: 50px;
+            }
+        
+            .kn {
+                width: 70px;
+            }
+        
+            .gc {
+                width: 80px;
+            }
+        
+            .hndate {
+                margin: 10px 0px;
+                display: -webkit-box;
+                -webkit-box-pack: justify;
+                webkit-justify-content: space-around;
+            }
+
+            .hndate1{
+              margin-right : 20px;
+            }
+        
+            .footer {
+                display: -webkit-box;
+                -webkit-box-pack: justify;
+                webkit-justify-content: space-around;
+                color: black;
+                font-size: 30;
+                font-weight: bold; 
+            }
+        </style>
+    </head>
+    
+    <body>
+    
+        <header>
+            <div class="left">
+                HỌC VIỆN KỸ THUẬT MẬT MÃ
+                <p class="left_p">PHÒNG KT&ĐBCLĐT</p>
+            </div>
+    
+            <div class="right">
+                CỘNG HÒA XÃ HÔI CHỦ NGHĨA VIỆT NAM
+                <p class="right_p">Độc lập - Tự do - Hạnh phúc</p>
+            </div>
+    
+    
+        </header>
+    
+        <div class="titile">
+            DANH SÁCH THI LẠI
+        </div>
+        <div class="titile">
+            Năm học ${time_start}-${time_start} học kỳ 1 - ${big_class}
+        </div>
+    
+        <div class="exam">
+            <div class="">
+                Tên học phần: <span class="exam1">${name}</span>
+            </div>
+            <div class="">
+                Số TC : 4
+            </div>
+        </div>
+    
+        <div class="date_exam">
+            <div class="">
+                Ngày thi : ${time_dd_start_exam}
+            </div>
+            <div class="">
+             Hình thức  : ${form_exam}
+            </div>
+            <div class="">
+                Ca thi : ${hours_exam}h
+            </div>
+            <div >
+                Thi tại :  <span class="room_exam"> ${nameRoom} </span>
+            </div>
+        </div>
+        <div class="total_exam">
+            <div class="">
+                Tổng số sinh viên: ....
+            </div>
+            <div class="">
+                Số sinh viên dự thi: ....
+            </div>
+            <div class="">
+                Vắng : ..........
+            </div>
+            <div class="">
+                Có lý do : .......
+            </div>
+            <div class="">
+                Không lý do : .......
+            </div>
+        </div>
+        <table style="width:100%">
+            <tr>
+              <th class="stt">STT</th>
+              <th class="msv">Mã SV</th>
+              <th class="hd">Họ đệm</th>
+              <th class="name">Tên</th>
+              <th class="ds">Đề số </th>
+              <th class="score">Điểm số</th>
+              <th class="score">Điểm chữ</th>
+              <th class="kn">Ký nhận</th>
+              <th class="gc">Ghi chú</th>
+            </tr>          
+          ${
+            dataStudent.map((e, index) => {
+              const dataObject = splitName(e.name);
+              return (
+                `<tr>
+                     <td>${index + 1} </td>
+                     <td> ${e.code_student} </td>
+                     <td> ${dataObject.hd} </td>
+                     <td> ${dataObject.name1} </td>
+                     <td> </td>
+                     <td> </td>
+                     <td> </td>
+                     <td> </td>
+                     <td> </td>
+                </tr>`  )
+            })
+          } 
+          </table>
+    
+          <div class="hndate">
+          <div> </div>
+           <div class="hndate1">  Hà Nội, ... tháng .... năm... </div>
+          </div>
+    
+          <div class="footer">
+            <div> CBChT thứ nhất</div>
+            <div> CBChT thứ hai</div>
+            <div> Người nhận bài thi </div>
+          </div>
+    
+    </body>
+    
+    </html>`
+    pdf1.create(data).toBuffer(function (err, buffer) {
+      res.set({
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': 'attachment; filename=quote.pdf',
+        'Content-Length': buffer.length
+      })
+      res.end(buffer);
+    });
+
+  }
+
+
 }

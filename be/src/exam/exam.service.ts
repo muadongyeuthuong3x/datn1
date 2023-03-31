@@ -13,6 +13,9 @@ export class ExamService {
   create(createExamDto: CreateExamDto) {
     const ExamCreate = new Exam();
     ExamCreate.name = createExamDto.name;
+    ExamCreate.semester = createExamDto.semester ;
+    ExamCreate.year_learn = createExamDto.year_learn;
+    ExamCreate.tc_learn = createExamDto.tc_learn;
     return this.examRepository.save(ExamCreate);
   }
 
@@ -28,8 +31,8 @@ export class ExamService {
     return `This action returns a #${id} exam`;
   }
 
-  async update(id: number, name: string) {
-    return await this.examRepository.update(id, { name });
+  async update(id: number, name: string , semester : string , year_learn : string , tc_learn :number ) {
+    return await this.examRepository.update(id, { name : name , semester :semester , year_learn : year_learn  , tc_learn : tc_learn });
   }
 
   async findSearchExam(name: string) {

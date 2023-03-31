@@ -15,6 +15,18 @@ const ExamComponent = () => {
             dataIndex: 'name',
         },
         {
+            title: 'Số tín chỉ',
+            dataIndex: 'tc_learn',
+        },
+        {
+            title: 'Học kì',
+            dataIndex: 'semester',
+        },
+        {
+            title: 'Năm học',
+            dataIndex: 'year_learn',
+        },
+        {
             title: 'Edit',
             dataIndex: 'edit',
         },
@@ -33,11 +45,17 @@ const ExamComponent = () => {
     const [idDelete, setIdDelete] = useState(-1);
     const [formExamCreate, setFromCreateSearch] = useState({
         name: '',
+        semester : 'Học kì I',
+        year_learn :'Năm 1',
+        tc_learn: 3,
     });
     const [nameSearch, setNameSearch] = useState('');
     const [formDataEdit, setFormDataEdit] = useState({
         name: '',
-        id: ''
+        id: '',
+        semester:'',
+        year_learn:'',
+        tc_learn: ''
     });
     useEffect(() => {
         dispatch(apiGetListExam())
@@ -50,6 +68,9 @@ const ExamComponent = () => {
                     key: i,
                     index: i,
                     name: item?.name,
+                    semester: item?.semester,
+                    year_learn: item?.year_learn,
+                    tc_learn: item?.tc_learn,
                     edit: <Button type='primary' onClick={() => showModalEdit(item)}>Edit</Button>,
                     delete: <Button type='primary' danger onClick={() => showModalDelete(item?.id)}>Delete</Button>
                 });
@@ -115,10 +136,13 @@ const ExamComponent = () => {
 
     const showModalEdit = (data) => {
         setIsModalOpenEdit(true);
-        const { name, id } = data
+        const { name, id , year_learn , semester,tc_learn } = data
         setFormDataEdit({
             name: name,
-            id: id
+            id: id,
+            year_learn ,
+            semester,
+            tc_learn
         })
     };
 
@@ -140,7 +164,49 @@ const ExamComponent = () => {
             }
         })
     }
+   
+    const handleChange = (e)=>{
+        setFromCreateSearch(prev => {
+            return {
+                ...prev,
+                semester: e
 
+            }
+        })
+    }
+
+
+    const handleChangeYearLearn= (e)=>{
+        setFromCreateSearch(prev => {
+            return {
+                ...prev,
+                year_learn: e
+
+            }
+        })
+    }
+
+
+    const handleChangeEdit = (e)=>{
+        setFormDataEdit(prev => {
+            return {
+                ...prev,
+                semester: e
+
+            }
+        })
+    }
+
+
+    const handleChangeYearLearnEdit = (e)=>{
+        setFormDataEdit(prev => {
+            return {
+                ...prev,
+                year_learn: e
+
+            }
+        })
+    }
 
     return (
         <div>
@@ -174,6 +240,19 @@ const ExamComponent = () => {
                             name: ["name"],
                             value: formExamCreate.name,
                         },
+                           {
+                            name: ["semester"],
+                            value: formExamCreate.semester,
+                        },
+                        {
+                            name: ["year_learn"],
+                            value: formExamCreate.year_learn,
+                        },
+                        {
+                            name: ["tc_learn"],
+                            value: formExamCreate.tc_learn,
+                        },
+                        
                     ]}
 
                 >
@@ -182,6 +261,47 @@ const ExamComponent = () => {
                         name="name"
                     >
                         <Input value={formExamCreate.name} onChange={onChanheFormCreate} name="name" />
+                    </Form.Item>
+
+
+                    <Form.Item
+                        label="Số tín chỉ"
+                        name="tc_learn"
+                    >
+                        <Input value={formExamCreate.tc_learn} onChange={onChanheFormCreate} name="tc_learn" type='number' />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Học kì"
+                        name="semester"
+                    >
+                        <Select
+                            style={{ width: '100%' }}
+                            onChange={handleChange}
+                            value={formExamCreate.semester}
+                            options={[
+                                { value: 'Học kì I', label: 'Học kì I' },
+                                { value: 'Học kì II', label: 'Học kì II' },
+                            ]}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Năm"
+                        name="year_learn"
+                    >
+                        <Select
+                            style={{ width: '100%' }}
+                            onChange={handleChangeYearLearn}
+                            value={formExamCreate.year_learn}
+                            options={[
+                                { value: 'Năm 1', label: 'Năm 1' },
+                                { value: 'Năm 2', label: 'Năm 2' },
+                                { value: 'Năm 3', label: 'Năm 3' },
+                                { value: 'Năm 4', label: 'Năm 4' },
+                                { value: 'Năm 5', label: 'Năm 5' },
+                            ]}
+                        />
                     </Form.Item>
 
 
@@ -225,6 +345,18 @@ const ExamComponent = () => {
                             name: ["name"],
                             value: formDataEdit.name,
                         },
+                        {
+                            name: ["semester"],
+                            value: formDataEdit.semester,
+                        },
+                        {
+                            name: ["year_learn"],
+                            value: formDataEdit.year_learn,
+                        },
+                        {
+                            name: ["tc_learn"],
+                            value: formDataEdit.tc_learn,
+                        },
                     ]}
 
                 >
@@ -236,6 +368,47 @@ const ExamComponent = () => {
                     >
                         <Input onChange={onChanheFormEdit} name="name" />
                     </Form.Item>
+
+                    <Form.Item
+                          label="Số tín chỉ"
+                        name="tc_learn"
+                    >
+                        <Input onChange={onChanheFormEdit} name="tc_learn"  type='number'/>
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Học kì"
+                        name="semester"
+                    >
+                        <Select
+                            style={{ width: '100%' }}
+                            onChange={handleChangeEdit}
+                            value={formExamCreate.semester}
+                            options={[
+                                { value: 'Học kì I', label: 'Học kì I' },
+                                { value: 'Học kì II', label: 'Học kì II' },
+                            ]}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Năm"
+                        name="year_learn"
+                    >
+                        <Select
+                            style={{ width: '100%' }}
+                            onChange={handleChangeYearLearnEdit}
+                            value={formExamCreate.year_learn}
+                            options={[
+                                { value: 'Năm 1', label: 'Năm 1' },
+                                { value: 'Năm 2', label: 'Năm 2' },
+                                { value: 'Năm 3', label: 'Năm 3' },
+                                { value: 'Năm 4', label: 'Năm 4' },
+                                { value: 'Năm 5', label: 'Năm 5' },
+                            ]}
+                        />
+                    </Form.Item>
+
 
                     <div className='form_button_group'>
                         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

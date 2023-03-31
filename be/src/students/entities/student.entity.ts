@@ -45,6 +45,9 @@ export class Student {
   @Column({ default: -1 })
   id_room_test: number;
 
+  @Column({ default: -1 })
+  id_room_test_tl: number;
+
   @Column({ default: '' })
   why_exam_break: string;
 

@@ -1,4 +1,5 @@
 
+import { ExamForm } from 'src/exam_form/entities/exam_form.entity';
 import { ItemRoomExamAndTeacher } from 'src/item-room-exam-and-teacher/entities/item-room-exam-and-teacher.entity';
 import { TableExamBigBlockClass } from 'src/table_exam_big_block_class/entities/table_exam_big_block_class.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne } from 'typeorm';
@@ -27,9 +28,16 @@ export class TestScheduleStudent {
     
     @ManyToOne(() => TableExamBigBlockClass, (item) => item.id_testScheduleStudent, {
         onDelete: 'CASCADE',
-    })
+    })  
 
     id_tableExamBigBlockClass: TableExamBigBlockClass;
+
+    @ManyToOne(() => ExamForm, (item) => item.id_testScheduleStudentExamForm, {
+        onDelete: 'CASCADE',
+    })
+
+    id_ExamForm : ExamForm
+
 
     @OneToMany(() => ItemRoomExamAndTeacher, (item) => item.id_testScheduleStudent, {
         onDelete: 'CASCADE',

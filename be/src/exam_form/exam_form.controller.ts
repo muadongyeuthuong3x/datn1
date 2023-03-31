@@ -21,7 +21,7 @@ export class ExamFormController {
       } else {
         return res.status(500).json({
           status: "error",
-          message: "Đã tồn tại môn thi trong hệ thống"
+          message: "Đã tồn tại hình thức thi trong hệ thống"
         });
       }
     } catch (error) {

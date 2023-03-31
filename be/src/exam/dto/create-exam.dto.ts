@@ -9,4 +9,16 @@ import { Entity } from 'typeorm';
 export class CreateExamDto {
     @IsNotEmpty()
     readonly name: string;
+
+    @IsNotEmpty()
+    readonly semester: string;
+
+    @IsNotEmpty()
+    readonly year_learn: string;
+
+    @IsNotEmpty()
+    readonly tc_learn: number;
+    
+
+    
 }

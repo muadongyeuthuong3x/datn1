@@ -64,6 +64,7 @@ export class TestScheduleStudentService {
       newTestSchedule.mode = mode;
       newTestSchedule.form_exam = form_exam;
       newTestSchedule.id_tableExamBigBlockClass = data;
+      newTestSchedule.id_ExamForm = form_exam as any;
       const dataCrete = await this.testScheduleStudentRepository.save(newTestSchedule);
       const dataItemExam = {
         id_query_test_schedule_student: dataCrete,

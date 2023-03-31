@@ -109,7 +109,8 @@ export class TableExamBigBlockClassService {
           'item-room-exam-and-teacher',
           'teacher-track.id',
           'teacher-mark-exam-room.id',
-          'room'
+          'room',
+          'exam-form'
         ])
         .innerJoin('table_exam_big_block_class.id_exam', 'exam')
         .innerJoin(
@@ -118,6 +119,7 @@ export class TableExamBigBlockClassService {
         )
         .innerJoin('table-big-class-exam.id_big_class_exam', 'big_block_class')
         .innerJoin('table_exam_big_block_class.id_testScheduleStudent', 'test-schedule-student')
+        .innerJoin('test-schedule-student.id_ExamForm', 'exam-form')
         .innerJoin('test-schedule-student.id_itemRoomExamAndTeacher', 'item-room-exam-and-teacher')
         .innerJoin('item-room-exam-and-teacher.id_teacher_mark_exam', 'teacher-mark-exam-room')
         .innerJoinAndSelect('teacher-mark-exam-room.id_teacher_mark_score', 'teacher')
