@@ -29,6 +29,15 @@ export class TestScheduleStudentService {
     const { roomPeopleMax, mode, timeYearExamStart, id_exam, form_exam, time_exam, roomExamAndTeacher } = createTestScheduleStudentDto;
     const newTestSchedule = new TestScheduleStudent();
     try {
+
+      const messageCheck =  this.formatCheckDataSend(createTestScheduleStudentDto ,res);
+      if(messageCheck){
+       return res.status(500).json({
+         status: "error",
+         message: messageCheck
+       })
+      }
+
       const data = await this.tableExamBigBlockClassServiceRepository.findOneData({ id_exam_where: id_exam, time_year_start: timeYearExamStart });
       const dataCheck = await this.checkFindExitsExam((data.id).toString())
       if (dataCheck != null && mode == dataCheck?.mode) {
@@ -37,26 +46,34 @@ export class TestScheduleStudentService {
           message: "Môn thi này đã được lên lịch"
         })
       }
-  
-      // let objectCheck = {
-      //   name_teacher : '',
-      //   room_name: ''
-      // }
-  
-      //  objectCheck  = await this.itemRoomExamAndTeacherRepository.findListExitRoomOrTeacherByTime(createTestScheduleStudentDto ,res );
-  
-      // if(objectCheck.name_teacher.length > 0) {
-      //   return res.status(500).json({
-      //     status: "error",
-      //     message: `Giáo viên ${objectCheck.name_teacher} đã có lịch thi trong thời gian thi`
-      //   })
-      // }
-      // if(objectCheck.room_name.length > 0) {
-      //   return res.status(500).json({
-      //     status: "error",
-      //     message: `Phòng ${objectCheck.room_name} đã lên lịch  trong thời gian thi`
-      //   })
-      // }
+
+      let objectCheck = {
+        name_teacher : '',
+        room_name: ''
+      }
+      for( let i = 0 ;i < roomExamAndTeacher.length ; i++){
+        const {time_start_exam , time_end_exam , room_exam , teacher_exam   } = roomExamAndTeacher[i];
+        const dataPorps = {
+          time_start_exam,
+          time_end_exam,
+          room_exam,
+          teacher_exam
+        }
+        objectCheck  = await this.itemRoomExamAndTeacherRepository.findListExitRoomOrTeacherByTime(dataPorps ,res );
+      }
+
+      if(objectCheck.name_teacher.length > 0) {
+        return res.status(500).json({
+          status: "error",
+          message: `Giáo viên ${objectCheck.name_teacher} đã có lịch thi trong thời gian thi`
+        })
+      }
+      if(objectCheck.room_name.length > 0) {
+        return res.status(500).json({
+          status: "error",
+          message: `Phòng ${objectCheck.room_name} đã lên lịch  trong thời gian thi`
+        })
+      }
   
       newTestSchedule.id_query_exam_big_class = (data.id).toString();
       newTestSchedule.roomPeopleMax = roomPeopleMax;
@@ -160,6 +177,40 @@ export class TestScheduleStudentService {
         message: 'Server error ',
       });
     }
+  }
+
+
+   formatCheckDataSend = (createTestScheduleStudentDto : CreateTestScheduleStudentDto , res : any)=>{
+    const { roomPeopleMax, mode, timeYearExamStart, id_exam, form_exam, time_exam, roomExamAndTeacher, grading_exam } = createTestScheduleStudentDto;
+
+     let message = ''
+    if( id_exam.length < 1 ){
+      return  message= "Chưa chọn môn thi"
+    }
+    
+    if(+roomPeopleMax < 1 ){
+     return     message = "Chưa chọn số sinh viên tối đa của 1 phòng thi"
+
+    }
+  
+    if(+time_exam < 1 ){
+      return   message= "Chưa chọn thời gian thi dành cho môn"
+    }
+   
+    for(let i = 0 ; i < roomExamAndTeacher.length ; i++){
+      let { room_exam  , teacher_score_student , teacher_exam , time_start_exam      } = roomExamAndTeacher[i] as any
+      
+      if( room_exam.length < 1  || teacher_exam.length  <1 || time_start_exam.length < 1  ){
+        return   message= `phòng thi chưa chọn giáo viên coi hoặc phòng thi hoặc thời gian `
+      }
+      if(grading_exam == 1 && teacher_score_student.length < 1 ){
+        return   message= `phòng thi chưa chọn giáo viên chấm`
+      }
+    }
+
+
+  
+
   }
 
   async findListTeacherByTime ( time_start : Date , time_end : Date ,idUnLess : number []){

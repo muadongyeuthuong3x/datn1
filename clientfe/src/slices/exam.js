@@ -31,10 +31,13 @@ const listExam = createSlice({
         createExamReducer: (state, { payload }) => {
             state.loading = false
             const dataOld = [...state.data];
-            const {id , name} = payload;
+            const {id , name , semester , year_learn , tc_learn } = payload;
             dataOld.push({
                 id: id ,
-                name: name
+                name: name,
+                tc_learn,
+                year_learn,
+                semester
             })
             state.data = dataOld
         },

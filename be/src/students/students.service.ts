@@ -361,6 +361,7 @@ export class StudentsService {
         why_edit_point_end_end,
       } = updateStudentDto;
 
+
       if (
         point_beetween > 10 ||
         point_beetween < 0 ||
@@ -376,15 +377,44 @@ export class StudentsService {
           message: `Điểm cần phải lớn hơn 0 hoặc bằng không hoặc nhỏ hơn 10`,
         });
       }
-
-      await this.studentRepository.update(id, {
-        point_beetween: point_beetween,
-        point_diligence: point_diligence,
-        point_end: point_end,
-        point_end_end: point_end_end,
-        why_edit_point_end: why_edit_point_end,
-        why_edit_point_end_end: why_edit_point_end_end,
-      });
+      if(point_end.length  == 0 && point_end_end.length  != 0){
+        await this.studentRepository.update(id, {
+          point_beetween: point_beetween,
+          point_diligence: point_diligence,
+          point_end_end: point_end_end,
+          point_end : -1,
+          why_edit_point_end: why_edit_point_end,
+          why_edit_point_end_end: why_edit_point_end_end,
+        });
+      }else if (point_end_end.length  == 0 && point_end.length  != 0 ){
+        await this.studentRepository.update(id, {
+          point_beetween: point_beetween,
+          point_diligence: point_diligence,
+          point_end: point_end,
+          point_end_end: -1,
+          why_edit_point_end: why_edit_point_end,
+          why_edit_point_end_end: why_edit_point_end_end,
+        });
+      }else if (point_end_end.length  == 0 && point_end.length  == 0){
+        await this.studentRepository.update(id, {
+          point_beetween: point_beetween,
+          point_diligence: point_diligence,
+          point_end : -1,
+          point_end_end: -1,
+          why_edit_point_end: why_edit_point_end,
+          why_edit_point_end_end: why_edit_point_end_end,
+        });
+      }else {
+        await this.studentRepository.update(id, {
+          point_beetween: point_beetween,
+          point_diligence: point_diligence,
+          point_end :point_end,
+          point_end_end: point_end_end,
+          why_edit_point_end: why_edit_point_end,
+          why_edit_point_end_end: why_edit_point_end_end,
+        });
+      }
+    
       return res.status(200).json({
         status: 'succes',
         message: 'Sửa điểm thành công',

@@ -105,6 +105,10 @@ const EditScore = () => {
             dataIndex: 'code_student',
         },
         {
+            title: 'Họ và tên sinh viên',
+            dataIndex: 'name',
+        },
+        {
             title: 'Điểm chuyên cần',
             dataIndex: 'point_diligence',
         },
@@ -177,6 +181,7 @@ const EditScore = () => {
                     key: i,
                     index: i,
                     code_student: item?.code_student,
+                    name : item?.name,
                     point_diligence: item?.point_diligence,
                     point_beetween: item?.point_beetween,
                     point_end:item?.point_end == -1 ? '' : item?.point_end,
