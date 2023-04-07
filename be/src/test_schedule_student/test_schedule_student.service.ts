@@ -26,7 +26,7 @@ export class TestScheduleStudentService {
   ) { }
 
   async create(createTestScheduleStudentDto: CreateTestScheduleStudentDto, res: any) {
-    const { roomPeopleMax, mode, timeYearExamStart, id_exam, form_exam, time_exam, roomExamAndTeacher } = createTestScheduleStudentDto;
+    const { roomPeopleMax, mode, timeYearExamStart, id_exam, form_exam, time_exam, roomExamAndTeacher, grading_exam,department } = createTestScheduleStudentDto;
     const newTestSchedule = new TestScheduleStudent();
     try {
 
@@ -82,6 +82,8 @@ export class TestScheduleStudentService {
       newTestSchedule.form_exam = form_exam;
       newTestSchedule.id_tableExamBigBlockClass = data;
       newTestSchedule.id_ExamForm = form_exam as any;
+      newTestSchedule.grading_exam = grading_exam;
+      newTestSchedule.department = department;
       const dataCrete = await this.testScheduleStudentRepository.save(newTestSchedule);
       const dataItemExam = {
         id_query_test_schedule_student: dataCrete,
@@ -203,7 +205,7 @@ export class TestScheduleStudentService {
       if( room_exam.length < 1  || teacher_exam.length  <1 || time_start_exam.length < 1  ){
         return   message= `phòng thi chưa chọn giáo viên coi hoặc phòng thi hoặc thời gian `
       }
-      if(grading_exam == 1 && teacher_score_student.length < 1 ){
+      if(Number(grading_exam) == 1 && teacher_score_student.length < 1 ){
         return   message= `phòng thi chưa chọn giáo viên chấm`
       }
     }

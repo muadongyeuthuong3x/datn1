@@ -12,6 +12,7 @@ export const initialState = {
     countStudnetExam : 0,
     teacher_department : [],
     listDataTestSchedule : [],
+    teacher_department_edit: []
 }
 
 
@@ -77,6 +78,10 @@ const listSchedule = createSlice({
             state.loading = false
             state.teacher_department = payload
         },
+        setteacher_departmentedit: (state, { payload }) => {
+            state.loading = false
+            state.teacher_department_edit = payload
+        },
         setGetAllTestStudent: (state, {payload})=>{
             state.loading = false;
             state.listDataTestSchedule = payload
@@ -88,7 +93,7 @@ const listSchedule = createSlice({
     },
 })
 
-export const { loadding, getListDataSuccess, deleteScheduleInList, loaddingFailes, createScheduleReducer, searchData, editData, setCount,setteacher_department ,setGetAllTestStudent ,setTeachers} = listSchedule.actions
+export const { loadding, getListDataSuccess, deleteScheduleInList, loaddingFailes, createScheduleReducer,setteacher_departmentedit, searchData, editData, setCount,setteacher_department ,setGetAllTestStudent ,setTeachers} = listSchedule.actions
 
 export function apiGetListDataApi(alert) {
     return async dispatch => {
@@ -220,12 +225,17 @@ export function setCountExamApiTl(data) {
     }
 }
 
-export function callApiGetTeacherDepartment(id){
+export function callApiGetTeacherDepartment(id, check){
     return async dispatch => {
         dispatch(loadding())
         try {
             const dataRes = await instance.get(`/department/query_teacher/${id}`);
-            dispatch(setteacher_department(dataRes.data.idDepartment))
+            if(check === 'create'){
+                dispatch(setteacher_department(dataRes.data.idDepartment))
+            }else if(check==='edit'){
+                dispatch(setteacher_departmentedit(dataRes.data.idDepartment))
+            }
+           
         } catch (error) {
             toast.error(error.response.data.message)
             dispatch(loaddingFailes())

@@ -23,7 +23,10 @@ export class CreateTestScheduleStudentDto {
     mode: number;
     @IsNotEmpty()
 
-    grading_exam: number;
+    grading_exam: string;
+    @IsNotEmpty()
+
+    department: string;
     @IsNotEmpty()
 
     id_query_exam_big_class: TableExamBigBlockClass;
@@ -50,5 +53,6 @@ export class CreateTestScheduleStudentDto {
     
     @IsNotEmpty()
     id_exam: string
+     
     
 }

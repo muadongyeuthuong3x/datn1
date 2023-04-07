@@ -24,6 +24,13 @@ export class TestScheduleStudent {
     form_exam: number;
 
     @Column()
+    grading_exam: string;
+
+    @Column()
+    department: string;
+
+
+    @Column()
     time_exam: number;
     
     @ManyToOne(() => TableExamBigBlockClass, (item) => item.id_testScheduleStudent, {

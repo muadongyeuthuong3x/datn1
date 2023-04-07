@@ -1,8 +1,9 @@
 import { Button, Table, Modal, Input, Form, DatePicker, Select, Image, Radio, Drawer, Space } from 'antd';
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import instance from '../configApi/axiosConfig'
 import { apiGetListDataApi, setCountExamApiTl, callApiGetTeacherDepartment, createDataTestScheduleStudent, getAllTestScheduleStudent, deleteItemTestScheduleStudent } from '../slices/scheduleTest';
+
 import { apiGetListExamBlock, callDataGetYear } from "../slices/examBlock";
 import { apiGetListDepartment } from '../slices/department'
 import { setCountExamApi } from "../slices/scheduleTest";
@@ -55,9 +56,19 @@ const columns1 = [
 const ScheduleSComponent = () => {
     const dispatch = useDispatch();
     const { data: listDepartment } = useSelector(state => state.listDepartment)
-    const { rooms, examForms, teachers, countStudnetExam, teacher_department } = useSelector(state => state.listSchedule);
+    const { rooms, examForms, teachers, countStudnetExam, teacher_department ,teacher_department_edit } = useSelector(state => state.listSchedule);
     const { dataOldSearchView, getYear } = useSelector(state => state.listExamBlock);
     const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
+    const [listTeachers , setListTeachers] = useState([])
+    
+
+    const callListTeacher = async () =>{
+      const res =   await instance.get('/teacher')
+      setListTeachers(res.data);
+    }
+    useEffect(()=>{
+        callListTeacher()
+    },[])
     // hình thức thi + môn thi + time => array name  timeExamAndFormExam
     const [onFormCreate, setOnchangeFormCreate] = useState({
         timeYearExamStart: "",
@@ -74,12 +85,34 @@ const ScheduleSComponent = () => {
         grading_exam: 1
     });
 
+    const [dataFormEdit, setDataFormEdit] = useState({
+        id_exam: "",
+        mode: '',
+        bigBlockClassExam: '',
+        roomPeopleMax: 0,
+        time_exam: 0,
+        timeYearExamStart: "",
+        timeYearExamEnd: "",
+        form_exam: "",
+        roomExamAndTeacher: [
+            {
+                time_start_exam: '',
+                time_end_exam: '',
+                teacher_exam: [],
+                teacher_score_student: '',
+                room_exam: '',
+                teachers: [],
+                rooms: [],
+                disabledRoom: true
+            }
+        ]
+    })
+
     const [listDataTestSchedule, setlistDataTestSchedule] = useState([]);
-    const [dataSourceCode, setdataSourceCode] = useState([])
     const [callApiReset, setCallApiReset] = useState(false);
     const [isModalOpenPDF, setIsModalOpenPDF] = useState(false);
     const [idDepartment, setidDepartment] = useState('');
-
+    const [openEditData, setOpenEditData] = useState(false);
     const options = [
         {
             value: 1,
@@ -133,12 +166,12 @@ const ScheduleSComponent = () => {
         });
         return listBigClassExam;
     }
-   
-    useEffect(()=>{
-     const dataOld = {...onFormCreate};
-     dataOld.form_exam = examForms[0]?.id;
-     setOnchangeFormCreate(dataOld)
-    },[examForms])
+
+    useEffect(() => {
+        const dataOld = { ...onFormCreate };
+        dataOld.form_exam = examForms[0]?.id;
+        setOnchangeFormCreate(dataOld)
+    }, [examForms])
 
     const listTimeSelect = useMemo(() => {
         if (onFormCreate.id_exam?.length < 1) {
@@ -195,7 +228,9 @@ const ScheduleSComponent = () => {
 
     const handleOkCreate = async () => {
         try {
-            const dataRes = await instance.post(`/test-schedule-student`, onFormCreate);
+
+            const dataCretae = { ...onFormCreate, department: idDepartment }
+            const dataRes = await instance.post(`/test-schedule-student`, dataCretae);
             if (dataRes) {
                 toast.success("Tạo dữ liệu thành công");
                 setIsModalOpenCreate(false);
@@ -325,12 +360,22 @@ const ScheduleSComponent = () => {
     }, [listDepartment])
 
 
+
+
     const changeFormExam = (e) => {
         const dataOld = { ...onFormCreate };
         const form_exam_old = dataOld.form_exam;
 
         dataOld.form_exam = e;
         setOnchangeFormCreate(dataOld);
+    }
+
+    const changeFormExamEdit = (e) => {
+        const dataOld = { ...dataFormEdit };
+        const form_exam_old = dataOld.form_exam;
+
+        dataOld.form_exam = e;
+        setDataFormEdit(dataOld);
     }
 
     const showDelelte = (id, i) => {
@@ -401,7 +446,7 @@ const ScheduleSComponent = () => {
                 room_exam: '',
                 teachers: [],
                 rooms: [],
-                disabledRoom : true
+                disabledRoom: true
             }
             dataArray.push(formObject);
         }
@@ -410,28 +455,96 @@ const ScheduleSComponent = () => {
         setOnchangeFormCreate(dataOld);
     }
 
+    
+    const changeMaxPeopleEdit = (e) => {
+        const valueGet = e.target.value;
+        console.log(valueGet);
+        if (valueGet < 1) {
+            return toast.error(` Số lượng sinh viên một lớp phải lớn hơn 0 `);
+        }
+        const dataOld = { ... dataFormEdit };
+        if (dataOld.roomExamAndTeacher) {
+            delete dataOld.roomExamAndTeacher;
+        }
+        const dataArray = [];
+        const numberCell = Math.ceil((countStudnetExam) / (valueGet));
+        for (let index = 0; index < numberCell; index++) {
+            const formObject = {
+                time_start_exam: '',
+                time_end_exam: '',
+                teacher_exam: [],
+                teacher_score_student: '',
+                room_exam: '',
+                teachers: [],
+                rooms: [],
+                disabledRoom: true
+            }
+            dataArray.push(formObject);
+        }
+        dataOld.roomPeopleMax = valueGet;
+        dataOld.roomExamAndTeacher = dataArray;
+        setDataFormEdit(dataOld);
+    }
     //time exam
     const changeTimeExam = (e) => {
         const dataOld = { ...onFormCreate };
         dataOld.time_exam = Number(e.target.value)
         setOnchangeFormCreate(dataOld)
+    }
 
+    const changeTimeExamEdit = (e) => {
+        const dataOld = { ...dataFormEdit };
+        const valueGet = e.target.value;
+        if (valueGet < 1) {
+            return toast.error(` thời gian thi  một lớp phải lớn hơn 0 `);
+        }
+        const dataArray = [];
+        dataOld.time_exam = Number(e.target.value)
+        const numberCell = Math.ceil((countStudnetExam) / (dataOld.roomPeopleMax));
+        for (let index = 0; index < numberCell; index++) {
+            const formObject = {
+                time_start_exam: '',
+                time_end_exam: '',
+                teacher_exam: [],
+                teacher_score_student: '',
+                room_exam: '',
+                teachers: [],
+                rooms: [],
+                disabledRoom: true
+            }
+            dataArray.push(formObject);
+        }
+        dataOld.roomExamAndTeacher = dataArray;
+        setDataFormEdit(dataOld)
     }
     // gradingExam
-
+    console.log("++++++++++++++++++++++++++++++++++")
+    console.log(dataFormEdit)
+    console.log("=================================")
     const changeFormGradingExam = (e) => {
         const dataOld = { ...onFormCreate };
         dataOld.grading_exam = e.target.value;
         const dataRoomExamAndTeacherOld = dataOld.roomExamAndTeacher;
         for (let i = 0; i < dataRoomExamAndTeacherOld.length; i++) {
-            if (e.target.value == 1) {
-                dataRoomExamAndTeacherOld[i].grading_exam_room = ''
-            } else {
-                delete dataRoomExamAndTeacherOld[i]?.grading_exam_room
-            }
+            if (e.target.value == 2) {
+                dataRoomExamAndTeacherOld[i].teacher_score_student = []
+            } 
         }
         dataOld.roomExamAndTeacher = dataRoomExamAndTeacherOld;
         setOnchangeFormCreate(dataOld)
+    }
+
+    const changeFormGradingExamEdit = (e) => {
+        const dataOld = { ...dataFormEdit };
+        dataOld.grading_exam = e.target.value;
+        const dataRoomExamAndTeacherOld = dataOld.roomExamAndTeacher;
+        for (let i = 0; i < dataRoomExamAndTeacherOld.length; i++) {
+            if (e.target.value == 2) {
+                dataRoomExamAndTeacherOld[i].teacher_score_student = []
+            }
+        }
+        dataOld.roomExamAndTeacher = dataRoomExamAndTeacherOld;
+        setDataFormEdit(dataOld)
     }
 
     // confime select 
@@ -461,7 +574,7 @@ const ScheduleSComponent = () => {
         if (dataOld.grading_exam === 2 && index == Math.ceil((countStudnetExam) / (dataOld.roomPeopleMax)) - 1) {
             dataOld.button_submit = false
         }
-        if (dataOld.grading_exam === 2){
+        if (dataOld.grading_exam === 2) {
             console.log("??????????????????")
             dataOld.roomExamAndTeacher[index].disabledRoom = false
         }
@@ -470,7 +583,7 @@ const ScheduleSComponent = () => {
     const changeTeacherRoomsScoreStudent = (e, index) => {
         const dataOld = { ...onFormCreate };
         dataOld.roomExamAndTeacher[index].teacher_score_student = e;
-        if (dataOld.grading_exam === 1){
+        if (dataOld.grading_exam === 1) {
             dataOld.roomExamAndTeacher[index].disabledRoom = false
         }
         if (dataOld.grading_exam === 1 && index == Math.ceil((countStudnetExam) / (dataOld.roomPeopleMax)) - 1) {
@@ -485,20 +598,20 @@ const ScheduleSComponent = () => {
         const dataTeacher = dataOld.roomExamAndTeacher;
         const time_start = dataOld.roomExamAndTeacher[i].time_start_exam;
         const time_end = dataOld.roomExamAndTeacher[i].time_end_exam;
-        const  idRoomsSelectOld = dataOld.roomExamAndTeacher[i].room_exam;
-        const itemRoomsSelectOld = rooms.find(e => e.id == idRoomsSelectOld );
-        dataOld.roomExamAndTeacher[i].room_exam = idd; 
+        const idRoomsSelectOld = dataOld.roomExamAndTeacher[i].room_exam;
+        const itemRoomsSelectOld = rooms.find(e => e.id == idRoomsSelectOld);
+        dataOld.roomExamAndTeacher[i].room_exam = idd;
         if (dataTeacher.length > 1) {
             for (let index = 0; index < dataTeacher.length; index++) {
                 if (index === i) {
-                   continue;
+                    continue;
                 } else {
                     const { time_end_exam, time_start_exam } = dataTeacher[index]
                     if ((Date.parse(time_start) >= Date.parse(time_start_exam) && Date.parse(time_start) <= Date.parse(time_end_exam)) || (Date.parse(time_end) >= Date.parse(time_start_exam) && Date.parse(time_end) <= Date.parse(time_end_exam))) {
                         const dataRoomOld = dataOld.roomExamAndTeacher[i].rooms;
-                        const dataNew =   dataRoomOld.filter(e=>e.id != idd);
+                        const dataNew = dataRoomOld.filter(e => e.id != idd);
                         let dataNew1 = dataNew;
-                        if(itemRoomsSelectOld ){
+                        if (itemRoomsSelectOld) {
                             dataNew1 = dataNew.concat(itemRoomsSelectOld);
                         }
                         dataOld.roomExamAndTeacher[index].rooms = dataNew1;
@@ -542,8 +655,12 @@ const ScheduleSComponent = () => {
     }
 
     useEffect(() => {
-        idDepartment && dispatch(callApiGetTeacherDepartment(idDepartment))
+        idDepartment && dispatch(callApiGetTeacherDepartment(idDepartment, 'create'))
     }, [idDepartment])
+
+    useEffect(() => {
+        dataFormEdit.idDepartment && dispatch(callApiGetTeacherDepartment(dataFormEdit.idDepartment , 'edit'))
+    }, [dataFormEdit.idDepartment])
 
     const onChangeCallDepartment = (e) => {
         const dataOld = { ...onFormCreate }
@@ -553,18 +670,116 @@ const ScheduleSComponent = () => {
             roomExamAndTeacher[i].teacher_score_student = '';
         }
         setidDepartment(e)
+        dataOld.roomExamAndTeacher = roomExamAndTeacher;
+        setOnchangeFormCreate(dataOld)
+    }
+
+    const onChangeCallDepartmentEdit = (e) => {
+        const dataOld = { ...dataFormEdit }
+        const { roomExamAndTeacher } = dataOld;
+
+        for (let i = 0; i < roomExamAndTeacher.length; i++) {
+            roomExamAndTeacher[i].teacher_score_student = '';
+        }
+        dataOld.idDepartment = e
+        dataOld.roomExamAndTeacher = roomExamAndTeacher;
+        setDataFormEdit(dataOld)
+        // setidDepartment(e)
     }
 
 
 
     const [listScheduleExamStudent, setlistScheduleExamStudent] = useState([]);
-    const [dataEdit, setDataEdit] = useState();
-    const [isOpenEditModal, setisOpenEditModal] = useState(false);
     const [isOpenDeleteModal, setisOpenDeleteModal] = useState(false);
     const [idDeleteScheduleExam, setidDeleteScheduleExam] = useState(false);
+
+    
+    const getIdTeacher = (item)=>{
+        let listTeacher = [];
+        for(let i = 0 ; i < item.length ; i++){
+           let idTeacher = item[i].id_Teacher.id
+           listTeacher.push(Number(idTeacher))
+        }
+        return listTeacher;
+       }
+   
+    const getIdTeacherScore = (item) => {
+        let listTeacher = [];
+        for (let i = 0; i < item.length; i++) {
+            let idTeacher = item[i].id_teacher_mark_score.id
+            listTeacher.push(Number(idTeacher))
+        }
+        return listTeacher;
+    }
+    
+
+    const dataCallApiRoom = async(time_start , time_end , index) =>{
+       const dataOld = {...dataFormEdit};
+       const dataRes = await instance.post(`/test-schedule-student/${time_start}/${time_end}`, []);
+       const dataRes1 = await instance.post(`/test-schedule-student/rooms/${time_start}/${time_end}`, []);
+       dataOld.roomExamAndTeacher[index].teachers = dataRes.data;
+       dataOld.roomExamAndTeacher[index].rooms = dataRes1.data;
+       setDataFormEdit(dataOld)
+       console.log("FOCUSSSSSSSSSSSSSSSSS")
+    }
+
     const showModalEdit = (item) => {
-        setisOpenEditModal(true)
-        setDataEdit(item)
+        const { time_year_end, time_year_start } = item;
+        const id_exam_edit = item.id_exam.id;
+        const id_class_exam = getClassBigExam(item?.id_big_class_exam);
+        const { form_exam, mode, roomPeopleMax, time_exam, grading_exam, department } = item.id_testScheduleStudent[0];
+        const formSearchCountStudent = {
+            exam: id_exam_edit,
+            time_start: time_year_start,
+        }
+        if (mode == 1) {
+            dispatch(setCountExamApi(formSearchCountStudent))
+        } else {
+            dispatch(setCountExamApiTl(formSearchCountStudent))
+        }
+
+        const dataRoomOld = [];
+      
+        const { id_itemRoomExamAndTeacher } = item.id_testScheduleStudent[0];
+        for (let i = 0; i < id_itemRoomExamAndTeacher.length; i++) {
+             const objectPush = {  
+                time_start_exam: id_itemRoomExamAndTeacher[i].time_start,
+                time_end_exam: id_itemRoomExamAndTeacher[i].time_end,
+                teacher_exam:  getIdTeacher(id_itemRoomExamAndTeacher[i].id_teacherTrack),
+                teacher_score_student: getIdTeacherScore(id_itemRoomExamAndTeacher[i].id_teacher_mark_exam),
+                room_exam: id_itemRoomExamAndTeacher[i].id_Room.id,
+                teachers: listTeachers ,
+                rooms: rooms,
+                disabledRoom: false
+             }
+             dataRoomOld.push(objectPush)
+        }
+
+        setDataFormEdit({
+            id_exam: id_exam_edit,
+            mode: mode,
+            bigBlockClassExam: id_class_exam,
+            roomPeopleMax: roomPeopleMax,
+            time_exam: time_exam,
+            timeYearExamStart: time_year_start,
+            timeYearExamEnd: time_year_end,
+            form_exam: form_exam,
+            idDepartment: Number(department),
+            grading_exam: Number(grading_exam),
+            // roomExamAndTeacher: [
+            //     {
+            //         time_start_exam: '',
+            //         time_end_exam: '',
+            //         teacher_exam: [],
+            //         teacher_score_student: '',
+            //         room_exam: '',
+            //         teachers: [],
+            //         rooms: [],
+            //         disabledRoom: true
+            //     }]
+            roomExamAndTeacher: dataRoomOld
+        })
+        setOpenEditData(true)
     }
 
     const showModalDelete = (id) => {
@@ -634,8 +849,6 @@ const ScheduleSComponent = () => {
                     responseType: 'blob',
                     dataType: "binary",
                 });
-
-            console.log(response);
 
             const blob = new Blob(
                 [response.data],
@@ -737,10 +950,10 @@ const ScheduleSComponent = () => {
         return idRoomsUnless;
     }
 
-    
 
-   const dataTable = () => {
-         const data = [];
+
+    const dataTable = () => {
+        const data = [];
         if (onFormCreate?.roomExamAndTeacher?.length > 0) {
             for (let index = 0; index < onFormCreate.roomExamAndTeacher.length; index++) {
                 data.push({
@@ -754,9 +967,9 @@ const ScheduleSComponent = () => {
                             value={onFormCreate.roomExamAndTeacher[index].time_start_exam && dayjs(onFormCreate.roomExamAndTeacher[index].time_start_exam)}
                             onOk={(e) => onConfirm(e, index)}
                             allowClear={false}
-                            disabled ={  onFormCreate.roomExamAndTeacher.length === 1 ? false : (onFormCreate.roomExamAndTeacher[index-1]?.disabledRoom) }
+                            disabled={onFormCreate.roomExamAndTeacher.length === 1 ? false : (onFormCreate.roomExamAndTeacher[index - 1]?.disabledRoom)}
                         />
-                        ,
+                    ,
                     time_end:
                         <div className="time_start_end">{onFormCreate.roomExamAndTeacher[index].time_end_exam
                             && dayjs(onFormCreate.roomExamAndTeacher[index].time_end_exam).format("YYYY/MM/DD HH:mm")
@@ -831,54 +1044,243 @@ const ScheduleSComponent = () => {
 
                     </Select>,
                     teacher_score:
-                       <div>
-                          { onFormCreate?.grading_exam == 1 ?
-                            <Select
-                                showSearch
-                                disabled={onFormCreate?.roomExamAndTeacher[index]?.teacher_exam.length > 0 ? false : true}
-                                labelCol={{ span: 0 }}
-                                wrapperCol={{ span: 20 }}
-                                style={{ width: '100%', marginBottom: "10px" }}
-                                placeholder="Chọn giáo viên chấm thi"
-                                optionFilterProp="children"
-                                optionLabelProp="label"
-                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                                filterSort={(optionA, optionB) =>
-                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                                }
-                                value={onFormCreate?.roomExamAndTeacher[index]?.teacher_score_student}
-                                onChange={(e) => changeTeacherRoomsScoreStudent(e, index)}
-                                className="select_teacher"
-                            >
-                                {
-                                    teacher_department.map(e => {
-                                        return (
-                                            <Option value={e.id} label={e.name}>
-                                                <div className='option_teacher'>
-                                                    <Space>
-                                                        {e.name}
-                                                    </Space>
-                                                    <Image
-                                                        width={50}
-                                                        height={50}
-                                                        src={e.avatar}
-                                                        aria-label={e.name}
-                                                    />
-                                                </div>
-                                            </Option>
-                                        )
-                                    })
-                                }
-      
-                            </Select>
-                             : "Máy chấm điểm tự động" }
-                     </div>  
+                        <div>
+                            {onFormCreate?.grading_exam == 1 ?
+                                <Select
+                                    showSearch
+                                    disabled={onFormCreate?.roomExamAndTeacher[index]?.teacher_exam.length > 0 ? false : true}
+                                    labelCol={{ span: 0 }}
+                                    wrapperCol={{ span: 20 }}
+                                    style={{ width: '100%', marginBottom: "10px" }}
+                                    placeholder="Chọn giáo viên chấm thi"
+                                    optionFilterProp="children"
+                                    optionLabelProp="label"
+                                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                    filterSort={(optionA, optionB) =>
+                                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                    }
+                                    value={onFormCreate?.roomExamAndTeacher[index]?.teacher_score_student}
+                                    onChange={(e) => changeTeacherRoomsScoreStudent(e, index)}
+                                    className="select_teacher"
+                                >
+                                    {
+                                        teacher_department.map(e => {
+                                            return (
+                                                <Option value={e.id} label={e.name}>
+                                                    <div className='option_teacher'>
+                                                        <Space>
+                                                            {e.name}
+                                                        </Space>
+                                                        <Image
+                                                            width={50}
+                                                            height={50}
+                                                            src={e.avatar}
+                                                            aria-label={e.name}
+                                                        />
+                                                    </div>
+                                                </Option>
+                                            )
+                                        })
+                                    }
+
+                                </Select>
+                                : "Máy chấm điểm tự động"}
+                        </div>
                 });
             }
         }
-         return data ;
-       
+        return data;
     };
+
+
+    // logic edit exam
+
+
+
+    const dataTableEdit = (dataFormEdit)=>{
+        const { roomExamAndTeacher , grading_exam} = dataFormEdit;
+        // this data create begin
+        const data = [];
+        if (roomExamAndTeacher?.length > 0) {
+            for (let index = 0; index < roomExamAndTeacher.length; index++) {
+                data.push({
+                    key: index,
+                    index: index + 1,
+                    time_start:
+                        <DatePicker
+                            showTime
+                            format="YYYY/MM/DD HH:mm"
+                            className="time_start_begin"
+                            value={roomExamAndTeacher[index].time_start_exam && dayjs(roomExamAndTeacher[index].time_start_exam)}
+                            onOk={(e) => onConfirm(e, index)}
+                            allowClear={false}
+                            disabled={roomExamAndTeacher.length === 1 ? false : (roomExamAndTeacher[index - 1]?.disabledRoom)}
+                        />
+                    ,
+                    time_end:
+                        <div className="time_start_end">{roomExamAndTeacher[index].time_end_exam
+                            && dayjs(roomExamAndTeacher[index].time_end_exam).format("YYYY/MM/DD HH:mm")
+                        }</div>
+                    ,
+                    room: <Select
+                        showSearch
+                        style={{ width: '100%' }}
+                        disabled={roomExamAndTeacher[index].time_start_exam ? false : true}
+                        placeholder="Chọn phòng thi"
+                        filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                        filterSort={(optionA, optionB) =>
+                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                        }
+                        value={roomExamAndTeacher[index].room_exam}
+                        onChange={(e) => changeRoomExam(e, index)}
+                        onSelect={(e) => onSelectItemRooms(e, index)}
+                        onFocus = {()=>dataCallApiRoom(  roomExamAndTeacher[index].time_start_exam , roomExamAndTeacher[index].time_end_exam , index  )}
+                    >
+                        {
+                            roomExamAndTeacher[index]?.rooms.map((e, index) => {
+                                return (
+                                    <Option value={e.id} label={e.name} key={index}>
+                                        <Space>
+                                            {e.name}-{e.form_room}
+                                        </Space>
+                                    </Option>
+                                )
+                            })
+                        }
+
+                    </Select>
+                    ,
+                    teacher_exam: <Select
+                        showSearch
+                        disabled={roomExamAndTeacher[index].time_start_exam ? false : true}
+                        labelCol={{ span: 0 }}
+                        wrapperCol={{ span: 20 }}
+                        style={{ width: '100%', marginBottom: "10px" }}
+                        placeholder="Chọn giáo viên coi thi"
+                        mode="multiple"
+                        optionFilterProp="children"
+                        optionLabelProp="label"
+                        filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                        filterSort={(optionA, optionB) =>
+                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                        }
+                        value={roomExamAndTeacher[index]?.teacher_exam}
+                        onChange={(e) => changeTeacherRooms(e, index)}
+                        onDeselect={(e) => showDelelte(e, index)}
+                        onSelect={(e) => onSelectItem(e, index)}
+                        onFocus = {()=>dataCallApiRoom(  roomExamAndTeacher[index].time_start_exam , roomExamAndTeacher[index].time_end_exam , index  )}
+                        className="select_teacher"
+                    >
+                        {
+                            roomExamAndTeacher[index].teachers.map(e => {
+                                return (
+                                    <Option value={e.id} label={e.name}>
+                                        <div className='option_teacher'>
+                                            <Space>
+                                                {e.name}
+                                            </Space>
+                                            <Image
+                                                width={50}
+                                                height={50}
+                                                src={e.avatar}
+                                                aria-label={e.name}
+                                            />
+                                        </div>
+                                    </Option>
+                                )
+                            })
+                        }
+
+                    </Select>,
+                    teacher_score:
+                        <div>
+                            {dataFormEdit.grading_exam == 1 ?
+                                <Select
+                                    showSearch
+                                    disabled={roomExamAndTeacher[index]?.teacher_exam.length > 0 ? false : true}
+                                    labelCol={{ span: 0 }}
+                                    wrapperCol={{ span: 20 }}
+                                    style={{ width: '100%', marginBottom: "10px" }}
+                                    placeholder="Chọn giáo viên chấm thi"
+                                    optionFilterProp="children"
+                                    optionLabelProp="label"
+                                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                    filterSort={(optionA, optionB) =>
+                                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                    }
+                                    value={roomExamAndTeacher[index]?.teacher_score_student}
+                                    onChange={(e) => changeTeacherRoomsScoreStudent(e, index)}
+                                    className="select_teacher"
+                                >
+                                    {
+                                        teacher_department_edit.map(e => {
+                                            return (
+                                                <Option value={e.id} label={e.name}>
+                                                    <div className='option_teacher'>
+                                                        <Space>
+                                                            {e.name}
+                                                        </Space>
+                                                        <Image
+                                                            width={50}
+                                                            height={50}
+                                                            src={e.avatar}
+                                                            aria-label={e.name}
+                                                        />
+                                                    </div>
+                                                </Option>
+                                            )
+                                        })
+                                    }
+
+                                </Select>
+                                : "Máy chấm điểm tự động"}
+                        </div>
+                });
+            }
+        }
+        return data;
+    }
+
+    // handele Edit
+
+    const onCloseEdit = () => {
+        setOpenEditData(false);
+    }
+
+    const handleCancelEdit = () => {
+        setOpenEditData(false);
+    }
+
+    const handleOkEdit = () => {
+        setOpenEditData(false);
+    }
+
+   ///// logic edit 
+
+   const [openNoti , setOpenNoti ] = useState(false)
+   const onChangeExamEdit  = ()=>{
+    setOpenNoti(true)
+   }
+   const handleChangeModeEdit = ()=>{
+    setOpenNoti(true)
+   }
+   const  onChangeSearchYearEdit= ()=>{
+    setOpenNoti(true)
+   }
+
+   const handleOkDeleteAndCreate = ()=>{
+    setOpenNoti(false)
+    setOpenEditData(false)
+    setIsModalOpenCreate(true) 
+    const { id_exam , mode  , timeYearExamStart}  = dataFormEdit;
+    // const dataOnFormCreate
+   }
+
+   const handleCancelDeleteAndCreate= ()=>{
+    setOpenNoti(false)
+   }
+
+
     return (
         <div>
             <div className='form_search'>
@@ -904,6 +1306,13 @@ const ScheduleSComponent = () => {
             {/* End Modal PDF */}
 
 
+                {/* Modal PDF */}
+            {/* <Modal title="Xóa danh sách thi này tạo lại danh sach thi khác" open={openNoti} onOk={handleOkDeleteAndCreate} onCancel={handleCancelDeleteAndCreate}>
+                <p> Nếu bạn đồng ý thì lịch thi này sẽ bị xóa và tạo lại từ đầu </p>
+            </Modal> */}
+            {/* End Modal PDF */}
+
+
 
             <Drawer
                 title="Tạo Lịch Thi"
@@ -914,7 +1323,7 @@ const ScheduleSComponent = () => {
                     <Space>
                         <Button onClick={handleCancelCreate}>Hủy</Button>
                         <Button type="primary" onClick={handleOkCreate}>
-                          Tạo lịch thi
+                            Tạo lịch thi
                         </Button>
                     </Space>
                 }
@@ -1173,7 +1582,7 @@ const ScheduleSComponent = () => {
                         </div>
                     </div>
 
-                  
+
 
 
                 </Form>
@@ -1182,8 +1591,296 @@ const ScheduleSComponent = () => {
                 <div className='table_select_time'>
                     <Table columns={columns} dataSource={dataTable()} />
                 </div>
-               
+
             </Drawer>
+
+
+            {/* Edit data room */}
+            <Drawer title="Sửa dữ liệu phòng thi" placement="right"
+                onClose={onCloseEdit}
+                open={openEditData}
+                extra={
+                    <Space>
+                        <Button onClick={handleCancelEdit}>Hủy</Button>
+                        <Button type="primary" onClick={handleOkEdit}>
+                            Sửa  lịch thi
+                        </Button>
+                    </Space>
+                }
+            >
+                <Form
+                    name="basic"
+                    labelCol={{ span: 0 }}
+                    wrapperCol={{ span: 24 }}
+                    style={{ maxWidth: '500' }}
+                    layout="vertical"
+                    autoComplete="off"
+                    fields={[
+                        {
+                            name: ["id_exam"],
+                            value: dataFormEdit.id_exam,
+                        },
+                        {
+                            name: ["mode"],
+                            value: dataFormEdit.mode,
+                        },
+                        {
+                            name: ["year"],
+                            value: dataFormEdit.timeYearExamStart + "-" + dataFormEdit.timeYearExamEnd,
+                        },
+                        {
+                            name: ["form_exam"],
+                            value: dataFormEdit.form_exam,
+                        },
+
+                        {
+                            name: ["roomPeopleMax"],
+                            value: dataFormEdit.roomPeopleMax,
+                        },
+                        {
+                            name: ["time_exam"],
+                            value: dataFormEdit.time_exam,
+                        },
+                        {
+                            name: ["grading_exam"],
+                            value: dataFormEdit.grading_exam
+                        },
+                        {
+                            name: ["idDepartment"],
+                            value: dataFormEdit.idDepartment
+                        },
+                        {
+                            name: ["grading_exam"],
+                            value: dataFormEdit.grading_exam
+                        },
+
+                    ]}
+
+                >
+
+                    <div className='tt_information_exam'>
+                        {
+                            dataFormEdit.id_exam > 0 && countStudnetExam > 1 && <span className='count_exam'> Khóa Dự Thi : {dataFormEdit.bigBlockClassExam}  {
+                                dataFormEdit.id_exam > 0 && <div className='count_exam1'> - Có tổng cộng {countStudnetExam} sinh viên </div>
+                            } </span>
+                        }
+                    </div>
+
+                    {
+                        countStudnetExam < 1 && dataFormEdit.id_exam && <div className='error_canlender'>Hiện tại chưa có sinh viên nào để lên lịch thi</div>
+                    }
+
+                    <div className='form_create_table'>
+                        <Form.Item
+                            label="Môn thi : "
+                            name="id_exam"
+                            className='form_item'
+                        >
+                            <Select
+                                showSearch
+                                style={{ width: '100%' }}
+                                placeholder="Chọn Môn Thi"
+                                value={dataFormEdit.id_exam}
+                                optionFilterProp="children"
+                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                filterSort={(optionA, optionB) =>
+                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                }
+                                onChange={onChangeExamEdit}
+                                disabled
+
+                            >
+                                {
+                                    listExamSelect.map((e, index) => {
+                                        return (
+                                            <Option value={e.id} label={e.name} key={index}>
+                                                <Space>
+                                                    {e.name}
+                                                </Space>
+                                            </Option>
+                                        )
+                                    })
+                                }
+                            </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Thi cuối kì - Thi lại : "
+                            name="mode"
+                            className='form_item'
+                        >  <Select
+                                name="mode"
+                                value={dataFormEdit.mode}
+                                onChange={handleChangeModeEdit}
+                                style={{ width: '100%' }}
+                                options={options}
+                                disabled
+                            />
+                        </Form.Item>
+
+
+
+                        <Form.Item
+                            label="Năm học : "
+                            name="year"
+                            className='form_item'
+                        >
+                            <Select
+                                showSearch
+                                style={{ width: '100%' }}
+                                disabled={dataFormEdit.id_exam > 0 ? false : true}
+                                placeholder="Năm học"
+                                value={dataFormEdit.timeYearExamStart + "-" + dataFormEdit.timeYearExamEnd}
+                                optionFilterProp="children"
+                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                filterSort={(optionA, optionB) =>
+                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                }
+                                onChange={onChangeSearchYearEdit}
+                                disabled
+                            > 
+                                {
+                                    listTimeSelect.map((e, index) => {
+                                        return (
+                                            <Option value={e} label={e} key={index}>
+                                                <Space>
+                                                    {e}
+                                                </Space>
+                                            </Option>
+                                        )
+                                    })
+                                }
+                            </Select>
+                        </Form.Item>
+                    </div>
+
+
+
+
+                    <div className='form_2'>
+                        <Form.Item
+                            label="Hình thức thi : "
+                            name="form_exam"
+                            className='form_item'
+                        >
+                            <Select
+                                showSearch
+                                disabled={dataFormEdit.id_exam > 0 ? false : true}
+                                style={{ width: '100%' }}
+                                placeholder="Chọn hình thức thi :"
+                                value={dataFormEdit.form_exam}
+                                optionFilterProp="children"
+                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                filterSort={(optionA, optionB) =>
+                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                }
+                                onChange={changeFormExamEdit}
+
+                            >
+                                {
+                                    examForms.map((e, index) => {
+                                        return (
+                                            <Option value={e.id} label={e.name} key={index}>
+                                                <Space>
+                                                    {e.name}
+                                                </Space>
+                                            </Option>
+                                        )
+                                    })
+                                }
+
+                            </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Số lượng sinh viên tối đa của 1 phòng : "
+                            name="roomPeopleMax"
+                            className='form_item'
+                        >
+                            <Input name="roomPeopleMax" value={dataFormEdit.roomPeopleMax} onChange={changeMaxPeopleEdit} type="number" disabled={dataFormEdit.id_exam > 0 ? false : true} />
+
+                        </Form.Item>
+
+                        {
+                            <Form.Item
+                                label="Tổng thời gian thi môn (Phút) : "
+                                name="time_exam"
+                                className='form_item'
+                            >
+                                <Input name="time_exam" value={dataFormEdit.time_exam} onChange={changeTimeExamEdit} type="number" disabled={dataFormEdit.roomPeopleMax > 0 ? false : true} />
+
+                            </Form.Item>
+                        }
+                    </div>
+
+
+                    <div className='form_3'>
+                        {
+                            <Form.Item
+                                label="Hình thức chấm thi : "
+                                name="grading_exam"
+                                className='form_item'
+                            >
+                                <Radio.Group onChange={changeFormGradingExamEdit} value={dataFormEdit.grading_exam} className="radio1" disabled={dataFormEdit.time_exam <= 0}>
+                                    {
+                                        options_score_student.map(e => <Radio value={e.value} key={e.value}> {e.label}</Radio>)
+                                    }
+                                </Radio.Group>
+                            </Form.Item>
+                        }
+
+
+                        <div>
+
+                            <Form.Item
+                                label=" Khoa chấm thi :"
+                                name="idDepartment"
+                                className='form_item'
+                            >
+                                <Select
+                                    showSearch
+                                    disabled={dataFormEdit.grading_exam === 1 && dataFormEdit?.roomExamAndTeacher?.length > 0 ? false : true}
+                                    labelCol={{ span: 0 }}
+                                    wrapperCol={{ span: 20 }}
+                                    style={{ width: '100%', marginBottom: "10px" }}
+                                    placeholder="Chọn khoa"
+                                    optionFilterProp="children"
+                                    optionLabelProp="label"
+                                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                    filterSort={(optionA, optionB) =>
+                                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                    }
+                                    value={dataFormEdit.idDepartment}
+                                    onChange={(e) => onChangeCallDepartmentEdit(e)}
+                                    className="select_teacher"
+                                >
+                                    {
+                                        listDepartment.map(e => {
+                                            return (
+                                                <Option value={e.id} label={e.department}>
+                                                    <div className='option_teacher'>
+                                                        <Space>
+                                                            {e.department}
+                                                        </Space>
+                                                    </div>
+                                                </Option>
+                                            )
+                                        })
+                                    }
+
+                                </Select>
+                            </Form.Item>
+                        </div>
+                    </div>
+                </Form>
+                <p className='list_room'>Danh sách đăng kí phòng thi : </p> 
+                    <div className='table_select_time'>
+                        <Table columns={columns} dataSource={dataTableEdit(dataFormEdit)} />
+                    </div>
+            </Drawer>
+
+
+            {/* end edit data */}
 
         </div >
     );

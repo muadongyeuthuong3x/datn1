@@ -101,6 +101,8 @@ export class TableExamBigBlockClassService {
           'test-schedule-student.time_exam',
           'test-schedule-student.form_exam',
           'test-schedule-student.roomPeopleMax',
+          'test-schedule-student.grading_exam',
+          'test-schedule-student.department',
           'exam.id',
           'exam.name',
           'table-big-class-exam.id',
