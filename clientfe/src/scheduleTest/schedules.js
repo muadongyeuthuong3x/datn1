@@ -458,31 +458,37 @@ const ScheduleSComponent = () => {
     
     const changeMaxPeopleEdit = (e) => {
         const valueGet = e.target.value;
-        console.log(valueGet);
         if (valueGet < 1) {
             return toast.error(` Số lượng sinh viên một lớp phải lớn hơn 0 `);
         }
-        const dataOld = { ... dataFormEdit };
-        if (dataOld.roomExamAndTeacher) {
-            delete dataOld.roomExamAndTeacher;
-        }
-        const dataArray = [];
         const numberCell = Math.ceil((countStudnetExam) / (valueGet));
-        for (let index = 0; index < numberCell; index++) {
-            const formObject = {
-                time_start_exam: '',
-                time_end_exam: '',
-                teacher_exam: [],
-                teacher_score_student: '',
-                room_exam: '',
-                teachers: [],
-                rooms: [],
-                disabledRoom: true
+        const dataOld = { ...dataFormEdit };
+        if(numberCell === Math.ceil((countStudnetExam) / (dataOld.roomPeopleMax))){
+            dataOld.roomPeopleMax = valueGet
+        }else {
+            if (dataOld.roomExamAndTeacher) {
+                delete dataOld.roomExamAndTeacher;
             }
-            dataArray.push(formObject);
+            const dataArray = [];
+           
+            for (let index = 0; index < numberCell; index++) {
+                const formObject = {
+                    time_start_exam: '',
+                    time_end_exam: '',
+                    teacher_exam: [],
+                    teacher_score_student: '',
+                    room_exam: '',
+                    teachers: [],
+                    rooms: [],
+                    disabledRoom: true
+                }
+                dataArray.push(formObject);
+            }
+            dataOld.roomPeopleMax = valueGet;
+            dataOld.roomExamAndTeacher = dataArray;
         }
-        dataOld.roomPeopleMax = valueGet;
-        dataOld.roomExamAndTeacher = dataArray;
+      
+      
         setDataFormEdit(dataOld);
     }
     //time exam
@@ -575,7 +581,6 @@ const ScheduleSComponent = () => {
             dataOld.button_submit = false
         }
         if (dataOld.grading_exam === 2) {
-            console.log("??????????????????")
             dataOld.roomExamAndTeacher[index].disabledRoom = false
         }
         setOnchangeFormCreate(dataOld)
@@ -1094,6 +1099,70 @@ const ScheduleSComponent = () => {
 
 
     // logic edit exam
+   
+    const getTeacherSelectsEdit = (time_start, time_end, i) => {
+        const dataTeacher = dataFormEdit.roomExamAndTeacher;
+        let idTeachersUnless = [];
+        if (dataTeacher[0].teacher_exam.length == 0) {
+            idTeachersUnless = [];
+        } else {
+            for (let index = 0; index < dataTeacher.length; index++) {
+                if (index === i) {
+                    continue;
+                } else {
+                    const { time_end_exam, time_start_exam } = dataTeacher[index]
+                    if ((Date.parse(time_start) >= Date.parse(time_start_exam) && Date.parse(time_start) <= Date.parse(time_end_exam)) || (Date.parse(time_end) >= Date.parse(time_start_exam) && Date.parse(time_end) <= Date.parse(time_end_exam))) {
+                        for (let j = 0; j < dataTeacher[index].teacher_exam.length; j++) {
+                            idTeachersUnless.push(dataTeacher[index].teacher_exam[j])
+                        }
+                        idTeachersUnless.concat(dataTeacher[index].teacher_exam)
+                    }
+                }
+            }
+        }
+        return idTeachersUnless;
+    }
+
+
+
+    const getRoomsSelectsEdit = (time_start, time_end, i) => {
+        const dataTeacher = dataFormEdit.roomExamAndTeacher;
+        let idRoomsUnless = [];
+        if (dataTeacher[0].room_exam.length == 0) {
+            idRoomsUnless = [];
+        } else {
+            for (let index = 0; index < dataTeacher.length; index++) {
+                if (index === i) {
+                    continue;
+                } else {
+                    const { time_end_exam, time_start_exam } = dataTeacher[index]
+                    if ((Date.parse(time_start) >= Date.parse(time_start_exam) && Date.parse(time_start) <= Date.parse(time_end_exam)) || (Date.parse(time_end) >= Date.parse(time_start_exam) && Date.parse(time_end) <= Date.parse(time_end_exam))) {
+                        idRoomsUnless.push(Number(dataTeacher[index].room_exam))
+                    }
+                }
+            }
+        }
+        return idRoomsUnless;
+    }
+   
+
+    const onConfirmEdit = async (e, index) => {
+
+        if (Date.parse(new Date()) > Date.parse(e)) {
+            return toast.error("Thời gian bạn chọn phải lớn hơn thời gian hiện tại");
+        }
+        const dataOld = { ...dataFormEdit };
+        const timeExam = dataOld.time_exam;
+        dataOld.roomExamAndTeacher[index].time_start_exam = dayjs(e).format('YYYY-MM-DD HH:mm');
+        dataOld.roomExamAndTeacher[index].time_end_exam = dayjs(e).add(timeExam, 'minute').format('YYYY-MM-DD HH:mm');
+        const idUnLess = getTeacherSelectsEdit(dayjs(e).format('YYYY-MM-DD HH:mm'), dayjs(e).add(timeExam, 'minute').format('YYYY-MM-DD HH:mm'), index);
+        const idUnLessRoom = getRoomsSelectsEdit(dayjs(e).format('YYYY-MM-DD HH:mm'), dayjs(e).add(timeExam, 'minute').format('YYYY-MM-DD HH:mm'), index);
+        const dataRes = await instance.post(`/test-schedule-student/${dataOld.roomExamAndTeacher[index].time_start_exam}/${dataOld.roomExamAndTeacher[index].time_end_exam}`, idUnLess);
+        const dataRes1 = await instance.post(`/test-schedule-student/rooms/${dataOld.roomExamAndTeacher[index].time_start_exam}/${dataOld.roomExamAndTeacher[index].time_end_exam}`, idUnLessRoom);
+        dataOld.roomExamAndTeacher[index].teachers = dataRes.data
+        dataOld.roomExamAndTeacher[index].rooms = dataRes1.data
+        setDataFormEdit(dataOld); 
+    }
 
 
 
@@ -1112,7 +1181,7 @@ const ScheduleSComponent = () => {
                             format="YYYY/MM/DD HH:mm"
                             className="time_start_begin"
                             value={roomExamAndTeacher[index].time_start_exam && dayjs(roomExamAndTeacher[index].time_start_exam)}
-                            onOk={(e) => onConfirm(e, index)}
+                            onOk={(e) => onConfirmEdit(e, index)}
                             allowClear={false}
                             disabled={roomExamAndTeacher.length === 1 ? false : (roomExamAndTeacher[index - 1]?.disabledRoom)}
                         />
