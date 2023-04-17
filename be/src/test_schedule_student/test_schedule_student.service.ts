@@ -219,9 +219,35 @@ export class TestScheduleStudentService {
   return  await this.itemRoomExamAndTeacherRepository.findListTeachers(time_start , time_end ,idUnLess);
   }
 
+  //findCounRoomServiers
+
+  async findCounRoomServiers(time_start: Date, time_end: Date, id: number) {
+    return await this.itemRoomExamAndTeacherRepository.findCountRoom(
+      time_start,
+      time_end,
+      id,
+    );
+  }
+
+
+  // find Counttechaer " findCountTeachers"
+
+  async findCountTeachers(time_start: Date, time_end: Date, id: number) {
+    return await this.itemRoomExamAndTeacherRepository.findCountTeacher(
+      time_start,
+      time_end,
+      id,
+    );
+  }
+
   async findListRoomsByTime ( time_start : Date , time_end : Date ,idUnLess : number []){
     return  await this.itemRoomExamAndTeacherRepository.findListRooms(time_start , time_end ,idUnLess);
     }
+
+    // async findListRoomsByTimeEdit ( time_start : Date , time_end : Date ,idUnLess : number []){
+    //   return  await this.itemRoomExamAndTeacherRepository.findListRoomsEdit(time_start , time_end ,idUnLess);
+    //   }
+  
 
     async dowloadPDFSchedule (id : number) : Promise<Buffer> {
       

@@ -14,6 +14,9 @@ export class TeacherMarkExamRoom {
 
     @Column()
     id_teacher_mark_query : string;
+
+    @Column()
+    id_room_query : string;
     
     @ManyToOne(() => Teacher, item => item.id_teacherMarkExamRoom)
     id_teacher_mark_score : number;

@@ -53,8 +53,51 @@ export class TestScheduleStudentController {
     return await this.testScheduleStudentService.findListRoomsByTime(time_start, time_end, idUnLess);
   }
 
-  @Get('/schedule_pdf/:id')
-  async dowloadPDF(@Param('id') id: number, @Res() res: Response): Promise<void> {
+  
+//   @Post('rooms/:time_start/:time_end')
+//   async findRoomsByDateEdit(
+//     @Param('time_start') time_start: Date,
+//     @Param('time_end') time_end: Date,
+//     @Body() idUnLess: number[],
+//   ) {
+//     return await this.testScheduleStudentService.findListRoomsByTimeEdit(
+//       time_start,
+//       time_end,
+//       idUnLess)
+//   }
+
+  
+
+    @Get('countteacher/:time_start/:time_end/:id')
+    async findCountRooms(
+        @Param('time_start') time_start: Date,
+        @Param('time_end') time_end: Date,
+        @Param('id') id: number,
+    ) {
+    return await this.testScheduleStudentService.findCountTeachers(
+      time_start,
+      time_end,
+      id,
+    );
+    }
+
+    @Get('countrooms/:time_start/:time_end/:id')
+    async findCounRoomServiers(
+        @Param('time_start') time_start: Date,
+        @Param('time_end') time_end: Date,
+        @Param('id') id: number,
+    ) {
+        return await this.testScheduleStudentService.findCounRoomServiers(
+            time_start,
+            time_end,
+            id,)
+    }
+
+
+  async dowloadPDF(
+    @Param('id') id: number,
+    @Res() res: Response,
+  ): Promise<void> {
     //   const buffer =  await this.testScheduleStudentService.dowloadPDFSchedule(id); 
     //   res.set({
     //     'Content-Type' : 'application/pdf',

@@ -10,22 +10,23 @@ export class TeacherTrackService {
   constructor(
     @InjectRepository(TeacherTrack)
     private readonly teacherTrackRepository: Repository<TeacherTrack>,
-  ) { }
+  ) {}
   async create(createTeacherTrackDto: CreateTeacherTrackDto) {
     for (let i = 0; i < createTeacherTrackDto.list_teacher.length; i++) {
       const createData = new TeacherTrack();
       createData.id_itemRoomExamAndTeacher = createTeacherTrackDto.idDataCreate;
-      createData.id_Teacher =createTeacherTrackDto.list_teacher[i] as any;
-      createData.id_teacher_track_query = createTeacherTrackDto.list_teacher[i] as any;
-      await this.teacherTrackRepository.save(createData)
+      createData.id_room_query = createTeacherTrackDto.idDataCreate as any;
+      createData.id_Teacher = createTeacherTrackDto.list_teacher[i] as any;
+      createData.id_teacher_track_query = createTeacherTrackDto.list_teacher[
+        i
+      ] as any;
+      await this.teacherTrackRepository.save(createData);
     }
   }
 
   findAll() {
     return `This action returns all teacherTrack`;
   }
-
-
 
   findOne(id: number) {
     return `This action returns a #${id} teacherTrack`;
@@ -39,5 +40,21 @@ export class TeacherTrackService {
     return `This action removes a #${id} teacherTrack`;
   }
 
-
+  async fintCountTeacher(roomsList: any, id: number) {
+    let countTeacher = 0;
+    for (let i = 0; i < roomsList.length; i++) {
+      const idQuery = roomsList[i].id;
+      const count: any = await this.teacherTrackRepository
+        .createQueryBuilder('teacher-track')
+        .where('teacher-track.id_room_query  = :id')
+        .andWhere('teacher-track.id_teacher_track_query  = :idTeacher')
+        .setParameters({
+          id: idQuery,
+          idTeacher: id,
+        })
+        .getCount();
+      countTeacher += count;
+    }
+    return countTeacher;
+  }
 }

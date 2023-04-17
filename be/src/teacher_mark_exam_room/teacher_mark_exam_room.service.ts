@@ -7,25 +7,23 @@ import { TeacherMarkExamRoom } from './entities/teacher_mark_exam_room.entity';
 
 @Injectable()
 export class TeacherMarkExamRoomService {
-
   constructor(
     @InjectRepository(TeacherMarkExamRoom)
     private readonly teacherMarkExamRoomRepository: Repository<TeacherMarkExamRoom>,
-  ) { }
+  ) {}
   async create(createTeacherMarkExamRoomDto: CreateTeacherMarkExamRoomDto) {
     try {
       // for (let i = 0; i < createTeacherMarkExamRoomDto.list_teacher.length; i++) {
-        const createData = new TeacherMarkExamRoom();
-        createData.id_item_room_exam =createTeacherMarkExamRoomDto.idDataCreate;
-        createData.id_teacher_mark_score =createTeacherMarkExamRoomDto.teacher;   
-        createData.id_teacher_mark_query = createTeacherMarkExamRoomDto.teacher as any;
-        return  await this.teacherMarkExamRoomRepository.save(createData); 
+      const createData = new TeacherMarkExamRoom();
+      createData.id_item_room_exam = createTeacherMarkExamRoomDto.idDataCreate;
+      createData.id_room_query =
+        createTeacherMarkExamRoomDto.idDataCreate as any;
+      createData.id_teacher_mark_score = createTeacherMarkExamRoomDto.teacher;
+      createData.id_teacher_mark_query =
+        createTeacherMarkExamRoomDto.teacher as any;
+      return await this.teacherMarkExamRoomRepository.save(createData);
       // }
-    } catch (error) {
-      
-    }
-  
-   
+    } catch (error) {}
   }
 
   findAll() {
@@ -36,7 +34,10 @@ export class TeacherMarkExamRoomService {
     return `This action returns a #${id} teacherMarkExamRoom`;
   }
 
-  update(id: number, updateTeacherMarkExamRoomDto: UpdateTeacherMarkExamRoomDto) {
+  update(
+    id: number,
+    updateTeacherMarkExamRoomDto: UpdateTeacherMarkExamRoomDto,
+  ) {
     return `This action updates a #${id} teacherMarkExamRoom`;
   }
 
