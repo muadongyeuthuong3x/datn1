@@ -31,13 +31,14 @@ const listExam = createSlice({
         createExamReducer: (state, { payload }) => {
             state.loading = false
             const dataOld = [...state.data];
-            const {id , name , semester , year_learn , tc_learn } = payload;
+            const {id , name ,semester  ,year_learn,tc_learn} = payload;
             dataOld.push({
                 id: id ,
                 name: name,
-                tc_learn,
-                year_learn,
-                semester
+                year_learn ,
+                semester,
+                tc_learn
+            
             })
             state.data = dataOld
         },
@@ -126,8 +127,8 @@ export function editDataExamApi(data) {
     return async dispatch => {
         dispatch(loadding())
         try {
-            const {id , name} = data
-            const dataRes = await instance.patch(`/exam/${id}`, {name});
+            const {id} = data
+            const dataRes = await instance.patch(`/exam/${id}`, data);
             dispatch(editData(data))
             toast.success(dataRes.data.message)
         } catch (error) {

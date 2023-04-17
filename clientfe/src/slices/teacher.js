@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import {UploadMuitiFie} from "../uploadImage/index"
 export const initialState = {
     loading: false,
-    data: []
+    data: [],
 }
 
 

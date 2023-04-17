@@ -15,6 +15,7 @@ import ExamBlock from './examBlock/index'
 import ListScoreStudent from './editScoreStudent/index';
 import ScoreStatistic from './scoreStatistics/index';
 import Department from './department/index'
+import RechartComponents from "./rechartTeacher/index"
 function App() {
   return (
     <BrowserRouter>
@@ -33,7 +34,7 @@ function App() {
         <Route path="/edit-score" element={<ListScoreStudent />} />
         <Route path="/tt-score-student" element={<ScoreStatistic />} />
         <Route path="/department" element={<Department />} />
-        
+        <Route path="/tt-teacher" element={<RechartComponents />} />
       </Routes>
     </BrowserRouter>
   );

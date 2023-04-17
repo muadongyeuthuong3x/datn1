@@ -2,6 +2,7 @@ import { Button, Table, Modal, Input, Form,Select } from 'antd';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListExam, deleteItemExam, createExam, searchDataApi, editDataExamApi } from '../slices/exam'
+import { toast } from 'react-toastify';
 
 const ExamComponent = () => {
     const dispatch = useDispatch();
@@ -114,6 +115,12 @@ const ExamComponent = () => {
     };
 
     const onChanheFormCreate = (e) => {
+        console.log(e.target.value)
+        if(e.target.name== 'tc_learn'){
+            if(e.target.value < 1){
+              return  toast.error("Số tín chỉ phải lớn hơn không")
+            }
+        }
         setFromCreateSearch(prev => {
             return {
                 ...prev,

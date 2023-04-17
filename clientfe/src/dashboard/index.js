@@ -115,6 +115,13 @@ const DashBoard = ({ ComponentProps, loading }) => {
             isAdmin: false,
             key: 11
         },
+        {
+            link: "/tt-teacher",
+            text: "Thống kê phân công thi",
+            icon: < UserOutlined />,
+            isAdmin: false,
+            key: 12
+        },
         
     ]
 
