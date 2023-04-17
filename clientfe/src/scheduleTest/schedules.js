@@ -1195,7 +1195,7 @@ const ScheduleSComponent = () => {
                         showSearch
                         style={{ width: '100%' }}
                         disabled={roomExamAndTeacher[index].time_start_exam ? false : true}
-                        placeholder="Chọn phòng thi"
+                        placeholder="Chọn phòng thi"    
                         filterOption={(input, option) => (option?.label ?? '').includes(input)}
                         filterSort={(optionA, optionB) =>
                             (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
