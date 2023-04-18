@@ -159,7 +159,7 @@ export default function ScoreStatis() {
             { name: "Tổng % sinh đỗ", value: data.countSuccess },
         ])
     }, [data])
-    const COLORS = ["#00C49F", "#FFBB28"];
+    const COLORS = ["#FFBB28","#00C49F"];
 
     const RADIAN = Math.PI / 180;
     const renderCustomizedLabel = ({ cx,
