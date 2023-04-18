@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListExamBlock } from "../slices/examBlock";
-import { apiGetListCountScore } from "../slices/scoreStatic";
+import { apiGetListCountScore, dispatchDefault } from "../slices/scoreStatic";
 import { PieChart, Pie, Cell } from "recharts";
 
 const { Option } = Select;
@@ -89,7 +89,10 @@ export default function ScoreStatis() {
     // dataAll,
     // countFail,
     // countSuccess
-
+     useEffect(()=>{
+      dispatch(dispatchDefault())
+     },[])
+    
     useEffect(() => {
     const arrayPush = [];
     for(let i =0  ; i <data.dataAll.length  ; i++){
@@ -236,54 +239,54 @@ export default function ScoreStatis() {
                 <Button type='primary' onClick={searchData}> Thống kê</Button>
             </div>
 
-            <div style={{display : "flex"}}> 
-           <div> 
-             <h2 style={{fontSize:"30px" , marginBottom:"20px"}}> Tổng số sinh viên đạt điểm </h2>
-            <BarChart
-                width={800}
-                height={500}
-                data={dataTT}
-                margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5
-                }}
-            >
-                <CartesianGrid strokeDasharray="3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="Tổng số sinh viên" fill="#0088FE" minPointSize={10}>
-                </Bar>
-            </BarChart>
-            </div>
-            <div> 
-            <h2 style={{fontSize:"30px" , marginBottom:"20px"}}> Tổng số (%) sinh viên đạt và không đạt </h2>
-            <PieChart width={600} height={400}>
-                <Pie
-                    data={data111}
-                    cx={300}
-                    cy={200}
-                    labelLine={false}
-                    label={renderCustomizedLabel}
-                    outerRadius={160}
-                    fill="#8884d8"
-                    dataKey="value"
-                >
-                    {data111.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                </Pie>
-            </PieChart>
-            <div style={{marginLeft:"100px"}}> 
-            <span style={{display:"flex"}}> <div style={{width : "40px" , height:"20px" ,marginBottom :"20px", marginRight:"20px", background:"#00C49F"}}>  </div>Số (%) sinh viên qua môn </span>
-             <span style={{display:"flex"}}><div style={{width : "40px" , height:"20px" , marginRight:"20px" ,background:"#FFBB28"}}> </div>Số (%) sinh viên trượt môn</span>
-            </div>
-            </div>
-            </div>
-        </div>
+             <div style={{display : "flex"}}> 
+                <div>
+                    <h2 style={{ fontSize: "30px", marginBottom: "20px" }}> Tổng số sinh viên đạt điểm </h2>
+                    <BarChart
+                        width={800}
+                        height={500}
+                        data={dataTT}
+                        margin={{
+                            top: 5,
+                            right: 30,
+                            left: 20,
+                            bottom: 5
+                        }}
+                    >
+                        <CartesianGrid strokeDasharray="3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="Tổng số sinh viên" fill="#0088FE" minPointSize={10}>
+                        </Bar>
+                    </BarChart>
+                </div>
+                <div>
+                    <h2 style={{ fontSize: "30px", marginBottom: "20px" }}> Tổng số (%) sinh viên đạt và không đạt </h2>
+                    <PieChart width={600} height={400}>
+                        <Pie
+                            data={data111}
+                            cx={300}
+                            cy={200}
+                            labelLine={false}
+                            label={renderCustomizedLabel}
+                            outerRadius={160}
+                            fill="#8884d8"
+                            dataKey="value"
+                        >
+                            {data111.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                        </Pie>
+                    </PieChart>
+                    <div style={{ marginLeft: "100px" }}>
+                        <span style={{ display: "flex" }}> <div style={{ width: "40px", height: "20px", marginBottom: "20px", marginRight: "20px", background: "#00C49F" }}>  </div>Số (%) sinh viên qua môn </span>
+                        <span style={{ display: "flex" }}><div style={{ width: "40px", height: "20px", marginRight: "20px", background: "#FFBB28" }}> </div>Số (%) sinh viên trượt môn</span>
+                    </div>
+                </div> 
+            </div> 
+        </div> 
 
     );
 }

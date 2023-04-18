@@ -26,10 +26,17 @@ const ttScoreStudent = createSlice({
         loaddingFailes: state => {
             state.loading = false
         },
+        defaultData: state => {
+            state.data = {
+                dataAll: [],
+                countFail: 0,
+                countSuccess: 0
+            }
+        }
     },
 })
 
-export const { loadding, getListCountScoreSuccess, loaddingFailes} = ttScoreStudent.actions
+export const { loadding, getListCountScoreSuccess, loaddingFailes, defaultData } = ttScoreStudent.actions
 
 export function apiGetListCountScore(data) {
     return async dispatch => {
@@ -40,11 +47,21 @@ export function apiGetListCountScore(data) {
                 dispatch(getListCountScoreSuccess(response.data.message))
             }
         } catch (error) {
-            dispatch(getListCountScoreSuccess([0,0,0,0,0,0,0,0,0,0]))
+            dispatch(getListCountScoreSuccess({ dataAll : [0,0,0,0,0,0,0,0,0,0] , countFail : 0 , countSuccess: 0 }))
             toast.error(error.response.data.message)
         }
     }
 } 
+
+
+    // dataAll,
+    // countFail,
+    // countSuccess
+export function dispatchDefault(){
+    return async dispatch => {
+        dispatch(defaultData())
+    }
+}
 
 
 
