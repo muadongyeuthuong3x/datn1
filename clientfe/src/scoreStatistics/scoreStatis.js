@@ -12,6 +12,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListExamBlock } from "../slices/examBlock";
 import { apiGetListCountScore } from "../slices/scoreStatic";
+import { PieChart, Pie, Cell } from "recharts";
 
 const { Option } = Select;
 
@@ -29,43 +30,43 @@ export default function ScoreStatis() {
     const [dataTT, setDataTT] = useState([
         {
             name: "Khoảng điểm 1",
-            Total: 0,
+            "Tổng số sinh viên": 0,
         },
         {
             name: "Khoảng điểm 2",
-            Total: 0,
+            "Tổng số sinh viên": 0,
         },
         {
             name: "Khoảng điểm 3",
-            Total: 0,
+            "Tổng số sinh viên": 0,
         },
         {
             name: "Khoảng điểm 4",
-            Total: 0,
+            "Tổng số sinh viên": 0,
         },
         {
             name: "Khoảng điểm 5",
-            Total: 0,
+            "Tổng số sinh viên": 0,
         },
         {
             name: "Khoảng điểm 6",
-            Total: 0,
+            "Tổng số sinh viên": 0,
         },
         {
             name: "Khoảng điểm 7",
-            Total: 0,
+            "Tổng số sinh viên": 0,
         },
         {
             name: "Khoảng điểm 8",
-            Total: 0,
+            "Tổng số sinh viên": 0,
         },
         {
             name: "Khoảng điểm 9",
-            Total: 0,
+            "Tổng số sinh viên": 0,
         },
         {
             name: "Khoảng điểm 10",
-            Total: 0,
+            "Tổng số sinh viên": 0,
         },
     ]);
     const { data } = useSelector(state => state.ttScoreStudent);
@@ -85,12 +86,23 @@ export default function ScoreStatis() {
         })
     }
 
+    // dataAll,
+    // countFail,
+    // countSuccess
+
     useEffect(() => {
-    const dataOld =[...dataTT];
-    for(let i =0  ; i <data.length  ; i++){
-        dataOld[i].Total = data[i]
+    const arrayPush = [];
+    for(let i =0  ; i <data.dataAll.length  ; i++){
+        if(data.dataAll[i] > 0){
+            const objectPush = {
+                name: `Khoảng điểm ${i+1}`,
+                "Tổng số sinh viên": data.dataAll[i],
+            }
+            arrayPush.push(objectPush)
+        }
+      
     }
-    setDataTT(dataOld);
+    setDataTT(arrayPush);
     },[data])
 
     const onChangeSearchExam = (e) => {
@@ -132,6 +144,44 @@ export default function ScoreStatis() {
         dispatch(apiGetListCountScore(dataSearch))
     }
 
+
+    const [data111, setdata111] = useState([
+        { name: "Tổng % sinh trượt", value: data.countFail },
+        { name: "Tổng % sinh đỗ", value: data.countSuccess },
+    ])
+
+    useEffect(() => {
+        setdata111([
+            { name: "Tổng % sinh trượt", value: data.countFail },
+            { name: "Tổng % sinh đỗ", value: data.countSuccess },
+        ])
+    }, [data])
+    const COLORS = ["#00C49F", "#FFBB28"];
+
+    const RADIAN = Math.PI / 180;
+    const renderCustomizedLabel = ({ cx,
+        cy,
+        midAngle,
+        innerRadius,
+        outerRadius,
+        percent,
+        index }) => {
+        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+        return (
+            <text
+                x={x}
+                y={y}
+                fill="white"
+                textAnchor={x > cx ? "start" : "end"}
+                dominantBaseline="central"
+            >
+                {`${(percent * 100).toFixed(0)}%`}
+            </text>
+        );
+    }
     return (
         <div>
 
@@ -186,10 +236,12 @@ export default function ScoreStatis() {
                 <Button type='primary' onClick={searchData}> Thống kê</Button>
             </div>
 
+            <div style={{display : "flex"}}> 
+           <div> 
+             <h2 style={{fontSize:"30px" , marginBottom:"20px"}}> Tổng số sinh viên đạt điểm </h2>
             <BarChart
-                
-                width={1200}
-                height={700}
+                width={800}
+                height={500}
                 data={dataTT}
                 margin={{
                     top: 5,
@@ -203,9 +255,34 @@ export default function ScoreStatis() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="Total" fill="#8884d8" minPointSize={10}>
+                <Bar dataKey="Tổng số sinh viên" fill="#0088FE" minPointSize={10}>
                 </Bar>
             </BarChart>
+            </div>
+            <div> 
+            <h2 style={{fontSize:"30px" , marginBottom:"20px"}}> Tổng số (%) sinh viên đạt và không đạt </h2>
+            <PieChart width={600} height={400}>
+                <Pie
+                    data={data111}
+                    cx={300}
+                    cy={200}
+                    labelLine={false}
+                    label={renderCustomizedLabel}
+                    outerRadius={160}
+                    fill="#8884d8"
+                    dataKey="value"
+                >
+                    {data111.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                </Pie>
+            </PieChart>
+            <div style={{marginLeft:"100px"}}> 
+            <span style={{display:"flex"}}> <div style={{width : "40px" , height:"20px" ,marginBottom :"20px", marginRight:"20px", background:"#00C49F"}}>  </div>Số (%) sinh viên qua môn </span>
+             <span style={{display:"flex"}}><div style={{width : "40px" , height:"20px" , marginRight:"20px" ,background:"#FFBB28"}}> </div>Số (%) sinh viên trượt môn</span>
+            </div>
+            </div>
+            </div>
         </div>
 
     );

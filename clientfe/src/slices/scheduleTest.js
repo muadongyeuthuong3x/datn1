@@ -12,7 +12,9 @@ export const initialState = {
     countStudnetExam : 0,
     teacher_department : [],
     listDataTestSchedule : [],
-    teacher_department_edit: []
+    teacher_department_edit: [],
+    listYeart : [],
+    listMessage : [],
 }
 
 
@@ -90,10 +92,18 @@ const listSchedule = createSlice({
             state.loading = false;
             state.teachersFind = payload
         },
+        setListYearn: (state, {payload})=>{
+            state.loading = false;
+            state.listYeart = payload
+        },
+        setlistMessage: (state, {payload})=>{
+            state.loading = false;
+            state.listMessage = payload
+        },
     },
 })
 
-export const { loadding, getListDataSuccess, deleteScheduleInList, loaddingFailes, createScheduleReducer,setteacher_departmentedit, searchData, editData, setCount,setteacher_department ,setGetAllTestStudent ,setTeachers} = listSchedule.actions
+export const { loadding, getListDataSuccess, deleteScheduleInList, loaddingFailes,setListYearn ,setlistMessage, createScheduleReducer,setteacher_departmentedit, searchData, editData, setCount,setteacher_department ,setGetAllTestStudent ,setTeachers} = listSchedule.actions
 
 export function apiGetListDataApi(alert) {
     return async dispatch => {
@@ -202,7 +212,6 @@ export function setCountExamApi(data) {
         try {
             const { exam , time_start} = data
             const dataRes = await instance.get(`/students/count/${exam}/${time_start}`);
-            console.log(dataRes.data.message)
             dispatch(setCount(dataRes.data.message))
         } catch (error) {
             toast.error(error.response.data.message)
@@ -304,7 +313,29 @@ export function deleteItemTestScheduleStudent(id){
     }
 }
 
-
+export function getYearExam(){
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const dataRes = await instance.get(`/test-schedule-student`);
+            const {message} = dataRes.data;
+            const arrayYear = [];
+            for(let i = 0 ; i <message.length ; i++){
+              const {time_year_start , time_year_end} = message[i];
+              let timeConcat = time_year_start + "-" + time_year_end;
+              if(!arrayYear.includes(timeConcat)){
+                let timeConcat = time_year_start + "-" + time_year_end;
+                arrayYear.push(timeConcat);
+              }
+            }
+            dispatch(setListYearn(arrayYear))
+            dispatch(setlistMessage(message));
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
 
 
 

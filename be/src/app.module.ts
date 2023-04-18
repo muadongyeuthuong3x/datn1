@@ -21,7 +21,6 @@ import { ExamModule } from './exam/exam.module';
 import { ExamFormModule } from './exam_form/exam_form.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { RoomModule } from './room/room.module';
-import { TimeTestModule } from './time_test/time_test.module';
 import { FormManagementModule } from './form_management/form_management.module';
 import { TableTeacherRoomModule } from './table_teacher_room/table_teacher_room.module';
 import { TableExamBigBlockClassModule } from './table_exam_big_block_class/table_exam_big_block_class.module';
@@ -40,7 +39,7 @@ import { join } from 'path';
     }),
 
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),   // <-- path to the static files
+      rootPath: join(__dirname, '..', 'public'), // <-- path to the static files
     }),
 
     DatabaseModule,
@@ -50,7 +49,7 @@ import { join } from 'path';
         POSTGRES_HOST: Joi.string().required(),
         POSTGRES_PORT: Joi.number().required(),
         POSTGRES_USER: Joi.string().required(),
-        POSTGRES_PASSWORD: Joi.string().required(), 
+        POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
         PORT: Joi.number(),
       }),
@@ -63,7 +62,6 @@ import { join } from 'path';
     ExamFormModule,
     TeacherModule,
     RoomModule,
-    TimeTestModule,
     FormManagementModule,
     TableTeacherRoomModule,
     TableExamBigBlockClassModule,

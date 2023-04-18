@@ -44,4 +44,10 @@ export class TeacherMarkExamRoomService {
   remove(id: number) {
     return `This action removes a #${id} teacherMarkExamRoom`;
   }
+
+  async findCountAllTeacherTrackMarkExamRoom() {
+    return await this.teacherMarkExamRoomRepository
+      .createQueryBuilder('teacher-mark-exam-room')
+      .getCount();
+  }
 }

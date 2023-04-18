@@ -57,4 +57,10 @@ export class TeacherTrackService {
     }
     return countTeacher;
   }
+
+  async findCountAllTeacherTrack() {
+    return await this.teacherTrackRepository
+      .createQueryBuilder('teacher-track')
+      .getCount();
+  }
 }

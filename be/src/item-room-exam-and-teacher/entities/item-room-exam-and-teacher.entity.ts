@@ -24,7 +24,7 @@ export class ItemRoomExamAndTeacher {
     id_class_query: number;
     
 
-    @ManyToOne(() => Room, item => item.id_ItemRoomExamAndTeacher)
+    @ManyToOne(() => Room, item => item.id_ItemRoomExamAndTeacher) 
     id_Room : Room;
 
 

@@ -3,7 +3,11 @@ import instance from '../configApi/axiosConfig'
 import { toast } from 'react-toastify'
 export const initialState = {
     loading: false,
-    data: []
+    data: {
+    dataAll : [],
+    countFail : 0,
+    countSuccess:0
+    }
 }
 
 
@@ -41,6 +45,7 @@ export function apiGetListCountScore(data) {
         }
     }
 } 
+
 
 
 

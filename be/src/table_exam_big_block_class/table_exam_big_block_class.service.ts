@@ -87,10 +87,9 @@ export class TableExamBigBlockClassService {
     }
   }
 
-  
-  async findAllTestScheduleStudent(res : any) {
+  async findAllTestScheduleStudent(res: any) {
     try {
-      const data =  await this.examBigClassRepository
+      const data = await this.examBigClassRepository
         .createQueryBuilder('table_exam_big_block_class')
         .select([
           'table_exam_big_block_class.id',
@@ -112,7 +111,7 @@ export class TableExamBigBlockClassService {
           'teacher-track.id',
           'teacher-mark-exam-room.id',
           'room',
-          'exam-form'
+          'exam-form',
         ])
         .innerJoin('table_exam_big_block_class.id_exam', 'exam')
         .innerJoin(
@@ -120,7 +119,10 @@ export class TableExamBigBlockClassService {
           'table-big-class-exam',
         )
         .innerJoin('table-big-class-exam.id_big_class_exam', 'big_block_class')
-        .innerJoin('table_exam_big_block_class.id_testScheduleStudent', 'test-schedule-student')
+        .innerJoin(
+          'table_exam_big_block_class.id_testScheduleStudent',
+          'test-schedule-student',
+        )
         .innerJoin('test-schedule-student.id_ExamForm', 'exam-form')
         .innerJoin('test-schedule-student.id_itemRoomExamAndTeacher', 'item-room-exam-and-teacher')
         .innerJoin('item-room-exam-and-teacher.id_teacher_mark_exam', 'teacher-mark-exam-room')

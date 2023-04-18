@@ -14,7 +14,7 @@ export class TeacherTrackController {
 
   @Get()
   findAll() {
-    return this.teacherTrackService.findAll();
+    return this.teacherTrackService.findCountAllTeacherTrack();
   }
 
   @Get(':id')

@@ -5,6 +5,8 @@ import {UploadMuitiFie} from "../uploadImage/index"
 export const initialState = {
     loading: false,
     data: [],
+    countTeacherTrack : 0,
+    countTeacherTrackMark : 0
 }
 
 
@@ -59,10 +61,17 @@ const listTeacher = createSlice({
             delete dataOld[indexEdit].idDepartment;
             state.data = dataOld
         },
+        setTeacherCount : (state, { payload }) => {
+           state.countTeacherTrack = payload;
+        },
+        setTeacherCountMark : (state, { payload }) => {
+            state.loading = false
+            state.countTeacherTrackMark = payload;
+         },
     },
 })
 
-export const { loadding, getListTeacherSuccess, deleteTeacherInList, loaddingFailes, createTeacherReducer, searchData, editData } = listTeacher.actions
+export const { loadding, getListTeacherSuccess, deleteTeacherInList, loaddingFailes, createTeacherReducer, searchData, editData, setTeacherCount, setTeacherCountMark } = listTeacher.actions
 
 export function apiGetListTeacherApi(alert) {
     return async dispatch => {
@@ -151,6 +160,24 @@ export function editDataTeacherApi(data) {
         }
     }
 }
+
+
+export function findCoundTeacherTrack() {
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const dataRes = await instance.get(`/teacher-mark-exam-room`, );
+            dispatch(setTeacherCount(dataRes.data))
+            const dataRes1 = await instance.get(`/teacher-track`, );
+            dispatch(setTeacherCountMark(dataRes1.data))
+
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
+
 
 export const postsSelector = state => state.posts
 export default listTeacher.reducer

@@ -545,15 +545,28 @@ export class StudentsService {
         id_exam_query: idQuery
       });
 
+      let countFail = 0;
+      let countSuccess = 0;
+
       findAllData.map((item: any) => {
         let scoreStusentEnd = Number(item.point_end)
         let scoreStudentEndEnd = Number(item.point_end_end)
         if (item.point_end_end != -1) {
           dataAll = this.dataArray0(dataAll, scoreStudentEndEnd, 0, 1)
+          if(scoreStudentEndEnd < 4 && scoreStudentEndEnd >-1){
+            countFail++;
+          }else if(scoreStudentEndEnd >= 4){
+            countSuccess++;
+          }
           for (let i = 1; i < 10; i++) {
             dataAll = this.dataArray(dataAll, scoreStudentEndEnd, i, i + 1)
           }
         } else if (item.point_end_end == -1) {
+          if(scoreStusentEnd < 4 && scoreStusentEnd >-1){
+            countFail++;
+          }else if(scoreStusentEnd >= 4){
+            countSuccess++;
+          }
           dataAll = this.dataArray0(dataAll, scoreStusentEnd, 0, 1)
           for (let i = 1; i < 10; i++) {
             dataAll = this.dataArray(dataAll, scoreStusentEnd, i, i + 1)
@@ -563,7 +576,11 @@ export class StudentsService {
 
       return res.status(200).json({
         status: 'success',
-        message: dataAll,
+        message: {
+          dataAll,
+          countFail,
+          countSuccess
+        },
       });
     } catch (error) {
       return res.status(500).json({

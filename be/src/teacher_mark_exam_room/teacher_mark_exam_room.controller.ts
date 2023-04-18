@@ -14,7 +14,7 @@ export class TeacherMarkExamRoomController {
 
   @Get()
   findAll() {
-    return this.teacherMarkExamRoomService.findAll();
+    return this.teacherMarkExamRoomService.findCountAllTeacherTrackMarkExamRoom();
   }
 
   @Get(':id')
@@ -31,4 +31,6 @@ export class TeacherMarkExamRoomController {
   remove(@Param('id') id: string) {
     return this.teacherMarkExamRoomService.remove(+id);
   }
+
+  
 }
