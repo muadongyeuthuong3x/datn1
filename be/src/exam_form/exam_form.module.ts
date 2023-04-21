@@ -8,8 +8,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [
     TypeOrmModule.forFeature([ExamForm]), CacheModule.register({
       ttl: 30000
-    })],
-  controllers: [ExamFormController],
+    })], 
+  controllers: [ExamFormController], 
   providers: [ExamFormService]
 })
 export class ExamFormModule { }
