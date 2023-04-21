@@ -105,7 +105,7 @@ const ScheduleSComponent = () => {
                 room_exam: '',
                 teachers: [],
                 rooms: [],
-                disabledRoom: true
+                disabledRoom: false
             }
         ]
     })
@@ -632,7 +632,7 @@ const ScheduleSComponent = () => {
     }
 
     const changeTeacherRoomsEdit = (e, index) => {
-        const dataOld = dataFormEdit;
+        const dataOld = {...dataFormEdit} ;
         dataOld.roomExamAndTeacher[index].teacher_exam = e;
         if (dataOld.grading_exam === 2 && index == Math.ceil((countStudnetExam) / (dataOld.roomPeopleMax)) - 1) {
             dataOld.button_submit = false
@@ -641,6 +641,8 @@ const ScheduleSComponent = () => {
             dataOld.roomExamAndTeacher[index].disabledRoom = false;
         }
         setDataFormEdit(dataOld)
+        const dataRoomAndTeach = dataOld.roomExamAndTeacher;
+        setDataNow(dataRoomAndTeach)
     }
 
     const changeTeacherRoomsScoreStudent = (e, index) => {
@@ -833,10 +835,10 @@ const ScheduleSComponent = () => {
             if (Date.parse(databaseRoomsInDb[i].time_start_exam) <= Date.parse(time_start) && Date.parse(time_start) <= Date.parse(databaseRoomsInDb[i].time_end_exam) && Date.parse(databaseRoomsInDb[i].time_start_exam) <= Date.parse(time_end) && Date.parse(time_end) <= Date.parse(databaseRoomsInDb[i].time_end_exam)) {
                 const roomfindID = databaseRoomsInDb[i].room_exam;
                 const dataFind = rooms.find(e => e.id == roomfindID);
-                if(dataFind){
+                if (dataFind) {
                     roomsResponse.push(dataFind);
                 }
-               
+
 
             }
         }
@@ -845,19 +847,70 @@ const ScheduleSComponent = () => {
         for (let k = 0; k < datarowInNoew.length; k++) {
             if ((Date.parse(datarowInNoew[k].time_start_exam) <= Date.parse(time_start) && Date.parse(time_start) <= Date.parse(datarowInNoew[k].time_end_exam)) && (Date.parse(datarowInNoew[k].time_start_exam) <= Date.parse(time_end) && Date.parse(time_end) <= Date.parse(datarowInNoew[k].time_end_exam))) {
                 const idRoomDelete = datarowInNoew[k].room_exam;
-                if(idRoomDelete){
+                if (idRoomDelete) {
                     datapush = datapush.filter(e => e.id != idRoomDelete);
                 }
-               
+
             }
         }
-        if(dataRoomSelect){
+        if (dataRoomSelect) {
             datapush.push(dataRoomSelect);
         }
-       
+
         datadbOld.roomExamAndTeacher[index].rooms = datapush;
         setDataFormEdit(datadbOld);
     }
+
+    const dataCallApiTeacher = async (time_start, time_end, index, idRooms) => {
+        const dataRes = await instance.post(`/test-schedule-student/${time_start}/${time_end}`, []);
+        const teacherResponse = dataRes.data;
+        const datarowInNoew = [...dataSelectRoomInNow];
+        const datadbOld = { ...dataFormEdit };
+        // one . push teacher_exam about time db 
+        // two . Delete cac teacher dulicate db
+        // three push teacher now select
+
+        // DB + No DB
+        for (let i = 0; i < databaseRoomsInDb.length; i++) {
+            if (Date.parse(databaseRoomsInDb[i].time_start_exam) <= Date.parse(time_start) && Date.parse(time_start) <= Date.parse(databaseRoomsInDb[i].time_end_exam) && Date.parse(databaseRoomsInDb[i].time_start_exam) <= Date.parse(time_end) && Date.parse(time_end) <= Date.parse(databaseRoomsInDb[i].time_end_exam)) {
+              
+                for (let m = 0; m < databaseRoomsInDb[i].teacher_exam.length; m++) {
+                    const teacherFindId = databaseRoomsInDb[i].teacher_exam[m];
+                    const dataFind = listTeachers.find(e => e.id == teacherFindId);
+                    if (dataFind) {
+                        teacherResponse.push(dataFind);
+                    }
+                }
+            }
+        }
+
+        let datapush = teacherResponse;
+        for (let k = 0; k < datarowInNoew.length; k++) {
+            if ((Date.parse(datarowInNoew[k].time_start_exam) <= Date.parse(time_start) && Date.parse(time_start) <= Date.parse(datarowInNoew[k].time_end_exam)) && (Date.parse(datarowInNoew[k].time_start_exam) <= Date.parse(time_end) && Date.parse(time_end) <= Date.parse(datarowInNoew[k].time_end_exam))) {
+                console.log("undefind",datarowInNoew[k].teacher_exam)
+                for (let m = 0; m < datarowInNoew[k].teacher_exam.length; m++) {
+                    const teacherDelete = datarowInNoew[k].teacher_exam[m];
+                    console.log("teacherDelete" , teacherDelete)
+                    datapush = datapush.filter(e => e.id != teacherDelete);
+                }
+
+
+
+            }
+        }
+
+        if (datarowInNoew[index].teacher_exam.length > 0) {
+            for (let i = 0; i < datarowInNoew[index].teacher_exam.length; i++) {
+                const teacher = listTeachers.find(e => e.id == datarowInNoew[index].teacher_exam[i]);
+                datapush.push(teacher);
+            }
+        }
+        datadbOld.roomExamAndTeacher[index].teachers = datapush;
+        setDataFormEdit(datadbOld);
+
+    }
+
+
 
     const showModalEdit = (item) => {
         const { time_year_end, time_year_start } = item;
@@ -916,7 +969,6 @@ const ScheduleSComponent = () => {
         })
         setOpenEditData(true)
         setLoadDb(JSON.parse(JSON.stringify(dataRoomOld)))
-
         setDataNow(JSON.parse(JSON.stringify(dataRoomOld)))
     };
 
@@ -1296,19 +1348,19 @@ const ScheduleSComponent = () => {
         dataOld.roomExamAndTeacher[index].rooms = dataRes1.data
         dataOld.roomExamAndTeacher[index].teacher_exam = []
         dataOld.roomExamAndTeacher[index].room_exam = ""
-        console.log("checkTime" , dataOld)
         setDataFormEdit(dataOld);
         const dataOldTime = JSON.parse(JSON.stringify(dataSelectRoomInNow));
         dataOldTime[index].time_start_exam = dayjs(e).format('YYYY-MM-DD HH:mm');
         dataOldTime[index].time_end_exam = dayjs(e).add(timeExam, 'minute').format('YYYY-MM-DD HH:mm');
         dataOldTime[index].room_exam = 0;
-        setDataNow(dataOldTime);  
+        dataOldTime[index].teacher_exam = [];
+        setDataNow(dataOldTime);
     }
 
 
 
     const dataTableEdit = (dataFormEdit) => {
-        const { roomExamAndTeacher, grading_exam } = dataFormEdit;   
+        const { roomExamAndTeacher, grading_exam } = dataFormEdit;
         // this data create begin
         const data = [];
         if (roomExamAndTeacher?.length > 0) {
@@ -1362,7 +1414,7 @@ const ScheduleSComponent = () => {
                     ,
                     teacher_exam: <Select
                         showSearch
-                        disabled={roomExamAndTeacher[index].time_start_exam ? false : true}
+                        // disabled={roomExamAndTeacher[index].time_start_exam ? false : true}
                         labelCol={{ span: 0 }}
                         wrapperCol={{ span: 20 }}
                         style={{ width: '100%', marginBottom: "10px" }}
@@ -1378,7 +1430,7 @@ const ScheduleSComponent = () => {
                         onChange={(e) => changeTeacherRoomsEdit(e, index)}
                         onDeselect={(e) => showDelelteEdit(e, index)}
                         // onSelect={(e) => onSelectItemEdit(e, index)}
-                        onFocus={() => dataCallApiRoom(roomExamAndTeacher[index].time_start_exam, roomExamAndTeacher[index].time_end_exam, index)}
+                        onFocus={() => dataCallApiTeacher(roomExamAndTeacher[index].time_start_exam, roomExamAndTeacher[index].time_end_exam, index)}
                         className="select_teacher"
                     >
                         {
@@ -1461,7 +1513,9 @@ const ScheduleSComponent = () => {
         setOpenEditData(false);
     }
 
-    const handleOkEdit = () => {
+    const handleOkEdit = async() => {
+        const dataRes = await instance.post(`/test-schedule-student/edit`, dataFormEdit);
+        console.log( "dataFormEdit" ,dataFormEdit)
         setOpenEditData(false);
     }
 
