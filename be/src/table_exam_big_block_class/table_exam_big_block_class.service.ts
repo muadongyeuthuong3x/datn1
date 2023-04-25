@@ -124,12 +124,12 @@ export class TableExamBigBlockClassService {
           'test-schedule-student',
         )
         .innerJoin('test-schedule-student.id_ExamForm', 'exam-form')
-        .innerJoin('test-schedule-student.id_itemRoomExamAndTeacher', 'item-room-exam-and-teacher')
-        .innerJoin('item-room-exam-and-teacher.id_teacher_mark_exam', 'teacher-mark-exam-room')
-        .innerJoinAndSelect('teacher-mark-exam-room.id_teacher_mark_score', 'teacher')
-        .innerJoin('item-room-exam-and-teacher.id_teacherTrack', 'teacher-track') 
-        .innerJoinAndSelect('teacher-track.id_Teacher', 'teacher AS alias_teacher')
-        .innerJoin('item-room-exam-and-teacher.id_Room', 'room') 
+        .leftJoin('test-schedule-student.id_itemRoomExamAndTeacher', 'item-room-exam-and-teacher')
+        .leftJoin('item-room-exam-and-teacher.id_teacher_mark_exam', 'teacher-mark-exam-room')
+        .leftJoinAndSelect('teacher-mark-exam-room.id_teacher_mark_score', 'teacher')
+        .leftJoin('item-room-exam-and-teacher.id_teacherTrack', 'teacher-track') 
+        .leftJoinAndSelect('teacher-track.id_Teacher', 'teacher AS alias_teacher')
+        .leftJoin('item-room-exam-and-teacher.id_Room', 'room') 
         .getMany();
         return  res.status(200).json({
           status: "success",

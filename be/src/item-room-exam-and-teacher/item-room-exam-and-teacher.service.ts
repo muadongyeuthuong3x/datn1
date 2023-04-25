@@ -42,6 +42,7 @@ export class ItemRoomExamAndTeacherService {
       mode,
       id_exam_big_class,
       roomPeopleMax,
+      grading_exam
     } = createItemRoomExamAndTeacherDto;
     try {
       for (let i = 0; i < roomExamAndTeacher.length; i++) {
@@ -56,9 +57,17 @@ export class ItemRoomExamAndTeacherService {
           roomExamAndTeacher[i].room_exam;
         newDataItemRoomExamAndTeacher.id_Room = roomExamAndTeacher[i]
           .room_exam as any;
-        const dataArrrayId = await this.studentRepository.findIdGetExamBigClass(
-          id_exam_big_class,
-        );
+        let dataArrrayId = [];
+        if (mode == 1) {
+          dataArrrayId = await this.studentRepository.findIdGetExamBigClass(
+            id_exam_big_class,
+          );
+        } else {
+          dataArrrayId = await this.studentRepository.findIdGetExamBigClassTl(
+            id_exam_big_class,
+          );
+        }
+
         let arrayIdUpdate = [];
         let vtStart = i == 0 ? 0 : i * Number(roomPeopleMax);
         let vtEnd =
@@ -74,6 +83,7 @@ export class ItemRoomExamAndTeacherService {
         await this.studentRepository.updateIdRoomTest(
           arrayIdUpdate,
           dataCreate.id,
+          mode,
         );
         arrayIdUpdate = [];
         const idDataCreate: number = dataCreate.id;
@@ -81,12 +91,12 @@ export class ItemRoomExamAndTeacherService {
           idDataCreate,
           list_teacher: roomExamAndTeacher[i].teacher_exam,
         });
-        if (mode == 1) {
+        if (grading_exam == 1) {
           await this.teacherMarkExamRoomRepository.create({
             idDataCreate,
             teacher: roomExamAndTeacher[i].teacher_score_student,
           });
-        }
+        };
       }
     } catch (error) {
       console.log(error);

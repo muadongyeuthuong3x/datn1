@@ -185,26 +185,26 @@ export function searchDataApi(data) {
 
 
 
-export function editDataScheduleApi(data) {
-    return async dispatch => {
-        dispatch(loadding())
-        try {
-            const { id, avatar_new } = data
-            let formUpload = { ...data }
-            if (!!avatar_new) {
-                const urlImage = await UploadMuitiFie(data?.avatar_new);
-                formUpload.avatar = urlImage[0];
-            }
-            delete formUpload.avatar_new
-            const dataRes = await instance.patch(`/teacher/${id}`, formUpload);
-            dispatch(editData(data))
-            toast.success(dataRes.data.message)
-        } catch (error) {
-            toast.error(error.response.data.message)
-            dispatch(loaddingFailes())
-        }
-    }
-}
+// export function editDataScheduleApi(data) {
+//     return async dispatch => {
+//         dispatch(loadding())
+//         try {
+//             const { id, avatar_new } = data
+//             let formUpload = { ...data }
+//             if (!!avatar_new) {
+//                 const urlImage = await UploadMuitiFie(data?.avatar_new);
+//                 formUpload.avatar = urlImage[0];
+//             }
+//             delete formUpload.avatar_new
+//             const dataRes = await instance.patch(`/teacher/${id}`, formUpload);
+//             dispatch(editData(data))
+//             toast.success(dataRes.data.message)
+//         } catch (error) {
+//             toast.error(error.response.data.message)
+//             dispatch(loaddingFailes())
+//         }
+//     }
+// }
 
 export function setCountExamApi(data) {
     return async dispatch => {
@@ -276,6 +276,22 @@ export function createDataTestScheduleStudent(data){
             const dataRes = await instance.post(`/test-schedule-student`, data);
            if(dataRes){
             toast.success("Tạo dữ liệu thành công");
+           }
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
+
+
+export function editDataSchedule(data){
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const dataRes = await instance.post(`/test-schedule-student/edit`, data);
+           if(dataRes){
+            toast.success("Sửa dữ liệu thành công");
            }
         } catch (error) {
             toast.error(error.response.data.message)

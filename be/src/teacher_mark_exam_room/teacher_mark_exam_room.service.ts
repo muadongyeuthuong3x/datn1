@@ -14,6 +14,7 @@ export class TeacherMarkExamRoomService {
   async create(createTeacherMarkExamRoomDto: CreateTeacherMarkExamRoomDto) {
     try {
       // for (let i = 0; i < createTeacherMarkExamRoomDto.list_teacher.length; i++) {
+      console.log(createTeacherMarkExamRoomDto.teacher) 
       const createData = new TeacherMarkExamRoom();
       createData.id_item_room_exam = createTeacherMarkExamRoomDto.idDataCreate;
       createData.id_room_query =

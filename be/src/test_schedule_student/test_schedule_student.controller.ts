@@ -18,6 +18,17 @@ export class TestScheduleStudentController {
     return await this.testScheduleStudentService.create(createTestScheduleStudentDto, res);
   }
 
+  @Post('/edit')
+  async update(
+    @Body() updateTestScheduleStudentDto: UpdateTestScheduleStudentDto,
+    @Res() res: any,
+  ) {
+    return await this.testScheduleStudentService.update(
+      updateTestScheduleStudentDto,
+      res,
+    );
+  }
+
   @Get()
   async findAll(@Res() res: any) {
     return await this.testScheduleStudentService.findAll(res);
@@ -33,10 +44,7 @@ export class TestScheduleStudentController {
     return await this.testScheduleStudentService.exportPDf(dataPdf);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTestScheduleStudentDto: UpdateTestScheduleStudentDto) {
-    return this.testScheduleStudentService.update(+id, updateTestScheduleStudentDto);
-  }
+
 
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: any) {

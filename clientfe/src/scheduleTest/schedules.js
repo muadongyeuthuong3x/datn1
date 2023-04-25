@@ -2,7 +2,7 @@ import { Button, Table, Modal, Input, Form, DatePicker, Select, Image, Radio, Dr
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import instance from '../configApi/axiosConfig'
-import { apiGetListDataApi, setCountExamApiTl, callApiGetTeacherDepartment, createDataTestScheduleStudent, getAllTestScheduleStudent, deleteItemTestScheduleStudent } from '../slices/scheduleTest';
+import { apiGetListDataApi, setCountExamApiTl, callApiGetTeacherDepartment, createDataTestScheduleStudent, getAllTestScheduleStudent, deleteItemTestScheduleStudent,editDataSchedule } from '../slices/scheduleTest';
 
 import { apiGetListExamBlock, callDataGetYear } from "../slices/examBlock";
 import { apiGetListDepartment } from '../slices/department'
@@ -63,6 +63,7 @@ const ScheduleSComponent = () => {
 
 
     const [databaseRoomsInDb, setLoadDb] = useState([]);
+    console.log("databaseRoomsInDb" , databaseRoomsInDb)
     const [dataSelectRoomInNow, setDataNow] = useState([])
     const callListTeacher = async () => {
         const res = await instance.get('/teacher')
@@ -89,6 +90,7 @@ const ScheduleSComponent = () => {
 
     const [dataFormEdit, setDataFormEdit] = useState({
         id_exam: "",
+        id_edit : "",
         mode: '',
         bigBlockClassExam: '',
         roomPeopleMax: 0,
@@ -105,7 +107,8 @@ const ScheduleSComponent = () => {
                 room_exam: '',
                 teachers: [],
                 rooms: [],
-                disabledRoom: false
+                disabledRoom: false,
+                id_room_edit : ""
             }
         ]
     })
@@ -232,6 +235,7 @@ const ScheduleSComponent = () => {
         try {
 
             const dataCretae = { ...onFormCreate, department: idDepartment }
+            console.log(dataCretae)
             const dataRes = await instance.post(`/test-schedule-student`, dataCretae);
             if (dataRes) {
                 toast.success("Tạo dữ liệu thành công");
@@ -260,12 +264,12 @@ const ScheduleSComponent = () => {
             systemForm_Exam: "",
             id_exam: "",
             exam: '',
-            mode: '',
+            mode: 1,
             bigBlockClassExam: '',
             roomPeopleMax: 0,
             time_exam: 0,
             button_submit: true,
-            grading_exam: ''
+            grading_exam: 2
         }
         dataOld.id_exam = onFormCreate.id_exam;
         dataOld.mode = onFormCreate.mode
@@ -294,7 +298,7 @@ const ScheduleSComponent = () => {
                 roomPeopleMax: 0,
                 time_exam: 0,
                 button_submit: true,
-                grading_exam: ''
+                grading_exam: 2
             }
 
         }
@@ -329,12 +333,12 @@ const ScheduleSComponent = () => {
             systemForm_Exam: "",
             id_exam: "",
             exam: '',
-            mode: '',
+            mode: 1,
             bigBlockClassExam: '',
             roomPeopleMax: 0,
             time_exam: 0,
             button_submit: true,
-            grading_exam: ''
+            grading_exam: 2
         }
         dataOld.mode = e
         dataOld.id_exam = onFormCreate.id_exam
@@ -510,7 +514,9 @@ const ScheduleSComponent = () => {
         const dataOld = { ...dataFormEdit };
         if (numberCell === Math.ceil((countStudnetExam) / (dataOld.roomPeopleMax))) {
             dataOld.roomPeopleMax = valueGet
+            setDataNow([]);
         } else {
+            setDataNow([]);
             if (dataOld.roomExamAndTeacher) {
                 delete dataOld.roomExamAndTeacher;
             }
@@ -525,7 +531,8 @@ const ScheduleSComponent = () => {
                     room_exam: '',
                     teachers: [],
                     rooms: [],
-                    disabledRoom: true
+                    disabledRoom: true,
+                    id_room_edit: ""
                 }
                 dataArray.push(formObject);
             }
@@ -561,7 +568,8 @@ const ScheduleSComponent = () => {
                 room_exam: '',
                 teachers: [],
                 rooms: [],
-                disabledRoom: true
+                disabledRoom: true,
+                id_room_edit:""
             }
             dataArray.push(formObject);
         }
@@ -616,6 +624,9 @@ const ScheduleSComponent = () => {
         const dataRes1 = await instance.post(`/test-schedule-student/rooms/${dataOld.roomExamAndTeacher[index].time_start_exam}/${dataOld.roomExamAndTeacher[index].time_end_exam}`, idUnLessRoom);
         dataOld.roomExamAndTeacher[index].teachers = dataRes.data
         dataOld.roomExamAndTeacher[index].rooms = dataRes1.data
+        dataOld.roomExamAndTeacher[index].teacher_exam = [];
+        dataOld.roomExamAndTeacher[index].teacher_score_student = '';
+        dataOld.roomExamAndTeacher[index].room_exam = '';
         setOnchangeFormCreate(dataOld);
     }
 
@@ -655,6 +666,18 @@ const ScheduleSComponent = () => {
             dataOld.button_submit = false
         }
         setOnchangeFormCreate(dataOld)
+    }
+
+    const changeTeacherRoomsScoreStudentEdit = (e, index) => {
+        const dataOld = { ...dataFormEdit };
+        dataOld.roomExamAndTeacher[index].teacher_score_student = e;
+        if (dataOld.grading_exam === 1) {
+            dataOld.roomExamAndTeacher[index].disabledRoom = false
+        }
+        if (dataOld.grading_exam === 1 && index == Math.ceil((countStudnetExam) / (dataOld.roomPeopleMax)) - 1) {
+            dataOld.button_submit = false
+        }
+        setDataFormEdit(dataOld)
     }
 
 
@@ -789,7 +812,7 @@ const ScheduleSComponent = () => {
         for (let i = 0; i < roomExamAndTeacher.length; i++) {
             roomExamAndTeacher[i].teacher_score_student = '';
         }
-        dataOld.idDepartment = e
+        dataOld.dataa = e
         dataOld.roomExamAndTeacher = roomExamAndTeacher;
         setDataFormEdit(dataOld)
         // setidDepartment(e)
@@ -819,7 +842,8 @@ const ScheduleSComponent = () => {
         }
         return listTeacher;
     }
-
+    
+    console.log("dataSelectRoomInNow1" ,dataSelectRoomInNow)
 
     const dataCallApiRoom = async (time_start, time_end, index, idRooms) => {
         //    const dataRes = await instance.post(`/test-schedule-student/${time_start}/${time_end}`,arrayExitsTeachers);
@@ -832,7 +856,7 @@ const ScheduleSComponent = () => {
         // DB + No DB
         for (let i = 0; i < databaseRoomsInDb.length; i++) {
 
-            if (Date.parse(databaseRoomsInDb[i].time_start_exam) <= Date.parse(time_start) && Date.parse(time_start) <= Date.parse(databaseRoomsInDb[i].time_end_exam) && Date.parse(databaseRoomsInDb[i].time_start_exam) <= Date.parse(time_end) && Date.parse(time_end) <= Date.parse(databaseRoomsInDb[i].time_end_exam)) {
+            if (Date.parse(databaseRoomsInDb[i].time_start_exam) <= Date.parse(time_start) && Date.parse(time_start) <= Date.parse(databaseRoomsInDb[i].time_end_exam) || Date.parse(databaseRoomsInDb[i].time_start_exam) <= Date.parse(time_end) && Date.parse(time_end) <= Date.parse(databaseRoomsInDb[i].time_end_exam)) {
                 const roomfindID = databaseRoomsInDb[i].room_exam;
                 const dataFind = rooms.find(e => e.id == roomfindID);
                 if (dataFind) {
@@ -844,8 +868,9 @@ const ScheduleSComponent = () => {
         }
         let datapush = roomsResponse;
         // Item select now
+        if(dataSelectRoomInNow.length > 0 ){
         for (let k = 0; k < datarowInNoew.length; k++) {
-            if ((Date.parse(datarowInNoew[k].time_start_exam) <= Date.parse(time_start) && Date.parse(time_start) <= Date.parse(datarowInNoew[k].time_end_exam)) && (Date.parse(datarowInNoew[k].time_start_exam) <= Date.parse(time_end) && Date.parse(time_end) <= Date.parse(datarowInNoew[k].time_end_exam))) {
+            if ((Date.parse(datarowInNoew[k].time_start_exam) <= Date.parse(time_start) && Date.parse(time_start) <= Date.parse(datarowInNoew[k].time_end_exam)) || (Date.parse(datarowInNoew[k].time_start_exam) <= Date.parse(time_end) && Date.parse(time_end) <= Date.parse(datarowInNoew[k].time_end_exam))) {
                 const idRoomDelete = datarowInNoew[k].room_exam;
                 if (idRoomDelete) {
                     datapush = datapush.filter(e => e.id != idRoomDelete);
@@ -856,6 +881,7 @@ const ScheduleSComponent = () => {
         if (dataRoomSelect) {
             datapush.push(dataRoomSelect);
         }
+    }
 
         datadbOld.roomExamAndTeacher[index].rooms = datapush;
         setDataFormEdit(datadbOld);
@@ -913,7 +939,8 @@ const ScheduleSComponent = () => {
 
 
     const showModalEdit = (item) => {
-        const { time_year_end, time_year_start } = item;
+        console.log("item", item)
+        const { time_year_end, time_year_start ,id } = item;
         const id_exam_edit = item.id_exam.id;
         const id_class_exam = getClassBigExam(item?.id_big_class_exam);
         const { form_exam, mode, roomPeopleMax, time_exam, grading_exam, department } = item.id_testScheduleStudent[0];
@@ -938,13 +965,15 @@ const ScheduleSComponent = () => {
                 room_exam: id_itemRoomExamAndTeacher[i].id_Room.id,
                 teachers: listTeachers,
                 rooms: rooms,
-                disabledRoom: false
+                disabledRoom: false,
+                id_room_edit : id_itemRoomExamAndTeacher[i].id
             }
             dataRoomOld.push(objectPush)
         }
 
         setDataFormEdit({
             id_exam: id_exam_edit,
+            id_edit : item.id_testScheduleStudent[0].id,
             mode: mode,
             bigBlockClassExam: id_class_exam,
             roomPeopleMax: roomPeopleMax,
@@ -965,7 +994,8 @@ const ScheduleSComponent = () => {
             //         rooms: [],
             //         disabledRoom: true
             //     }]
-            roomExamAndTeacher: dataRoomOld
+            roomExamAndTeacher: dataRoomOld,
+           
         })
         setOpenEditData(true)
         setLoadDb(JSON.parse(JSON.stringify(dataRoomOld)))
@@ -1024,21 +1054,41 @@ const ScheduleSComponent = () => {
         setIsModalOpenPDF(false);
         const dataGetPdf = { ...idPDF };
         for (let i = 0; i < dataGetPdf.arrayId.length; i++) {
-            const response = await instance.post(`/students/schedule_pdf/${dataGetPdf.arrayId[i].id}`,
-                {
-                    mode: dataGetPdf.mode,
-                    time_start: dataGetPdf.time_start,
-                    big_class: dataGetPdf.big_class,
-                    nameRoom: dataGetPdf.arrayId[i].nameRoom,
-                    name: dataGetPdf.name,
-                    time_exam: dataGetPdf.arrayId[i].time_exam,
-                    form_exam: dataGetPdf.form_exam,
+            let response = '';
+            if (dataGetPdf.mode == 1) {
+                response = await instance.post(`/students/schedule_pdf/${dataGetPdf.arrayId[i].id}`,
+                    {
+                        mode: dataGetPdf.mode,
+                        time_start: dataGetPdf.time_start,
+                        big_class: dataGetPdf.big_class,
+                        nameRoom: dataGetPdf.arrayId[i].nameRoom,
+                        name: dataGetPdf.name,
+                        time_exam: dataGetPdf.arrayId[i].time_exam,
+                        form_exam: dataGetPdf.form_exam,
 
-                },
-                {
-                    responseType: 'blob',
-                    dataType: "binary",
-                });
+                    },
+                    {
+                        responseType: 'blob',
+                        dataType: "binary",
+                    });
+
+            } else {
+                response = await instance.post(`/students/schedule_pdf/tl/${dataGetPdf.arrayId[i].id}`,
+                    {
+                        mode: dataGetPdf.mode,
+                        time_start: dataGetPdf.time_start,
+                        big_class: dataGetPdf.big_class,
+                        nameRoom: dataGetPdf.arrayId[i].nameRoom,
+                        name: dataGetPdf.name,
+                        time_exam: dataGetPdf.arrayId[i].time_exam,
+                        form_exam: dataGetPdf.form_exam,
+
+                    },
+                    {
+                        responseType: 'blob',
+                        dataType: "binary",
+                    });
+            }
 
             const blob = new Blob(
                 [response.data],
@@ -1067,7 +1117,7 @@ const ScheduleSComponent = () => {
             mode,
             name,
             time_start,
-            form_exam
+            form_exam,
         })
     }
 
@@ -1348,12 +1398,14 @@ const ScheduleSComponent = () => {
         dataOld.roomExamAndTeacher[index].rooms = dataRes1.data
         dataOld.roomExamAndTeacher[index].teacher_exam = []
         dataOld.roomExamAndTeacher[index].room_exam = ""
+        dataOld.roomExamAndTeacher[index].teacher_score_student = "";
         setDataFormEdit(dataOld);
         const dataOldTime = JSON.parse(JSON.stringify(dataSelectRoomInNow));
         dataOldTime[index].time_start_exam = dayjs(e).format('YYYY-MM-DD HH:mm');
         dataOldTime[index].time_end_exam = dayjs(e).add(timeExam, 'minute').format('YYYY-MM-DD HH:mm');
         dataOldTime[index].room_exam = 0;
         dataOldTime[index].teacher_exam = [];
+        dataOldTime[index].teacher_score_student = "";
         setDataNow(dataOldTime);
     }
 
@@ -1471,7 +1523,7 @@ const ScheduleSComponent = () => {
                                         (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                     }
                                     value={roomExamAndTeacher[index]?.teacher_score_student}
-                                    onChange={(e) => changeTeacherRoomsScoreStudent(e, index)}
+                                    onChange={(e) => changeTeacherRoomsScoreStudentEdit(e, index)}
                                     className="select_teacher"
                                 >
                                     {
@@ -1514,9 +1566,16 @@ const ScheduleSComponent = () => {
     }
 
     const handleOkEdit = async() => {
-        const dataRes = await instance.post(`/test-schedule-student/edit`, dataFormEdit);
+        const data = {
+            ...dataFormEdit,
+            department : dataFormEdit.idDepartment
+        }
+     //   console.log(data)
+        dispatch(editDataSchedule(data))
+       // const dataRes = await instance.post(`/test-schedule-student/edit`, dataFormEdit);
         console.log( "dataFormEdit" ,dataFormEdit)
         setOpenEditData(false);
+        setCallApiReset(!callApiReset)
     }
 
     ///// logic edit 

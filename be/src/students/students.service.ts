@@ -3,18 +3,32 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  StreamableFile
 } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
+import {
+  DataSource,
+  In,
+  MoreThan,
+  MoreThanOrEqual,
+  Repository,
+  LessThan,
+} from 'typeorm';
 import { Student } from './entities/student.entity';
 import { ClassService } from 'src/class/class.service';
 import { TableExamBigBlockClass } from 'src/table_exam_big_block_class/entities/table_exam_big_block_class.entity';
 import { TableExamBigBlockClassService } from 'src/table_exam_big_block_class/table_exam_big_block_class.service';
 import { Response } from 'express';
 var pdf1 = require('html-pdf');
-import moment  from 'moment';
+import moment from 'moment';
 import dayjs from 'dayjs';
+const { readFileSync } = require("fs");
+const { Readable } = require('stream');
+import { join } from 'path';
+const reader = require('xlsx');
+const xl = require('excel4node');
+const mime = require('excel4node');
 
 @Injectable()
 export class StudentsService {
@@ -377,16 +391,16 @@ export class StudentsService {
           message: `Điểm cần phải lớn hơn 0 hoặc bằng không hoặc nhỏ hơn 10`,
         });
       }
-      if(point_end.length  == 0 && point_end_end.length  != 0){
+      if (point_end.length == 0 && point_end_end.length != 0) {
         await this.studentRepository.update(id, {
           point_beetween: point_beetween,
           point_diligence: point_diligence,
           point_end_end: point_end_end,
-          point_end : -1,
+          point_end: -1,
           why_edit_point_end: why_edit_point_end,
           why_edit_point_end_end: why_edit_point_end_end,
         });
-      }else if (point_end_end.length  == 0 && point_end.length  != 0 ){
+      } else if (point_end_end.length == 0 && point_end.length != 0) {
         await this.studentRepository.update(id, {
           point_beetween: point_beetween,
           point_diligence: point_diligence,
@@ -395,26 +409,26 @@ export class StudentsService {
           why_edit_point_end: why_edit_point_end,
           why_edit_point_end_end: why_edit_point_end_end,
         });
-      }else if (point_end_end.length  == 0 && point_end.length  == 0){
+      } else if (point_end_end.length == 0 && point_end.length == 0) {
         await this.studentRepository.update(id, {
           point_beetween: point_beetween,
           point_diligence: point_diligence,
-          point_end : -1,
+          point_end: -1,
           point_end_end: -1,
           why_edit_point_end: why_edit_point_end,
           why_edit_point_end_end: why_edit_point_end_end,
         });
-      }else {
+      } else {
         await this.studentRepository.update(id, {
           point_beetween: point_beetween,
           point_diligence: point_diligence,
-          point_end :point_end,
+          point_end: point_end,
           point_end_end: point_end_end,
           why_edit_point_end: why_edit_point_end,
           why_edit_point_end_end: why_edit_point_end_end,
         });
       }
-    
+
       return res.status(200).json({
         status: 'succes',
         message: 'Sửa điểm thành công',
@@ -553,18 +567,18 @@ export class StudentsService {
         let scoreStudentEndEnd = Number(item.point_end_end)
         if (item.point_end_end != -1) {
           dataAll = this.dataArray0(dataAll, scoreStudentEndEnd, 0, 1)
-          if(scoreStudentEndEnd < 4 && scoreStudentEndEnd >-1){
+          if (scoreStudentEndEnd < 4 && scoreStudentEndEnd > -1) {
             countFail++;
-          }else if(scoreStudentEndEnd >= 4){
+          } else if (scoreStudentEndEnd >= 4) {
             countSuccess++;
           }
           for (let i = 1; i < 10; i++) {
             dataAll = this.dataArray(dataAll, scoreStudentEndEnd, i, i + 1)
           }
         } else if (item.point_end_end == -1) {
-          if(scoreStusentEnd < 4 && scoreStusentEnd >-1){
+          if (scoreStusentEnd < 4 && scoreStusentEnd > -1) {
             countFail++;
-          }else if(scoreStusentEnd >= 4){
+          } else if (scoreStusentEnd >= 4) {
             countSuccess++;
           }
           dataAll = this.dataArray0(dataAll, scoreStusentEnd, 0, 1)
@@ -605,8 +619,8 @@ export class StudentsService {
       const countFind = await this.studentRepository.count({
         where: {
           id_exam_query: dataQuery.id,
-          point_beetween: MoreThanOrEqual(4),
-          point_diligence: MoreThanOrEqual(4),
+          // point_beetween: MoreThanOrEqual(4),
+          // point_diligence: MoreThanOrEqual(4),
         } as any
       })
       return res.status(200).json({
@@ -638,7 +652,7 @@ export class StudentsService {
       const countFind = await this.studentRepository.count({
         where: {
           id_exam_query: dataQuery.id,
-          point_end: MoreThanOrEqual(4),
+          point_end: LessThan(4),
         }
       })
       return res.status(200).json({
@@ -663,11 +677,27 @@ export class StudentsService {
     return data;
   }
 
-  async updateIdRoomTest(arrayId: number[], id_room: any) {
-    return await this.studentRepository.createQueryBuilder('student').update(Student)
-      .set({ id_room_test: id_room })
-      .where({ id: In(arrayId) })
-      .execute();
+  async findIdGetExamBigClassTl(idExamBigClass: any) {
+    const data = await this.studentRepository.find({
+      where: { id_exam_query: idExamBigClass, point_end: LessThan(4), }, select: ["id"], order: {
+        'id': 'ASC',
+      }
+    });
+    return data;
+  }
+
+  async updateIdRoomTest(arrayId: number[], id_room: any, mode: number) {
+    if (mode == 1) {
+      return await this.studentRepository.createQueryBuilder('student').update(Student)
+        .set({ id_room_test: id_room })
+        .where({ id: In(arrayId) })
+        .execute();
+    } else {
+      return await this.studentRepository.createQueryBuilder('student').update(Student)
+        .set({ id_room_test_tl: id_room })
+        .where({ id: In(arrayId) })
+        .execute();
+    }
   }
 
   async findStudent(id: number) {
@@ -679,21 +709,21 @@ export class StudentsService {
     return data;
   }
 
-  async Pdf(id: number, dataPDF: { mode: number, time_start: Date, big_class: string, nameRoom: string, name: string , time_exam : Date  , form_exam : string}, res: Response) {
+  async Pdf(id: number, dataPDF: { mode: number, time_start: Date, big_class: string, nameRoom: string, name: string, time_exam: Date, form_exam: string }, res: Response) {
     const dataStudent = await this.studentRepository.findBy({ id_room_test: id })
-    const { mode, time_start, big_class, name, nameRoom, time_exam  ,form_exam} = dataPDF;
+    const { mode, time_start, big_class, name, nameRoom, time_exam, form_exam } = dataPDF;
     console.log(time_exam)
-    const time_dd_start_exam =  dayjs(time_exam).format('DD/MM/YYYY');
+    const time_dd_start_exam = dayjs(time_exam).format('DD/MM/YYYY');
     const hours_exam = dayjs(time_exam).hour();
-    const splitName = (name2 : string)=>{
-       const array = name2.split(" ");
-       const name1 = array.pop();
-       const hd = array.join(" ")
-       const object =  {
+    const splitName = (name2: string) => {
+      const array = name2.split(" ");
+      const name1 = array.pop();
+      const hd = array.join(" ")
+      const object = {
         hd,
-        name1 
-       }
-       return object
+        name1
+      }
+      return object
     }
     const data = `<!DOCTYPE html>
     <html lang="en">
@@ -937,11 +967,10 @@ export class StudentsService {
               <th class="kn">Ký nhận</th>
               <th class="gc">Ghi chú</th>
             </tr>          
-          ${
-            dataStudent.map((e, index) => {
-              const dataObject = splitName(e.name);
-              return (
-                `<tr>
+          ${dataStudent.map((e, index) => {
+      const dataObject = splitName(e.name);
+      return (
+        `<tr>
                      <td>${index + 1} </td>
                      <td> ${e.code_student} </td>
                      <td> ${dataObject.hd} </td>
@@ -952,8 +981,8 @@ export class StudentsService {
                      <td> </td>
                      <td> </td>
                 </tr>`  )
-            })
-          } 
+    })
+      } 
           </table>
     
           <div class="hndate">
@@ -981,5 +1010,386 @@ export class StudentsService {
 
   }
 
+  async PdfTl(id: number, dataPDF: { mode: number, time_start: Date, big_class: string, nameRoom: string, name: string, time_exam: Date, form_exam: string }, res: Response) {
+    const dataStudent = await this.studentRepository.findBy({ id_room_test_tl: id })
+    const { mode, time_start, big_class, name, nameRoom, time_exam, form_exam } = dataPDF;
+    console.log(time_exam)
+    const time_dd_start_exam = dayjs(time_exam).format('DD/MM/YYYY');
+    const hours_exam = dayjs(time_exam).hour();
+    const splitName = (name2: string) => {
+      const array = name2.split(" ");
+      const name1 = array.pop();
+      const hd = array.join(" ")
+      const object = {
+        hd,
+        name1
+      }
+      return object
+    }
+    const data = `<!DOCTYPE html>
+    <html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=
+        , initial-scale=1.0">
+        <title>Document</title>
+        <style>
+          body {
+            padding: 20px 20px;
+            with : 100%;
+          }
+            header {
+                display: -webkit-box;
+                display: flex;
+                -webkit-box-pack: justify;
+                webkit-justify-content: space-around;
+                justify-content: space-around;
+            }
+        
+            .left,
+            .right,
+            .left_p,
+            .right_p {
+                color: black;
+                font-size: 35;
+                font-weight: bold;
+            }
+        
+            .left_p {
+                margin-left: 37px;
+                border-bottom: 2px solid black;
+                width: 168px;
+            }
+        
+            .right_p {
+                margin-left: 60px;
+                border-bottom: 2px solid black;
+                width: 200px;
+            }
+        
+            .titile {
+              display: -webkit-box;
+              display: flex;
+              -webkit-box-pack: center; 
+              webkit-justify-content: center;
+              justify-content: center;
+                color: black;
+                font-size: 35;
+                font-weight: bold;
+                padding-right: 70px !important;
+                padding-top: 10px !important;
+            }
+        
+            .exam {
+                display: -webkit-box;
+                margin-top: 20px;
+                -webkit-box-pack: justify;
+                display: -webkit-box;
+                display: flex;
+                -webkit-box-pack: justify;
+                webkit-justify-content: space-around;
+            }
+        
+            .exam1 {
+                color: black;
+                font-size: 35;
+                font-weight: bold;
+            }
+        
+            .date_exam {
+                display: -webkit-box;
+                -webkit-box-pack: justify
+                margin-top: 5px;
+                display: -webkit-box;
+                display: flex;
+                -webkit-box-pack: justify;
+                webkit-justify-content: space-around;
+            }
+        
+            .room_exam {
+                color: black;
+                font-size: 35;
+                font-weight: bold;
+            }
+        
+            .total_exam {
+                display: -webkit-box;
+                -webkit-box-pack: justify
+                margin-top: 5px;
+                display: -webkit-box;
+                display: flex;
+                -webkit-box-pack: justify;
+                webkit-justify-content: space-around;
+            }
+        
+        
+            table {
+                margin-top: 10px;
+            }
+        
+        
+            table,
+            th,
+            td {
+                border: 1px solid black;
+                border-collapse: collapse;
+                -ms-flex-pack: justify;
+                text-align: center;
+            }
+        
+            .stt {
+                width: 25px;
+            }
+        
+            .sbd {
+                width: 25px;
+            }
+        
+            .msv {
+                width: 90px;
+            }
+        
+            .hd {
+                width: 200px;
+            }
+        
+            .name {
+                width: 90px;
+            }
+        
+            .ds {
+                width: 50px;
+            }
+        
+            .kn {
+                width: 70px;
+            }
+        
+            .gc {
+                width: 80px;
+            }
+        
+            .hndate {
+                margin: 10px 0px;
+                display: -webkit-box;
+                -webkit-box-pack: justify;
+                webkit-justify-content: space-around;
+            }
+
+            .hndate1{
+              margin-right : 20px;
+            }
+        
+            .footer {
+                display: -webkit-box;
+                -webkit-box-pack: justify;
+                webkit-justify-content: space-around;
+                color: black;
+                font-size: 30;
+                font-weight: bold; 
+            }
+        </style>
+    </head>
+    
+    <body>
+    
+        <header>
+            <div class="left">
+                HỌC VIỆN KỸ THUẬT MẬT MÃ
+                <p class="left_p">PHÒNG KT&ĐBCLĐT</p>
+            </div>
+    
+            <div class="right">
+                CỘNG HÒA XÃ HÔI CHỦ NGHĨA VIỆT NAM
+                <p class="right_p">Độc lập - Tự do - Hạnh phúc</p>
+            </div>
+    
+    
+        </header>
+    
+        <div class="titile">
+            DANH SÁCH THI LẠI
+        </div>
+        <div class="titile">
+            Năm học ${time_start}-${time_start} học kỳ 1 - ${big_class}
+        </div>
+    
+        <div class="exam">
+            <div class="">
+                Tên học phần: <span class="exam1">${name}</span>
+            </div>
+            <div class="">
+                Số TC : 4
+            </div>
+        </div>
+    
+        <div class="date_exam">
+            <div class="">
+                Ngày thi : ${time_dd_start_exam}
+            </div>
+            <div class="">
+             Hình thức  : ${form_exam}
+            </div>
+            <div class="">
+                Ca thi : ${hours_exam}h
+            </div>
+            <div >
+                Thi tại :  <span class="room_exam"> ${nameRoom} </span>
+            </div>
+        </div>
+        <div class="total_exam">
+            <div class="">
+                Tổng số sinh viên: ....
+            </div>
+            <div class="">
+                Số sinh viên dự thi: ....
+            </div>
+            <div class="">
+                Vắng : ..........
+            </div>
+            <div class="">
+                Có lý do : .......
+            </div>
+            <div class="">
+                Không lý do : .......
+            </div>
+        </div>
+        <table style="width:100%">
+            <tr>
+              <th class="stt">STT</th>
+              <th class="msv">Mã SV</th>
+              <th class="hd">Họ đệm</th>
+              <th class="name">Tên</th>
+              <th class="ds">Đề số </th>
+              <th class="score">Điểm số</th>
+              <th class="score">Điểm chữ</th>
+              <th class="kn">Ký nhận</th>
+              <th class="gc">Ghi chú</th>
+            </tr>          
+          ${dataStudent.map((e, index) => {
+      const dataObject = splitName(e.name);
+      return (
+        `<tr>
+                     <td>${index + 1} </td>
+                     <td> ${e.code_student} </td>
+                     <td> ${dataObject.hd} </td>
+                     <td> ${dataObject.name1} </td>
+                     <td> </td>
+                     <td> </td>
+                     <td> </td>
+                     <td> </td>
+                     <td> </td>
+                </tr>`  )
+    })
+      } 
+          </table>
+    
+          <div class="hndate">
+          <div> </div>
+           <div class="hndate1">  Hà Nội, ... tháng .... năm... </div>
+          </div>
+    
+          <div class="footer">
+            <div> CBChT thứ nhất</div>
+            <div> CBChT thứ hai</div>
+            <div> Người nhận bài thi </div>
+          </div>
+    
+    </body>
+    
+    </html>`
+    pdf1.create(data).toBuffer(function (err, buffer) {
+      res.set({
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': 'attachment; filename=quote.pdf',
+        'Content-Length': buffer.length
+      })
+      res.end(buffer);
+    });
+
+  }
+
+  async wirteData(id: string , res) {
+    const data = await this.studentRepository.findBy(({
+      id_exam_query: id
+    }));
+    const headerColumns = ["STT", "SBD", "Mã SV", "Họ và Tên", "Lớp", "Đề Số", "Số tờ", "Điểm thi cuối kì"];
+    const dataInportFile = [];
+    for (let i = 0; i < data.length; i++) {
+      dataInportFile.push({
+        stt: `${i}`,
+        sbd: `${i + 1}`,
+        masv: data[i]['code_student'],
+        name: data[i]['name'],
+        class: data[i]['class_student'],
+        ds: '',
+        st: '',
+        score: ''
+      })
+    }
+
+    const wb = new xl.Workbook();
+    const ws = wb.addWorksheet('Sheet 1');
+    let colIndex = 1;
+    headerColumns.forEach(item => {
+      ws.cell(1, colIndex++).string(item)
+    })
+    let rowIndex = 2;
+    dataInportFile.forEach(item => {
+      let columnIndex = 1;
+      ws.cell(rowIndex, columnIndex++).string(item.stt)
+      ws.cell(rowIndex, columnIndex++).string(item.sbd)
+      ws.cell(rowIndex, columnIndex++).string(item.masv)
+      ws.cell(rowIndex, columnIndex++).string(item.name)
+      ws.cell(rowIndex, columnIndex++).string(item.class)
+      ws.cell(rowIndex, columnIndex++).string(item.ds);
+      ws.cell(rowIndex, columnIndex++).string(item.st)
+      ws.cell(rowIndex, columnIndex++).string(item.score)
+
+      rowIndex++;
+    })
+    wb.write('formatFile/end.xlsx', function(err, stats) {
+      if (err) {
+        console.error(err);
+      } else {
+        const buffer = readFileSync(join(process.cwd(), 'formatFile/end.xlsx'));
+        const stream = new Readable();
+        stream.push(buffer);
+        stream.push(null);
+        res.set({
+          "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          'Content-Length': buffer.length,
+        });
+        stream.pipe(res);
+      }
+    });
+  }
+
+  async FormatFile(res: any) {
+    const buffer = readFileSync(join(process.cwd(), 'formatFile/between.xlsx'));
+    const stream = new Readable();
+    stream.push(buffer);
+    stream.push(null);
+    res.set({
+      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      'Content-Length': buffer.length,
+    });
+    stream.pipe(res);
+  }
+
+  async FormatFileScore(id: string, name: string, res: any) {
+    await this.wirteData(id,res)
+    // const buffer = readFileSync(join(process.cwd(), 'formatFile/end.xlsx'));
+    // const stream = new Readable();
+    // stream.push(buffer); 
+    // stream.push(null);
+    // res.set({
+    //   "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    //   'Content-Length': buffer.length,
+    // });
+    // stream.pipe(res);
+  }
 
 }

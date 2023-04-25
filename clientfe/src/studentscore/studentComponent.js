@@ -3,9 +3,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListExamBlock, searchDataApi } from "../slices/examBlock";
 import { UploadOutlined } from '@ant-design/icons';
+import { saveAs } from "file-saver"
 import { postDataFileScoreStudent, postDataFileScoreStudentEnd,postDataFileScoreStudentEndEnd} from '../slices/student'
+import instance from '../configApi/axiosConfig'
 const { Option } = Select;
 const { Dragger } = Upload;
+
 
 
 const StudentComponent = () => {
@@ -18,13 +21,17 @@ const StudentComponent = () => {
     const [isShowModalOpenBetween, setIsShowModalOpenBetween] = useState(false);
     const [isShowModalOpenEnd, setIsShowModalOpenEnd] = useState(false)
     const [isShowModalOpenEndEnd, setIsShowModalOpenEndEnd] = useState(false)
-
+    const [isShowModalOpenFormat, setIsShowModalOpenFormat] = useState(false)
     const [formCreateBetween, setFormCreateBetween] = useState({
         id_exam: '',
         time_year_end: '',
         time_year_start: '',
         files: [],
         name: ''
+    })
+    const [nameFormat , setNameFormat] = useState({
+        name: '',
+        id : ''
     })
 
     const [formCreateEnd, setFormCreateEnd] = useState({
@@ -157,8 +164,21 @@ const StudentComponent = () => {
                         file: [],
                         name: item.name,
                     }
+                    
                     setFormCreateEndEnd(objectCreate)
                 }}>Upload điểm thi lại</Button>,
+            },
+            {
+                title: 'File Format Nhập Điểm',
+                dataIndex: 'button_end_end',
+                key: 'button_end_end',
+                render: (item) => <Button type='primary' onClick={() => {
+                    setNameFormat({
+                        name : item.name,
+                        id :  item.id,
+                    })
+                    setIsShowModalOpenFormat(true);
+                }}>Dowload Định Dạng File </Button>,
             },
         ]
         return dataFormat;
@@ -353,6 +373,38 @@ const StudentComponent = () => {
         dispatch(postDataFileScoreStudentEnd(formUpload))
     }
 
+
+    const handleOkFormat = async(e)=>{
+        let nameFile = ''
+        let responseDowload = ''
+        if (e === 'between') {
+            nameFile = `File_Format_Diem_Giua_Ki-${nameFormat.name}`;
+            responseDowload =  await instance.get(`/students/format`,
+                {
+                    responseType: "blob",
+                    dataType: "binary",
+                });
+        } else if (e === 'end') {
+            nameFile = `File_Format_Diem_Cuoi_Ki-${nameFormat.name}`;
+            responseDowload =   await instance.get(`/students/format/${nameFormat.id}/end`,
+                {
+                    responseType: "blob",
+                    dataType: "binary",
+                });
+        } else if (e === 'endend') {
+            nameFile = `File_Format_Diem_Thi_Lai-${nameFormat.name}`;
+            responseDowload = await instance.get(`/students/format/${nameFormat.id}/endend`,
+                {
+                    responseType: "blob",
+                    dataType: "binary",
+                });
+        }
+        const blob = new Blob([responseDowload.data] , {
+            type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        });
+        saveAs(blob, nameFile);
+    }
+
     return (
         <div>
             <div className='form_search'>
@@ -490,6 +542,32 @@ const StudentComponent = () => {
                         File hỗ trợ .xlsx
                     </p>
                 </Dragger>
+            </Modal>
+
+
+
+            {/* format file  upload file */}
+            <Modal title="Dowload định dạng file upload điểm" open={isShowModalOpenFormat} onOk={createFileEndEnd}
+                onCancel={() => {
+                    setIsShowModalOpenFormat(false);
+                }
+                }
+                footer={[
+                    <Button key="back" onClick={() => { setIsShowModalOpenFormat(false) }}>
+                        Cannel
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={() => handleOkFormat("between")}>
+                       Giữa kì
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={() => handleOkFormat("end")}>
+                        Cuối kì
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={() => handleOkFormat("endend")}>
+                        Thi lại
+                    </Button>,
+                ]}
+            >
+
             </Modal>
 
         </div>

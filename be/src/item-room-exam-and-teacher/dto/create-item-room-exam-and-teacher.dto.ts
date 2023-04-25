@@ -19,6 +19,9 @@ export class CreateItemRoomExamAndTeacherDto {
     
     @IsNotEmpty()
     mode: number;
+   
+    @IsNotEmpty()
+    grading_exam: number;
 
     @IsNotEmpty()
     id_exam_big_class: number;
