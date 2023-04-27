@@ -933,6 +933,10 @@ export class StudentsService {
                 font-size: 30;
                 font-weight: bold; 
             }
+
+            .bg100{
+              color : red;
+            }
         </style>
     </head>
     
@@ -1001,7 +1005,7 @@ export class StudentsService {
         </div> 
     <table>
             <tr>
-              <th class="stt">STT1</th>
+              <th class="stt">STT</th>
               <th class="msv">Mã SV</th>
               <th class="hd">Họ đệm</th>
               <th class="name">Tên</th>
@@ -1013,6 +1017,7 @@ export class StudentsService {
             </tr>
           ${dataStudent.map((e, index) => {
             const dataObject = splitName(e.name);
+            const result = Number(e.point_diligence) < 4 ? `<span class="bg100"> ${e.point_diligence == 0 ? "N100" : "N25"}</span>` : (Number(e.point_beetween) < 4 ? `<span class="bg100">Không đủ điều kiện</span>` : "")  
             return (
             `<tr>
                 <td>${index+1}</td>
@@ -1023,7 +1028,7 @@ export class StudentsService {
                 <td> </td>
                 <td> </td>
                 <td> </td>
-                <td> </td>
+                <td>${result}</td>
           </tr>`)}).join('')
       } 
           </table>
