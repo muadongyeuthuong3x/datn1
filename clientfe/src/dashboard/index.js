@@ -32,56 +32,56 @@ const DashBoard = ({ ComponentProps, loading }) => {
         {
             link: "/dashboard",
             text: "Danh sách user",
-            icon: < UserOutlined />,
+            icon: '',
             isAdmin: true,
             key: 0
         },
         {
             link: "/department",
             text: "Danh  sách Khoa",
-            icon: < UserOutlined />,
+            icon: '',
             isAdmin: false,
             key: 1
         },
         {
             link: "/list-teacher",
             text: "Danh sách  giáo viên",
-            icon: < UserOutlined />,
+            icon: '',
             isAdmin: false,
             key: 2
         },
         {
             link: "/list-khoi",
             text: "Danh sách khối",
-            icon: < UserOutlined />,
+            icon: '',
             isAdmin: false,
             key: 3
         },
         {
             link: "/list-exam",
             text: "Môn Thi",
-            icon: < UserOutlined />,
+            icon: '',
             isAdmin: false,
             key: 4
         },
         {
             link: "/exam-form",
             text: "Hình thức thi",
-            icon: < UserOutlined />,
+            icon: '',
             isAdmin: false,
             key: 5
         },
         {
             link: "/form-room",
             text: "Phòng thi",
-            icon: < UserOutlined />,
+            icon: '',
             isAdmin: false,
             key: 6
         },
         {
             link: "/exam-block",
             text: "Môn Thi Của Khối",
-            icon: < UserOutlined />,
+            icon: '',
             isAdmin: false,
             key: 7
         },
@@ -89,14 +89,14 @@ const DashBoard = ({ ComponentProps, loading }) => {
         {
             link: "/student-score",
             text: "Lên Điểm Thi",
-            icon: < UserOutlined />,
+            icon: '',
             isAdmin: false,
             key: 8
         },
         {
             link: "/edit-score",
             text: "Sửa điểm thi",
-            icon: < UserOutlined />,
+            icon: '',
             isAdmin: false,
             key: 9
         },
@@ -104,21 +104,21 @@ const DashBoard = ({ ComponentProps, loading }) => {
         {
             link: "/tt-score-student",
             text: "Thống kế điểm thi",
-            icon: < UserOutlined />,
+            icon: '',
             isAdmin: false,
             key: 10
         },
         {
             link: "/schedule-test",
             text: "Lên Lịch Thi",
-            icon: < UserOutlined />,
+            icon: '',
             isAdmin: false,
             key: 11
         },
         {
             link: "/tt-teacher",
             text: "Thống kê phân công thi",
-            icon: < UserOutlined />,
+            icon: '',
             isAdmin: false,
             key: 12
         },
@@ -205,7 +205,7 @@ const DashBoard = ({ ComponentProps, loading }) => {
                         theme="dark"
                         mode="inline"
                         defaultSelectedKeys={[stateRenderClickId]}
-                        style={{ width: 250 }}
+                        style={{ maxWidth: 250 }}
                         selectedKeys={[stateRenderClickId]}
                     >
                         {
@@ -240,12 +240,12 @@ const DashBoard = ({ ComponentProps, loading }) => {
                         }}
 
                     >
-                        <Breadcrumb
+                        {/* <Breadcrumb
                             style={{
                                 margin: '16px 0',
                             }}
                         >
-                        </Breadcrumb>
+                        </Breadcrumb> */}
                         <div
                             style={{
                                 padding: 24,
@@ -253,8 +253,11 @@ const DashBoard = ({ ComponentProps, loading }) => {
                                 background: colorBgContainer,
                             }}
                             className="content"
-                        >
-                            <ComponentProps />
+                        >  
+                        <div className='scrool_x'> 
+                        <ComponentProps />
+                        </div>
+                           
                         </div>
                     </Content>
                     <Footer
