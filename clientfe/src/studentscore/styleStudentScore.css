@@ -1,0 +1,15 @@
+.blockedBetween > div:first-child {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.blockedEnd > div:first-child {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+
+  .blockedEndEnd > div:first-child {
+    pointer-events: none;
+    opacity: 0.5;
+  }

@@ -56,11 +56,12 @@ export class StudentsController {
       const getKeys = Object.keys(temp[0]);
       if (
         getKeys[0] !== 'STT' ||
-        getKeys[1] !== 'Mã Sinh Viên' ||
-        getKeys[2] !== 'Họ và Tên' ||
-        getKeys[3] !== 'Điểm Chuyên Cần' ||
-        getKeys[4] !== 'Điểm giữa kì' ||
-        getKeys.length !== 5
+        getKeys[1] !== 'Mã SV' ||
+        getKeys[2] !== 'Họ và tên' ||
+        getKeys[3] !== 'Lớp' ||
+        getKeys[4] !== 'Điểm thành phần 1' ||
+        getKeys[5] !== 'Điểm thành phần 2' ||
+        getKeys.length !== 6
       ) {
         return res.status(500).json({
           status: 'error',
@@ -102,10 +103,14 @@ export class StudentsController {
       const getKeys = Object.keys(temp[0]);
       if (
         getKeys[0] !== 'STT' ||
-        getKeys[1] !== 'Mã Sinh Viên' ||
-        getKeys[2] !== 'Họ và Tên' ||
-        getKeys[3] !== 'Điểm Cuối Kì' ||
-        getKeys.length !== 4
+        getKeys[1] !== 'SBD' ||
+        getKeys[2] !== 'Mã SV' ||
+        getKeys[3] !== 'Họ và Tên' ||
+        getKeys[4] !== 'Lớp' ||
+        getKeys[5] !== 'Đề Số' ||
+        getKeys[6] !== 'Số tờ' ||
+        getKeys[7] !== 'Điểm thi cuối kì' ||
+        getKeys.length !== 8
       ) {
         return res.status(500).json({
           status: 'error',
@@ -147,10 +152,14 @@ export class StudentsController {
       const getKeys = Object.keys(temp[0]);
       if (
         getKeys[0] !== 'STT' ||
-        getKeys[1] !== 'Mã Sinh Viên' ||
-        getKeys[2] !== 'Họ và Tên' ||
-        getKeys[3] !== 'Điểm Thi Lại' ||
-        getKeys.length !== 4
+        getKeys[1] !== 'SBD' ||
+        getKeys[2] !== 'Mã SV' ||
+        getKeys[3] !== 'Họ và Tên' ||
+        getKeys[4] !== 'Lớp' ||
+        getKeys[5] !== 'Đề Số' ||
+        getKeys[6] !== 'Số tờ' ||
+        getKeys[7] !== 'Điểm thi lại cuối kì' ||
+        getKeys.length !== 8
       ) {
         return res.status(500).json({
           status: 'error',
@@ -223,12 +232,12 @@ export class StudentsController {
   }
 
   @Post('/schedule_pdf/:id')
-  getPdfRoomExam(@Param('id') id: string, @Body() dataPDF: { mode: number, time_start: Date, big_class: string; nameRoom: string, name: string, time_exam: Date, form_exam: string }, @Res() res: any) {
+  getPdfRoomExam(@Param('id') id: string, @Body() dataPDF: { mode: number, time_start: Date, semester : string , big_class: string; nameRoom: string, name: string, time_exam: Date, form_exam: string , numberTc: number }, @Res() res: any) {
     return this.studentsService.Pdf(+id, dataPDF, res);
-  }
+  } 
 
   @Post('/schedule_pdf/tl/:id')
-  getPdfRoomExamTL(@Param('id') id: string, @Body() dataPDF: { mode: number, time_start: Date, big_class: string; nameRoom: string, name: string, time_exam: Date, form_exam: string }, @Res() res: any) {
+  getPdfRoomExamTL(@Param('id') id: string, @Body() dataPDF: { mode: number, time_start: Date, semester : string, big_class: string; nameRoom: string, name: string, time_exam: Date, form_exam: string ,numberTc: number  }, @Res() res: any) {
     return this.studentsService.PdfTl(+id, dataPDF, res);
   }
 
@@ -243,6 +252,10 @@ export class StudentsController {
   dowloadFileFormatScore(@Param('id') id: string, @Param('name') name: string, @Res() res: any) {
     return this.studentsService.FormatFileScore(id, name, res);
   }
-
+  
+  @Get('/format/:id/:name/tl')
+  dowloadFileFormatScoreTL(@Param('id') id: string, @Param('name') name: string, @Res() res: any) {
+    return this.studentsService.FormatFileScoreTl(id, name, res);
+  }
 
 }

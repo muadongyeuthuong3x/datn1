@@ -51,6 +51,9 @@ export class StudentsService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     let checkRollBack = false;
+    let checkScore = false;
+    let checkNotiName = ''
+    let checkNotiMaSv = ''
     try {
       await Promise.all(
         createStudentDto.map(async (item) => {
@@ -58,18 +61,18 @@ export class StudentsService {
           const getValue = Object.values(item);
           studentCreate.code_student = getValue[1];
           studentCreate.name = getValue[2];
-          studentCreate.point_diligence = getValue[3];
-          studentCreate.point_beetween = getValue[4];
+          studentCreate.class_student = getValue[3];
+          studentCreate.point_diligence = getValue[4];
+          studentCreate.point_beetween = getValue[5];
           if (
-            getValue[3] > 10 ||
-            getValue[3] < 0 ||
             getValue[4] > 10 ||
-            getValue[4] < 0
+            getValue[4] < 0 ||
+            getValue[5] > 10 ||
+            getValue[5] < 0
           ) {
-            res.status(500).json({
-              status: 'error',
-              message: `Điểm cần phải lớn hơn 0 hoặc bằng không hoặc nhỏ hơn 10`,
-            });
+            checkNotiName = name;
+            checkNotiMaSv = getValue[1]
+            checkScore = true;
           }
           studentCreate.id_exam_big_class = id_exam;
           studentCreate.id_exam_query = id_exam as any;
@@ -78,18 +81,30 @@ export class StudentsService {
             await queryRunner.manager.save(studentCreate);
           } else {
             checkRollBack = true;
-            res.status(500).json({
-              status: 'error',
-              message: `Điểm giữa kì có môn ${name} mã sinh viên ${getValue[1]} đã tồn tại`,
-            });
+            checkNotiName = name;
+            checkNotiMaSv = getValue[1]
           }
         }),
       );
-      !checkRollBack && (await queryRunner.commitTransaction());
-      return res.status(200).json({
-        status: 'succes',
-        message: `Upload thành công`,
-      });
+      if (checkScore) {
+        return res.status(500).json({
+          status: 'error',
+          message: ` Môn ${checkNotiName} mã sinh viên ${checkNotiMaSv} điểm cần phải từ 0 đến 10`,
+        });
+      }
+      if (checkRollBack) {
+        return res.status(500).json({
+          status: 'error',
+          message: `Điểm giữa kì có môn ${checkNotiName} mã sinh viên ${checkNotiMaSv} đã tồn tại`,
+        });
+      }
+      if (!checkRollBack) {
+        await queryRunner.commitTransaction();
+        return res.status(200).json({
+          status: 'succes',
+          message: `Upload thành công`,
+        });
+      }
     } catch (error) {
       console.log(error)
       await queryRunner.rollbackTransaction();
@@ -154,40 +169,54 @@ export class StudentsService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     let checkRollBack = false;
+    let checkScore = false;
+    let checkNotiName = '';
+    let checkNotiMaSv = '';
     try {
       await Promise.all(
         createStudentDto.map(async (item) => {
           const getValue = Object.values(item);
           const result: any = await this.findDataIsExitAnhUpdate(
-            getValue[1],
+            getValue[2],
             id_exam,
           );
 
-          if (getValue[3] > 10 || getValue[3] < 0) {
-            res.status(500).json({
-              status: 'error',
-              message: `Điểm cần phải lớn hơn 0 hoặc bằng không hoặc nhỏ hơn 10`,
-            });
+          if (getValue[7] > 10 || getValue[7] < 0) {
+            checkNotiName = name;
+            checkNotiMaSv = getValue[1]
+            checkScore = true;
           }
           if (!!result) {
             const { id } = result;
             await queryRunner.manager.update(Student, id, {
-              point_end: getValue[3],
+              point_end: getValue[7],
             });
           } else {
             checkRollBack = true;
-            return res.status(500).json({
-              status: 'error',
-              message: `Điểm  môn ${name} mã sinh viên ${getValue[1]} không tồn tại trong hệ thống`,
-            });
+            checkNotiName = name;
+            checkNotiMaSv = getValue[2]
           }
         }),
       );
-      !checkRollBack && (await queryRunner.commitTransaction());
-      return res.status(200).json({
-        status: 'succes',
-        message: `Upload thành công`,
-      });
+      if (checkScore) {
+        return res.status(500).json({
+          status: 'error',
+          message: ` Môn ${checkNotiName} mã sinh viên ${checkNotiMaSv} điểm cần phải từ 0 đến 10`,
+        });
+      }
+      if (checkRollBack) {
+        return res.status(500).json({
+          status: 'error',
+          message: `Điểm cuối kì môn ${checkNotiName} mã sinh viên ${checkNotiMaSv} không tồn tại trong hệ thống`,
+        });
+      }
+      if (!checkRollBack) {
+        await queryRunner.commitTransaction();
+        return res.status(200).json({
+          status: 'succes',
+          message: `Upload thành công`,
+        });
+      }
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw new BadGatewayException({
@@ -225,39 +254,54 @@ export class StudentsService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     let checkRollBack = false;
+    let checkScore = false;
+    let checkNotiName = '';
+    let checkNotiMaSv = '';
     try {
       await Promise.all(
         createStudentDto.map(async (item) => {
           const getValue = Object.values(item);
           const result: any = await this.findDataIsExitAnhUpdate(
-            getValue[1],
+            getValue[2],
             id_exam,
           );
-          if (getValue[3] > 10 || getValue[3] < 0) {
-            res.status(500).json({
-              status: 'error',
-              message: `Điểm cần phải lớn hơn 0 hoặc bằng không hoặc nhỏ hơn 10`,
-            });
+          if (getValue[7] > 10 || getValue[7] < 0) {
+            checkNotiName = name;
+            checkNotiMaSv = getValue[2]
+            checkScore = true;
           }
           if (!!result) {
             const { id } = result;
             await queryRunner.manager.update(Student, id, {
-              point_end_end: getValue[3],
+              point_end_end: getValue[7],
             });
           } else {
             checkRollBack = true;
-            return res.status(500).json({
-              status: 'error',
-              message: `Điểm  môn ${name} mã sinh viên ${getValue[1]} không tồn tại trong hệ thống`,
-            });
+            checkRollBack = true;
+            checkNotiName = name;
+            checkNotiMaSv = getValue[2]
           }
         }),
       );
-      !checkRollBack && (await queryRunner.commitTransaction());
-      return res.status(200).json({
-        status: 'succes',
-        message: `Upload thành công`,
-      });
+      if (checkScore) {
+        return res.status(500).json({
+          status: 'error',
+          message: ` Môn ${checkNotiName} mã sinh viên ${checkNotiMaSv} điểm cần phải từ 0 đến 10`,
+        });
+      }
+      if (checkRollBack) {
+        return res.status(500).json({
+          status: 'error',
+          message: `Điểm thi lại cuối kì môn ${checkNotiName} mã sinh viên ${checkNotiMaSv} không tồn tại trong hệ thống`,
+        });
+      }
+      if (!checkRollBack) {
+        await queryRunner.commitTransaction();
+        return res.status(200).json({
+          status: 'succes',
+          message: `Upload thành công`,
+        });
+      }
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw new BadGatewayException({
@@ -709,12 +753,12 @@ export class StudentsService {
     return data;
   }
 
-  async Pdf(id: number, dataPDF: { mode: number, time_start: Date, big_class: string, nameRoom: string, name: string, time_exam: Date, form_exam: string }, res: Response) {
+  async Pdf(id: number, dataPDF: { mode: number, time_start: Date, big_class: string, nameRoom: string, name: string, time_exam: Date, semester: string, form_exam: string, numberTc: number }, res: Response) {
     const dataStudent = await this.studentRepository.findBy({ id_room_test: id })
-    const { mode, time_start, big_class, name, nameRoom, time_exam, form_exam } = dataPDF;
-    console.log(time_exam)
+    const { mode, time_start, big_class, name, nameRoom, time_exam, form_exam, numberTc, semester } = dataPDF;
     const time_dd_start_exam = dayjs(time_exam).format('DD/MM/YYYY');
     const hours_exam = dayjs(time_exam).hour();
+    const minus_exam = dayjs(time_exam).minute();
     const splitName = (name2: string) => {
       const array = name2.split(" ");
       const name1 = array.pop();
@@ -909,10 +953,10 @@ export class StudentsService {
         </header>
     
         <div class="titile">
-            DANH SÁCH THI LẠI
+            DANH SÁCH THI ${mode == 1 ? "" : "LẠI"}
         </div>
         <div class="titile">
-            Năm học ${time_start}-${time_start} học kỳ 1 - ${big_class}
+            Năm học ${time_start}-${Number(time_start) + 1} ${semester}  ${big_class}
         </div>
     
         <div class="exam">
@@ -920,7 +964,7 @@ export class StudentsService {
                 Tên học phần: <span class="exam1">${name}</span>
             </div>
             <div class="">
-                Số TC : 4
+                Số TC : ${numberTc}
             </div>
         </div>
     
@@ -932,7 +976,7 @@ export class StudentsService {
              Hình thức  : ${form_exam}
             </div>
             <div class="">
-                Ca thi : ${hours_exam}h
+                Ca thi : ${hours_exam}h${minus_exam}
             </div>
             <div >
                 Thi tại :  <span class="room_exam"> ${nameRoom} </span>
@@ -952,12 +996,12 @@ export class StudentsService {
                 Có lý do : .......
             </div>
             <div class="">
-                Không lý do : .......
+                Không lý do : ......
             </div>
-        </div>
-        <table style="width:100%">
+        </div> 
+    <table>
             <tr>
-              <th class="stt">STT</th>
+              <th class="stt">STT1</th>
               <th class="msv">Mã SV</th>
               <th class="hd">Họ đệm</th>
               <th class="name">Tên</th>
@@ -966,28 +1010,26 @@ export class StudentsService {
               <th class="score">Điểm chữ</th>
               <th class="kn">Ký nhận</th>
               <th class="gc">Ghi chú</th>
-            </tr>          
+            </tr>
           ${dataStudent.map((e, index) => {
-      const dataObject = splitName(e.name);
-      return (
-        `<tr>
-                     <td>${index + 1} </td>
-                     <td> ${e.code_student} </td>
-                     <td> ${dataObject.hd} </td>
-                     <td> ${dataObject.name1} </td>
-                     <td> </td>
-                     <td> </td>
-                     <td> </td>
-                     <td> </td>
-                     <td> </td>
-                </tr>`  )
-    })
+            const dataObject = splitName(e.name);
+            return (
+            `<tr>
+                <td>${index+1}</td>
+                <td>${e.code_student}</td>
+                <td>${dataObject.hd}</td>
+                <td>${dataObject.name1} </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+          </tr>`)}).join('')
       } 
           </table>
-    
           <div class="hndate">
           <div> </div>
-           <div class="hndate1">  Hà Nội, ... tháng .... năm... </div>
+           <div class="hndate1">  Hà Nội, ... tháng .... năm.... </div>
           </div>
     
           <div class="footer">
@@ -1010,12 +1052,12 @@ export class StudentsService {
 
   }
 
-  async PdfTl(id: number, dataPDF: { mode: number, time_start: Date, big_class: string, nameRoom: string, name: string, time_exam: Date, form_exam: string }, res: Response) {
+  async PdfTl(id: number, dataPDF: { mode: number, time_start: Date, big_class: string, nameRoom: string, name: string, semester: string, time_exam: Date, form_exam: string, numberTc: number }, res: Response) {
     const dataStudent = await this.studentRepository.findBy({ id_room_test_tl: id })
-    const { mode, time_start, big_class, name, nameRoom, time_exam, form_exam } = dataPDF;
-    console.log(time_exam)
+    const { mode, time_start, big_class, name, nameRoom, time_exam, form_exam, numberTc, semester } = dataPDF;
     const time_dd_start_exam = dayjs(time_exam).format('DD/MM/YYYY');
     const hours_exam = dayjs(time_exam).hour();
+    const minus_exam = dayjs(time_exam).minute();
     const splitName = (name2: string) => {
       const array = name2.split(" ");
       const name1 = array.pop();
@@ -1210,18 +1252,18 @@ export class StudentsService {
         </header>
     
         <div class="titile">
-            DANH SÁCH THI LẠI
+            DANH SÁCH THI ${mode == 1 ? "" : "LẠI"}
         </div>
         <div class="titile">
-            Năm học ${time_start}-${time_start} học kỳ 1 - ${big_class}
+            Năm học ${time_start}-${Number(time_start) + 1} ${semester}  ${big_class}
         </div>
     
         <div class="exam">
             <div class="">
-                Tên học phần: <span class="exam1">${name}</span>
+                Tên học phần: <span class="exam1">${name}</span> 
             </div>
             <div class="">
-                Số TC : 4
+                Số TC : ${numberTc}
             </div>
         </div>
     
@@ -1233,7 +1275,7 @@ export class StudentsService {
              Hình thức  : ${form_exam}
             </div>
             <div class="">
-                Ca thi : ${hours_exam}h
+                Ca thi : ${hours_exam}h${minus_exam}
             </div>
             <div >
                 Thi tại :  <span class="room_exam"> ${nameRoom} </span>
@@ -1282,7 +1324,7 @@ export class StudentsService {
                      <td> </td>
                      <td> </td>
                 </tr>`  )
-    })
+    }).join('')
       } 
           </table>
     
@@ -1311,11 +1353,39 @@ export class StudentsService {
 
   }
 
-  async wirteData(id: string , res) {
-    const data = await this.studentRepository.findBy(({
-      id_exam_query: id
-    }));
-    const headerColumns = ["STT", "SBD", "Mã SV", "Họ và Tên", "Lớp", "Đề Số", "Số tờ", "Điểm thi cuối kì"];
+  async wirteData(id: string, res, checkExam) {
+    let data = [];
+    let score = ''
+    if (checkExam == "end") {
+      score = "Điểm thi cuối kì"
+      data = await this.studentRepository.findBy(({
+        id_exam_query: id,
+        point_diligence: MoreThanOrEqual(4),
+        point_beetween: MoreThanOrEqual(4),
+      }));
+    } else {
+      score = "Điểm thi lại cuối kì"
+      data = await this.studentRepository.find({
+        where: {
+          id_exam_query: id,
+          point_diligence: MoreThanOrEqual(4),
+          point_beetween: MoreThanOrEqual(4),
+          point_end: LessThan(4),
+        }
+      });
+
+      // data =   await this.studentRepository
+      //   .createQueryBuilder('student')
+      //   .where('student.id_exam_query >= :id_exam_query', { id_exam_query: id })
+      //   .andWhere('student.point_diligence >= :point_diligence', { point_diligence: 4 })
+      //   .andWhere('student.point_beetween >= :point_beetween', { point_beetween: 4 })
+      //   .andWhere('student.point_end < :point_end', { point_end: 4 })
+      //   .getMany();
+      // console.log(data)
+    }
+
+
+    const headerColumns = ["STT", "SBD", "Mã SV", "Họ và Tên", "Lớp", "Đề Số", "Số tờ", score];
     const dataInportFile = [];
     for (let i = 0; i < data.length; i++) {
       dataInportFile.push({
@@ -1350,11 +1420,17 @@ export class StudentsService {
 
       rowIndex++;
     })
-    wb.write('formatFile/end.xlsx', function(err, stats) {
+    let checkWrite = ''
+    if (checkExam == "end") {
+      checkWrite = 'formatFile/end.xlsx'
+    } else {
+      checkWrite = 'formatFile/endend.xlsx'
+    }
+    wb.write(checkWrite, function (err, stats) {
       if (err) {
         console.error(err);
       } else {
-        const buffer = readFileSync(join(process.cwd(), 'formatFile/end.xlsx'));
+        const buffer = readFileSync(join(process.cwd(), checkWrite));
         const stream = new Readable();
         stream.push(buffer);
         stream.push(null);
@@ -1380,16 +1456,11 @@ export class StudentsService {
   }
 
   async FormatFileScore(id: string, name: string, res: any) {
-    await this.wirteData(id,res)
-    // const buffer = readFileSync(join(process.cwd(), 'formatFile/end.xlsx'));
-    // const stream = new Readable();
-    // stream.push(buffer); 
-    // stream.push(null);
-    // res.set({
-    //   "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    //   'Content-Length': buffer.length,
-    // });
-    // stream.pipe(res);
+    await this.wirteData(id, res, "end")
+  }
+
+  async FormatFileScoreTl(id: string, name: string, res: any) {
+    await this.wirteData(id, res, "endend")
   }
 
 }

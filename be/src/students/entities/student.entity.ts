@@ -21,6 +21,12 @@ export class Student {
   @Column()
   name: string;
 
+  
+  @Column()
+  class_student: string;
+
+
+
   @Column('numeric',{ default: 0  })
   point_diligence: number ;
 

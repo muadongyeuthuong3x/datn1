@@ -1065,7 +1065,8 @@ const ScheduleSComponent = () => {
                         name: dataGetPdf.name,
                         time_exam: dataGetPdf.arrayId[i].time_exam,
                         form_exam: dataGetPdf.form_exam,
-
+                        numberTc : dataGetPdf.numberTc,
+                        semester:dataGetPdf.semester
                     },
                     {
                         responseType: 'blob',
@@ -1106,7 +1107,7 @@ const ScheduleSComponent = () => {
 
     const showModalPDF = (data) => {
         setIsModalOpenPDF(true);
-        const { id_room, big_class, mode, name, time_start, form_exam } = data;
+        const { id_room, big_class, mode, name, time_start, form_exam, numberTc ,semester } = data;
         const arrayId = []
         for (let i = 0; i < id_room.length; i++) {
             arrayId.push({ id: id_room[i].id, nameRoom: id_room[i].id_Room.name, time_exam: id_room[i].time_start })
@@ -1118,6 +1119,8 @@ const ScheduleSComponent = () => {
             name,
             time_start,
             form_exam,
+            numberTc,
+            semester
         })
     }
 
@@ -1137,7 +1140,7 @@ const ScheduleSComponent = () => {
                 edit: <Button type='primary' onClick={() => showModalEdit(item)}>Edit</Button>, // chi chay 1 lan
                 delete: <Button type='primary' danger onClick={() => showModalDelete(item?.id_testScheduleStudent[0].id)}>Delete</Button>,
                 // export: <Button type='primary' onClick={() => showModalPDF({ id: item?.id_testScheduleStudent[0].id, subject: item?.id_exam?.name, mode: resultMode(item?.id_testScheduleStudent[0].mode), form_exam: resultFormExam(item?.form_exam), blokcclass: getClassBigExam(item?.id_big_class_exam) })}>Lấy danh sách thi</Button>
-                export: <Button type='primary' onClick={() => showModalPDF({ id_room: item?.id_testScheduleStudent[0].id_itemRoomExamAndTeacher, time_start: item.time_year_start, big_class: getClassBigExam(item?.id_big_class_exam), name: item.id_exam.name, mode: item.id_testScheduleStudent[0].mode, form_exam: item?.id_testScheduleStudent[0].id_ExamForm.name })}>Lấy danh sách thi</Button>
+                export: <Button type='primary' onClick={() => showModalPDF({ id_room: item?.id_testScheduleStudent[0].id_itemRoomExamAndTeacher, time_start: item.time_year_start, big_class: getClassBigExam(item?.id_big_class_exam), name: item.id_exam.name, mode: item.id_testScheduleStudent[0].mode, form_exam: item?.id_testScheduleStudent[0].id_ExamForm.name , numberTc : item.id_exam.tc_learn ,semester : item.id_exam.semester })}>Lấy danh sách thi</Button>
             });
         })
         setlistScheduleExamStudent(dataList)
@@ -1694,7 +1697,7 @@ const ScheduleSComponent = () => {
 
                     <div className='tt_information_exam'>
                         {
-                            onFormCreate.id_exam > 0 && countStudnetExam > 1 && <span className='count_exam'> Khóa Dự Thi : {onFormCreate.bigBlockClassExam}  {
+                            onFormCreate.id_exam > 0 && countStudnetExam > 0 && <span className='count_exam'> Khóa Dự Thi : {onFormCreate.bigBlockClassExam}  {
                                 onFormCreate.id_exam > 0 && <div className='count_exam1'> - Có tổng cộng {countStudnetExam} sinh viên </div>
                             } </span>
                         }
@@ -1983,7 +1986,7 @@ const ScheduleSComponent = () => {
 
                     <div className='tt_information_exam'>
                         {
-                            dataFormEdit.id_exam > 0 && countStudnetExam > 1 && <span className='count_exam'> Khóa Dự Thi : {dataFormEdit.bigBlockClassExam}  {
+                            dataFormEdit.id_exam > 0 && countStudnetExam > 0 && <span className='count_exam'> Khóa Dự Thi : {dataFormEdit.bigBlockClassExam}  {
                                 dataFormEdit.id_exam > 0 && <div className='count_exam1'> - Có tổng cộng {countStudnetExam} sinh viên </div>
                             } </span>
                         }

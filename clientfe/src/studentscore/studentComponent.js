@@ -6,6 +6,8 @@ import { UploadOutlined } from '@ant-design/icons';
 import { saveAs } from "file-saver"
 import { postDataFileScoreStudent, postDataFileScoreStudentEnd,postDataFileScoreStudentEndEnd} from '../slices/student'
 import instance from '../configApi/axiosConfig'
+import './styleStudentScore.css'
+import { toast } from 'react-toastify';
 const { Option } = Select;
 const { Dragger } = Upload;
 
@@ -123,14 +125,15 @@ const StudentComponent = () => {
                 key: 'button_between',
                 render: (item) => <Button type='primary' onClick={() => {
                     setIsShowModalOpenBetween(true)
+                    console.log("400000",formCreateBetween)
                     const objectCreate = {
                         id_exam: item.id,
                         time_year_end: item.time_year_end,
                         time_year_start: item.time_year_start,
-                        file: [],
+                        files: formCreateBetween?.files,
                         name: item.name,
                     }
-                    setFormCreateBetween(objectCreate)
+                    setFormCreateBetween(prev => { return { ...prev, objectCreate }})
                 }}
                 >Upload điểm thi giữa kì</Button>,
             },
@@ -144,10 +147,10 @@ const StudentComponent = () => {
                         id_exam: item.id,
                         time_year_end: item.time_year_end,
                         time_year_start: item.time_year_start,
-                        file: [],
+                        files: formCreateEnd.files,
                         name: item.name,
                     }
-                    setFormCreateEnd(objectCreate)
+                    setFormCreateEnd(prev => { return { ...prev, objectCreate }})
                 }}>Upload điểm thi cuối kì</Button>,
             },
             {
@@ -161,11 +164,11 @@ const StudentComponent = () => {
                         id_exam: item.id,
                         time_year_end: item.time_year_end,
                         time_year_start: item.time_year_start,
-                        file: [],
+                        files: formCreateEndEnd.files,
                         name: item.name,
                     }
                     
-                    setFormCreateEndEnd(objectCreate)
+                    setFormCreateEndEnd(prev => { return { ...prev, objectCreate }})
                 }}>Upload điểm thi lại</Button>,
             },
             {
@@ -273,10 +276,14 @@ const StudentComponent = () => {
 
 
     const props = {
-        name: 'file',
-        multiple: true,
+        name: 'files',
+        multiple: false,
         onChange(info) {
             const listFiles = info.fileList;
+            if(listFiles[0].type == "image/png"){
+               return toast.error("Không đúng định dạng file")
+            }
+            console.log("listFiles" , listFiles)
             setFormCreateBetween(prev => {
                 return {
                     ...prev,
@@ -287,11 +294,19 @@ const StudentComponent = () => {
         onDrop(e) {
             console.log('Dropped files', e.dataTransfer.files);
         },
+        onRemove(){
+            setFormCreateBetween(prev => {
+                return {
+                    ...prev,
+                    files: []
+                }
+            })
+        }
     };
 
     const propsEnd = {
-        name: 'file',
-        multiple: true,
+        name: 'files',
+        multiple: false,
         onChange(info) {
             const listFiles = info.fileList;
             setFormCreateEnd(prev => {
@@ -302,14 +317,19 @@ const StudentComponent = () => {
             })
         },
         onDrop(e) {
-            console.log('Dropped files', e.dataTransfer.files);
+            setFormCreateEnd(prev => {
+                return {
+                    ...prev,
+                    files: []
+                }
+            })
         },
     };
 
 
     const propsEndEnd = {
-        name: 'file',
-        multiple: true,
+        name: 'files',
+        multiple: false,
         onChange(info) {
             const listFiles = info.fileList;
             setFormCreateEndEnd(prev => {
@@ -322,12 +342,23 @@ const StudentComponent = () => {
         onDrop(e) {
             console.log('Dropped files', e.dataTransfer.files);
         },
+        onRemove(){
+            setFormCreateEndEnd(prev => {
+                return {
+                    ...prev,
+                    files: []
+                }
+            })
+        }
     };
 
 
     const createFileBetween = () => {
         const formUpload = new FormData();
         const listFile = formCreateBetween.files;
+        if(listFile.length < 1){
+            return toast.error("Chưa có file điểm")
+        }
         // eslint-disable-next-line array-callback-return
         listFile.map(e => {
             formUpload.append("files", e.originFileObj);
@@ -344,6 +375,9 @@ const StudentComponent = () => {
     const createFileEndEnd = () => {
         const formUpload = new FormData();
         const listFile = formCreateEndEnd.files;
+        if(listFile.length < 1){
+            return toast.error("Chưa có file điểm")
+        }
         // eslint-disable-next-line array-callback-return
         listFile.map(e => {
             formUpload.append("files", e.originFileObj);
@@ -361,6 +395,9 @@ const StudentComponent = () => {
         const formUpload = new FormData();
         const listFile = formCreateEnd.files;
         // eslint-disable-next-line array-callback-return
+        if(listFile.length < 1){
+            return toast.error("Chưa có file điểm")
+        }
         listFile.map(e => {
             formUpload.append("files", e.originFileObj);
         })
@@ -393,7 +430,7 @@ const StudentComponent = () => {
                 });
         } else if (e === 'endend') {
             nameFile = `File_Format_Diem_Thi_Lai-${nameFormat.name}`;
-            responseDowload = await instance.get(`/students/format/${nameFormat.id}/endend`,
+            responseDowload = await instance.get(`/students/format/${nameFormat.id}/endend/tl`,
                 {
                     responseType: "blob",
                     dataType: "binary",
@@ -465,19 +502,12 @@ const StudentComponent = () => {
             {/* multi  upload file */}
             <Modal title={`Upload điểm giữa kì năm học ${formCreateBetween.time_year_start} - ${formCreateBetween.time_year_end}`} open={isShowModalOpenBetween} onOk={createFileBetween}
                 onCancel={() => {
-                    setFormCreateBetween({
-                        id_exam: '',
-                        time_year_end: '',
-                        time_year_start: '',
-                        file: [],
-                        name: ''
-                    })
                     setIsShowModalOpenBetween(false);
                 }
                 }>
 
                 <div style={{ marginBottom: "20px" }}> Môn thi : {formCreateBetween.name}  </div>
-                <Dragger {...props} accept=".xlsx" beforeUpload={() => false}>
+                <Dragger {...props} accept=".xlsx"  beforeUpload={() => false}   className={formCreateBetween.files?.length  > 0? 'blockedBetween' : undefined}>
                     <p className="ant-upload-drag-icon">
                         <UploadOutlined />
                     </p>
@@ -492,19 +522,22 @@ const StudentComponent = () => {
             {/* multi  upload file end */}
             <Modal title={`Upload điểm thi cuối năm học ${formCreateEnd.time_year_start} - ${formCreateEnd.time_year_end}`} open={isShowModalOpenEnd} onOk={createFileEnd}
                 onCancel={() => {
-                    setFormCreateEnd({
-                        id_exam: '',
-                        time_year_end: '',
-                        time_year_start: '',
-                        file: [],
-                        name: ''
-                    })
+                    // setFormCreateEnd(prev=> {
+                    //     return {
+                    //         ...prev,
+                    //         id_exam: '',
+                    //         time_year_end: '',
+                    //         time_year_start: '',
+                    //         name: ''
+                    //     }
+                        
+                    // })
                     setIsShowModalOpenEnd(false);
                 }
                 }>
 
                 <div style={{ marginBottom: "20px" }}> Môn thi : {formCreateEnd.name}  </div>
-                <Dragger {...propsEnd} accept=".xlsx" beforeUpload={() => false}>
+                <Dragger {...propsEnd} accept=".xlsx" beforeUpload={() => false}  className={formCreateEnd.files?.length > 0 ? 'blockedEnd' : undefined} >
                     <p className="ant-upload-drag-icon">
                         <UploadOutlined />
                     </p>
@@ -517,23 +550,23 @@ const StudentComponent = () => {
 
 
 
-
             {/* multi  upload file */}
             <Modal title={`Upload điểm thi lại năm học ${formCreateEndEnd.time_year_start} - ${formCreateEndEnd.time_year_end}`} open={isShowModalOpenEndEnd} onOk={createFileEndEnd}
                 onCancel={() => {
-                    setFormCreateEndEnd({
-                        id_exam: '',
-                        time_year_end: '',
-                        time_year_start: '',
-                        file: [],
-                        name: ''
-                    })
-                    isShowModalOpenEndEnd(false);
+                    // setFormCreateEndEnd( prev=>{
+                    //     return{
+                    //     ...prev,
+                    //     id_exam: '',
+                    //     time_year_end: '',
+                    //     time_year_start: '',
+                    //     name: ''
+                    // }})
+                    setIsShowModalOpenEndEnd(false);
                 }
                 }>
 
                 <div style={{ marginBottom: "20px" }}> Môn thi : {formCreateEndEnd.name}  </div>
-                <Dragger {...propsEndEnd} accept=".xlsx" beforeUpload={() => false}>
+                <Dragger {...propsEndEnd} accept=".xlsx" beforeUpload={() => false}  className={formCreateEndEnd.files?.length > 0 ? 'blockedEndEnd' : undefined} >
                     <p className="ant-upload-drag-icon">
                         <UploadOutlined />
                     </p>

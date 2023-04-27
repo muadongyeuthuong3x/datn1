@@ -104,6 +104,8 @@ export class TableExamBigBlockClassService {
           'test-schedule-student.department',
           'exam.id',
           'exam.name',
+          'exam.tc_learn',
+          'exam.semester',
           'table-big-class-exam.id',
           'big_block_class.bigBlockClass',
           'big_block_class.id',
