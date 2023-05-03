@@ -29,6 +29,7 @@ import { DepartmentModule } from './department/department.module';
 import { TestScheduleStudentModule } from './test_schedule_student/test_schedule_student.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { AdminWeb } from './auth-middleware/admin.web';
 @Module({
   imports: [
     JwtModule.register({
@@ -75,9 +76,57 @@ import { join } from 'path';
 })
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthLogin).forRoutes(
-      { path: 'users', method: RequestMethod.GET },
+    consumer.apply(AuthLogin, AdminWeb).forRoutes(
+      { path: 'users', method: RequestMethod.ALL },
       // {path: 'users', method: RequestMethod.PUT}
     );
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'big-block-class', method: RequestMethod.ALL });
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'department', method: RequestMethod.ALL });
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'exam', method: RequestMethod.ALL });
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'exam_form', method: RequestMethod.ALL });
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'form-management', method: RequestMethod.ALL });
+    consumer.apply(AuthLogin).forRoutes({
+      path: 'item-room-exam-and-teacher',
+      method: RequestMethod.ALL,
+      });
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'room', method: RequestMethod.ALL });
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'students', method: RequestMethod.ALL });
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'table-exam-big-block-class', method: RequestMethod.ALL });
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'table-teacher-room', method: RequestMethod.ALL });
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'table-big-class-exam', method: RequestMethod.ALL });
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'teacher', method: RequestMethod.ALL });
+
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'teacher-mark-exam-room', method: RequestMethod.ALL });
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'teacher-track', method: RequestMethod.ALL });
+
+    consumer
+      .apply(AuthLogin)
+      .forRoutes({ path: 'test-schedule-student', method: RequestMethod.ALL });
   }
 }

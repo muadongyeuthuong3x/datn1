@@ -1606,12 +1606,92 @@ const ScheduleSComponent = () => {
         setOpenNoti(false)
     }
 
+     const [dataSearch ,setdataSearch ] = useState({
+        time_year_start:'',
+        semester : ''
+     })
+     const listTimeSelectSearch = useMemo(() => {
+        const data = [];
+        // eslint-disable-next-line array-callback-return
+        dataOldSearchView.map((e) => {
+            const timeConcat = e.time_year_start + "-" + e.time_year_end;
+            if (!data.includes(timeConcat)) {
+                data.push(timeConcat)
+            }
+        })
+        return data;
+    }, [dataOldSearchView])
+     const searchData = ()=>{
+     console.log(dataSearch)
+    }
+
+    const handleChange = (e)=>{
+        setdataSearch(prev => {
+            return {
+                ...prev,
+                semester: e
+
+            }
+        })
+    }
+
+    const onChangeSearchYearSearch = (e)=>{
+        const [time_start, time_end] = e.split('-');
+        setdataSearch(prev => {
+            return {
+                ...prev,
+                time_year_start: time_start
+
+            }
+        })
+    }
 
     return (
         <div>
             <div className='form_search'>
                 <Button type='primary' onClick={showModalCreate}>Tạo Lịch Thi</Button>
+                <Select
+                    showSearch
+                    style={{ width: '100%' , marginRight: "50px" }}
+                    placeholder="Năm học"
+                    optionFilterProp="children"
+                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                    filterSort={(optionA, optionB) =>
+                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                    }
+                    className="select_time"
+                    onChange={onChangeSearchYearSearch}
+                >
+                    {
+                        listTimeSelectSearch.map((e, index) => {
+                            return (
+                                <Option value={e} label={e + "1"} key={index}>
+                                    <Space>
+                                        {e}
+                                    </Space>
+                                </Option>
+                            )
+                        })
+                    }
+                </Select>
 
+                <Select
+                 showSearch
+                style={{ width: '100%' }}
+                placeholder="Học kì"
+                optionFilterProp="children"
+                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                }
+                onChange={handleChange}
+                value={dataSearch.semester}
+                options={[
+                    { value: 'Học kì I', label: 'Học kì I' },
+                    { value: 'Học kì II', label: 'Học kì II' },
+                ]}
+            />
+                <Button type='primary' onClick={searchData}> Tìm kiếm </Button>
             </div>
 
             <Table columns={columns1} dataSource={listScheduleExamStudent} />

@@ -53,7 +53,7 @@ const listUsers = createSlice({
 
 export const { loadding, getListUserSuccess, deleteUserInList, loaddingFailes, createUserReducer, searchData ,editData } = listUsers.actions
 
-export function apiGetListUsers(alert) {
+export function apiGetListUsers() {
     return async dispatch => {
         dispatch(loadding())
         try {
@@ -61,7 +61,7 @@ export function apiGetListUsers(alert) {
             dispatch(getListUserSuccess(response.data))
           
         } catch (error) {
-            alert.error(error.response.data.message)
+            toast.error(error.response.data.message)
             dispatch(loaddingFailes())
         }
     }

@@ -6,9 +6,13 @@ import Loadding from '../loadding/index'
 import {
     useState,
     useMemo,
+    useEffect,
 } from 'react';
 import { Link } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+import Cookies from 'js-cookie';
+
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
     return {
@@ -26,8 +30,11 @@ const DashBoard = ({ ComponentProps, loading }) => {
     } = theme.useToken();
     const checkRole = JSON.parse(localStorage.getItem('datawebkma')).role || '';
     const [stateRenderClickId, setRenderClickId] = useState(-1)
-
-
+    const token = Cookies.get("tokenwebkma");
+    const navigate = useNavigate();
+    if(!token){
+        navigate("/login");
+    }
     const items = [
         {
             link: "/dashboard",
@@ -124,7 +131,7 @@ const DashBoard = ({ ComponentProps, loading }) => {
         },
         
     ]
-
+    
 
     const listData = useMemo(() => {
         if (checkRole.length < 0) {
@@ -152,23 +159,6 @@ const DashBoard = ({ ComponentProps, loading }) => {
         })
         return itemsList;
     }, [checkRole, items])
-
-    // const listData = useMemo(() => {
-    //     if (checkRole.length < 0) {
-    //         return
-    //     }
-    //     const itemsList = [];
-    //     // eslint-disable-next-line array-callback-return
-    //     items.map(data => {
-    //         const { isAdmin } = data
-    //         if (checkRole === "admin" && isAdmin) {
-    //             itemsList.push(data.slider)
-    //         } else if ((checkRole === "user" && !isAdmin) || checkRole === "admin") {
-    //             itemsList.push(data.slider)
-    //         }
-    //     })
-    //     return itemsList;
-    // }, [checkRole, items])
 
 
     const openTabMenu = (e) => {
@@ -200,7 +190,6 @@ const DashBoard = ({ ComponentProps, loading }) => {
                     </div>
 
 
-                    {/* <Menu theme="dark" onClick={openTabMenu} defaultSelectedKeys={stateRenderClickId < 0 ? listData[0].key : stateRenderClickId} selectedKeys={stateRenderClickId < 0 ? listData[0].key : stateRenderClickId} mode="inline" items={listData} /> */}
                     <Menu
                         theme="dark"
                         mode="inline"

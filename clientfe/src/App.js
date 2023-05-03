@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes ,Switch } from 'react-router-dom';
 import Users from "./users/index"
 import Login from './login';
@@ -16,25 +16,16 @@ import ListScoreStudent from './editScoreStudent/index';
 import ScoreStatistic from './scoreStatistics/index';
 import Department from './department/index'
 import RechartComponents from "./rechartTeacher/index"
+import Cookies from 'js-cookie';
+
 function App() {
+ 
+
   return (
     <BrowserRouter>
       <Routes>
-        
-        <Route path="/dashboard" element={<Users />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/list-khoi" element={<ListSubject />} />
-        <Route path="/list-exam" element={<ListExam />} />
-        <Route path="/exam-form" element={<ListExamForm />} />
-        <Route path="/list-teacher" element={<ListTeacher />} />
-        <Route path="/form-room" element={<ListRoom />} />
-        <Route path="/schedule-test" element={<ScheduleTest />} />
-        <Route path="/student-score" element={<StudentScore />} />
-        <Route path="/exam-block" element={<ExamBlock />} />
-        <Route path="/edit-score" element={<ListScoreStudent />} />
-        <Route path="/tt-score-student" element={<ScoreStatistic />} />
-        <Route path="/department" element={<Department />} />
-        <Route path="/tt-teacher" element={<RechartComponents />} />
+  <Route path="/login" element={<Login />} /> 
+       <Route path="/dashboard" element={<Users />} /><Route path="/list-khoi" element={<ListSubject />} /><Route path="/list-exam" element={<ListExam />} /><Route path="/exam-form" element={<ListExamForm />} /><Route path="/list-teacher" element={<ListTeacher />} /><Route path="/form-room" element={<ListRoom />} /><Route path="/schedule-test" element={<ScheduleTest />} /><Route path="/student-score" element={<StudentScore />} /><Route path="/exam-block" element={<ExamBlock />} /><Route path="/edit-score" element={<ListScoreStudent />} /><Route path="/tt-score-student" element={<ScoreStatistic />} /><Route path="/department" element={<Department />} /><Route path="/tt-teacher" element={<RechartComponents />} />
       </Routes>
     </BrowserRouter>
   );

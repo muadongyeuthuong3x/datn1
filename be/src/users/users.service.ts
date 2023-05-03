@@ -44,7 +44,7 @@ export class UsersService {
   async createUser(createUserDto: CreateUserDto) {
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(createUserDto.password, salt);
-    let newUser = new UserEntity();
+    const newUser = new UserEntity();
     newUser.email = createUserDto.email;
     newUser.password = hash;
     newUser.role = createUserDto.role;

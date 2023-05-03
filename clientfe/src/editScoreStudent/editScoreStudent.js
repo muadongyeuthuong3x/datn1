@@ -12,7 +12,7 @@ const EditScore = () => {
     const [isModalOpenEdit, setIsModalOpenEdit] = useState(false);
     const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
     const showModalCreate = () => {
-        setIsModalOpenCreate(true);
+        window.location.href = "/student-score"
     };
 
     const [dataEdit, setDataEdit] = useState({

@@ -1,6 +1,7 @@
 import { NestMiddleware, Injectable, BadGatewayException } from '@nestjs/common';
 import {  JwtService } from '@nestjs/jwt';
 import { Request, Response, NextFunction } from 'express';
+import { UserRole } from 'src/enums/enum_users';
 import { UsersService } from '../users/users.service';
 
 
@@ -8,6 +9,7 @@ interface RequestWithUser extends Request {
    user ? : {
     email : string;
     id  : number;
+    permission : UserRole;
    }
 }
 @Injectable()
@@ -30,7 +32,8 @@ export class AuthLogin implements NestMiddleware{
             }
             req.user = {
                 email : findUserInDataBase.email,
-                id :  findUserInDataBase.id
+                id :  findUserInDataBase.id,
+                permission : findUserInDataBase.role
             }
             next();
         }else {
