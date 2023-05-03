@@ -28,7 +28,7 @@ const DashBoard = ({ ComponentProps, loading }) => {
     const {
         token: { colorBgContainer },
     } = theme.useToken();
-    const checkRole = JSON.parse(localStorage.getItem('datawebkma')).role || '';
+    const checkRole = JSON.parse(localStorage.getItem('datawebkma'))?.role || '';
     const [stateRenderClickId, setRenderClickId] = useState(-1)
     const token = Cookies.get("tokenwebkma");
     const navigate = useNavigate();
@@ -129,6 +129,13 @@ const DashBoard = ({ ComponentProps, loading }) => {
             isAdmin: false,
             key: 12
         },
+        {
+            link: "/login",
+            text: "Đăng xuất",
+            icon: '',
+            isAdmin: false,
+            key: 13
+        },
         
     ]
     
@@ -163,6 +170,11 @@ const DashBoard = ({ ComponentProps, loading }) => {
 
     const openTabMenu = (e) => {
         console.log(e)
+        const {key} = e
+        if(key == "13"){
+            localStorage.removeItem("datawebkma")
+            Cookies.remove("tokenwebkma")
+        }
         setRenderClickId(e.key)
     }
     return (
@@ -198,7 +210,7 @@ const DashBoard = ({ ComponentProps, loading }) => {
                         selectedKeys={[stateRenderClickId]}
                     >
                         {
-                            listData.map(e => {
+                            listData.map((e ,index) => {
                                 return <Menu.Item key={e.key} onClick={openTabMenu} className={({ isActive }) => (isActive ? 'active' : 'inactive')} >
                                     <NavLink to={e.link}  className={({ isActive }) => (isActive ? 'active' : 'inactive')}>
                                         <div className='flexLink'>

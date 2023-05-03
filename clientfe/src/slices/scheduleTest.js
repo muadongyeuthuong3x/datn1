@@ -313,6 +313,19 @@ export function getAllTestScheduleStudent(){
     }
 }
 
+export function getAllTestScheduleStudentSearch(data){
+    return async dispatch => {
+        dispatch(loadding())
+        try {
+            const dataRes = await instance.post(`/test-schedule-student/search`,data);
+            dispatch(setGetAllTestStudent(dataRes.data.message))
+        } catch (error) {
+            toast.error(error.response.data.message)
+            dispatch(loaddingFailes())
+        }
+    }
+}
+
 
 export function deleteItemTestScheduleStudent(id){
     return async dispatch => {

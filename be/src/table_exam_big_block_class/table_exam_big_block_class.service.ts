@@ -146,6 +146,93 @@ export class TableExamBigBlockClassService {
   }
 }
 
+  async findAllTestScheduleStudentSearch(
+    dataSearch: {
+      semester: string,
+      time_year_start: string
+    },
+    res: any,
+  ) {
+    try {
+      const { semester, time_year_start } = dataSearch;
+      const data = await this.examBigClassRepository
+        .createQueryBuilder('table_exam_big_block_class')
+        .select([
+          'table_exam_big_block_class.id',
+          'table_exam_big_block_class.time_year_start',
+          'table_exam_big_block_class.time_year_end',
+          'test-schedule-student.id',
+          'test-schedule-student.mode',
+          'test-schedule-student.time_exam',
+          'test-schedule-student.form_exam',
+          'test-schedule-student.roomPeopleMax',
+          'test-schedule-student.grading_exam',
+          'test-schedule-student.department',
+          'exam.id',
+          'exam.name',
+          'exam.tc_learn',
+          'exam.semester',
+          'table-big-class-exam.id',
+          'big_block_class.bigBlockClass',
+          'big_block_class.id',
+          'item-room-exam-and-teacher',
+          'teacher-track.id',
+          'teacher-mark-exam-room.id',
+          'room',
+          'exam-form',
+        ])
+        .innerJoin('table_exam_big_block_class.id_exam', 'exam')
+        .innerJoin(
+          'table_exam_big_block_class.id_big_class_exam',
+          'table-big-class-exam',
+        )
+        .innerJoin('table-big-class-exam.id_big_class_exam', 'big_block_class')
+        .innerJoin(
+          'table_exam_big_block_class.id_testScheduleStudent',
+          'test-schedule-student',
+        )
+        .innerJoin('test-schedule-student.id_ExamForm', 'exam-form')
+        .leftJoin(
+          'test-schedule-student.id_itemRoomExamAndTeacher',
+          'item-room-exam-and-teacher',
+        )
+        .leftJoin(
+          'item-room-exam-and-teacher.id_teacher_mark_exam',
+          'teacher-mark-exam-room',
+        )
+        .leftJoinAndSelect(
+          'teacher-mark-exam-room.id_teacher_mark_score',
+          'teacher',
+        )
+        .leftJoin('item-room-exam-and-teacher.id_teacherTrack', 'teacher-track')
+        .leftJoinAndSelect(
+          'teacher-track.id_Teacher',
+          'teacher AS alias_teacher',
+        )
+        .leftJoin('item-room-exam-and-teacher.id_Room', 'room')
+        .where('exam.semester = :semester_search', {
+          semester_search: semester,
+        })
+        .andWhere(
+          'table_exam_big_block_class.time_year_start = :time_year_start_search',
+          {
+            time_year_start_search: time_year_start,
+          },
+        )
+        .getMany();
+      return res.status(200).json({
+        status: 'success',
+        message: data,
+      });
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        status: "error",
+        message: "Server error"
+      })
+    }
+  }
+
 
   async findOneData(data: { id_exam_where: any; time_year_start: any }) {
     const { id_exam_where, time_year_start } = data;

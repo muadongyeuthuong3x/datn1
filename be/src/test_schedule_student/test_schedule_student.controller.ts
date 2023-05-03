@@ -29,6 +29,21 @@ export class TestScheduleStudentController {
     );
   }
 
+
+  @Post('/search')
+  async searchData(
+    @Body() dataSearch: {
+      semester: string,
+      time_year_start: string
+    },
+    @Res() res: any,
+  ) {
+    return await this.testScheduleStudentService.findAllSearch(
+      dataSearch,
+      res,
+    );
+  }
+
   @Get()
   async findAll(@Res() res: any) {
     return await this.testScheduleStudentService.findAll(res);

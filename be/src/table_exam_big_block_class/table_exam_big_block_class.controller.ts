@@ -60,6 +60,7 @@ export class TableExamBigBlockClassController {
     );
   }
 
+
   @Patch(':id')
   update(
     @Param('id') id: string,

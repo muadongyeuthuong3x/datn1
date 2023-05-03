@@ -1620,9 +1620,11 @@ const ScheduleSComponent = () => {
             }
         })
         return data;
-    }, [dataOldSearchView])
-     const searchData = ()=>{
-     console.log(dataSearch)
+    }, [dataOldSearchView]);
+    
+    const searchData = async () => {
+        const dataRes = await instance.post(`/test-schedule-student/search`, dataSearch);
+        setlistDataTestSchedule(dataRes.data.message)
     }
 
     const handleChange = (e)=>{

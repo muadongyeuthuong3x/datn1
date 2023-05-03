@@ -56,7 +56,7 @@ export class TestScheduleStudentService {
       }
 
 
-      if(id_edit){
+      if (id_edit) {
         const id = id_edit;
         await this.testScheduleStudentRepository.delete(id);
       }
@@ -114,7 +114,7 @@ export class TestScheduleStudentService {
         mode,
         id_exam_big_class: data.id,
         roomPeopleMax: Number(roomPeopleMax),
-        grading_exam:grading_exam
+        grading_exam: grading_exam
       }
       await this.itemRoomExamAndTeacherRepository.create(dataItemExam);
       return res.status(200).json({
@@ -140,6 +140,19 @@ export class TestScheduleStudentService {
 
   async findAll(res: any) {
     return await this.tableExamBigBlockClassServiceRepository.findAllTestScheduleStudent(res);
+  }
+
+  async findAllSearch(
+    dataSearch: {
+      semester: string;
+      time_year_start: string;
+    },
+    res: any,
+  ) {
+    return await this.tableExamBigBlockClassServiceRepository.findAllTestScheduleStudentSearch(
+      dataSearch,
+      res,
+    );
   }
 
   findOne(id: number) {
