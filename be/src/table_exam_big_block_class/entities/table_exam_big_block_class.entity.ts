@@ -39,11 +39,15 @@ export class TableExamBigBlockClass {
   @OneToMany(() => Student, (item) => item.id_exam_big_class, {
     onDelete: 'CASCADE',
   })
-  id_student: TableBigClassExam;
+  id_student: Student;
 
-  @OneToMany(() => TestScheduleStudent, (item) => item.id_tableExamBigBlockClass, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(
+    () => TestScheduleStudent,
+    (item) => item.id_tableExamBigBlockClass,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   id_testScheduleStudent: TestScheduleStudent;
 
   @CreateDateColumn({ name: 'created_at', default: new Date() })

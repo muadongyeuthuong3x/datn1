@@ -45,7 +45,7 @@ export class Student {
   @Column({ default: '' })
   why_edit_point_end: string;
 
-  @Column()
+  @Column({ default: '' })
   id_exam_query: string;
   
   @Column({ default: -1 })
@@ -54,16 +54,10 @@ export class Student {
   @Column({ default: -1 })
   id_room_test_tl: number;
 
-  @Column({ default: '' })
-  why_exam_break: string;
-
-  @Column({ default: '' })
-  why_retest: string;
-
   @ManyToOne(() => TableExamBigBlockClass, (item) => item.id_student, {
     onDelete: 'CASCADE',
   })
-  id_exam_big_class: number;
+  id_exam_big_class: TableExamBigBlockClass;
 
 
   @CreateDateColumn({ name: 'created_at', default: new Date() })

@@ -12,8 +12,8 @@ import * as Joi from '@hapi/joi';
 import { DatabaseModule } from './database/database.module';
 import { AuthLogin } from './auth-middleware/auth.login';
 import { JwtModule } from '@nestjs/jwt';
-import { BlockClassModule } from './block_class/block_class.module';
-import { ClassModule } from './class/class.module';
+// import { BlockClassModule } from './block_class/block_class.module';
+// import { ClassModule } from './class/class.module';
 import { StudentsModule } from './students/students.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BigBlockClassModule } from './big_block_class/big_block_class.module';
@@ -22,7 +22,6 @@ import { ExamFormModule } from './exam_form/exam_form.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { RoomModule } from './room/room.module';
 import { FormManagementModule } from './form_management/form_management.module';
-import { TableTeacherRoomModule } from './table_teacher_room/table_teacher_room.module';
 import { TableExamBigBlockClassModule } from './table_exam_big_block_class/table_exam_big_block_class.module';
 import { TableBigClassExamModule } from './table-big-class-exam/table-big-class-exam.module';
 import { DepartmentModule } from './department/department.module';
@@ -35,7 +34,7 @@ import { AdminWeb } from './auth-middleware/admin.web';
     JwtModule.register({
       secret: 'dferzxczcbxcvffwe',
       signOptions: {
-        expiresIn: '1 hour',
+        expiresIn: '9 hour', 
       },
     }),
 
@@ -55,8 +54,8 @@ import { AdminWeb } from './auth-middleware/admin.web';
         PORT: Joi.number(),
       }),
     }),
-    BlockClassModule,
-    ClassModule,
+    // BlockClassModule,
+    // ClassModule,
     StudentsModule,
     BigBlockClassModule,
     ExamModule,
@@ -64,7 +63,6 @@ import { AdminWeb } from './auth-middleware/admin.web';
     TeacherModule,
     RoomModule,
     FormManagementModule,
-    TableTeacherRoomModule,
     TableExamBigBlockClassModule,
     TableBigClassExamModule,
     DepartmentModule,

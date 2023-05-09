@@ -125,7 +125,6 @@ const StudentComponent = () => {
                 key: 'button_between',
                 render: (item) => <Button type='primary' onClick={() => {
                     setIsShowModalOpenBetween(true)
-                    console.log("400000",formCreateBetween)
                     const objectCreate = {
                         id_exam: item.id,
                         time_year_end: item.time_year_end,
@@ -133,7 +132,7 @@ const StudentComponent = () => {
                         files: formCreateBetween?.files,
                         name: item.name,
                     }
-                    setFormCreateBetween(prev => { return { ...prev, objectCreate }})
+                    setFormCreateBetween(objectCreate)
                 }}
                 >Upload điểm thi giữa kì</Button>,
             },
@@ -150,7 +149,7 @@ const StudentComponent = () => {
                         files: formCreateEnd.files,
                         name: item.name,
                     }
-                    setFormCreateEnd(prev => { return { ...prev, objectCreate }})
+                    setFormCreateEnd(objectCreate)
                 }}>Upload điểm thi cuối kì</Button>,
             },
             {
@@ -168,7 +167,7 @@ const StudentComponent = () => {
                         name: item.name,
                     }
                     
-                    setFormCreateEndEnd(prev => { return { ...prev, objectCreate }})
+                    setFormCreateEndEnd(objectCreate)
                 }}>Upload điểm thi lại</Button>,
             },
             {
@@ -359,6 +358,7 @@ const StudentComponent = () => {
         if(listFile.length < 1){
             return toast.error("Chưa có file điểm")
         }
+        console.log("formCreateBetween",formCreateBetween)
         // eslint-disable-next-line array-callback-return
         listFile.map(e => {
             formUpload.append("files", e.originFileObj);

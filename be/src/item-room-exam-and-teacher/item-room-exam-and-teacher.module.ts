@@ -3,10 +3,6 @@ import { ItemRoomExamAndTeacherService } from './item-room-exam-and-teacher.serv
 import { ItemRoomExamAndTeacherController } from './item-room-exam-and-teacher.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ItemRoomExamAndTeacher } from './entities/item-room-exam-and-teacher.entity';
-import { Class } from 'src/class/entities/class.entity';
-import { ClassModule } from 'src/class/class.module';
-import { ClassController } from 'src/class/class.controller';
-import { ClassService } from 'src/class/class.service';
 import { TestScheduleStudentModule } from 'src/test_schedule_student/test_schedule_student.module';
 import { TestScheduleStudent } from 'src/test_schedule_student/entities/test_schedule_student.entity';
 import { TestScheduleStudentController } from 'src/test_schedule_student/test_schedule_student.controller';
@@ -35,19 +31,17 @@ import { RoomService } from 'src/room/room.service';
  
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ItemRoomExamAndTeacher ,TestScheduleStudent, Class ,  TableExamBigBlockClass , TableBigClassExam , Class, TeacherTrack , TeacherMarkExamRoom , Student , Teacher ,Room]),
-    ClassModule,
+    TypeOrmModule.forFeature([ItemRoomExamAndTeacher ,TestScheduleStudent ,  TableExamBigBlockClass , TableBigClassExam , TeacherTrack , TeacherMarkExamRoom , Student , Teacher ,Room]),
     TableExamBigBlockClassModule,
     TableBigClassExamModule,
     ItemRoomExamAndTeacherModule,
     TeacherTrackModule,
     TeacherMarkExamRoomModule,
-    ClassModule,
     StudentsModule,
     TeacherModule,
     RoomModule
   ],
-  controllers: [ItemRoomExamAndTeacherController , ClassController ],
-  providers: [ItemRoomExamAndTeacherService , ClassService, TestScheduleStudentService, TableExamBigBlockClassService, TableBigClassExamService, TeacherMarkExamRoomService, TeacherTrackService , TeacherMarkExamRoomService , StudentsService , TeacherService , RoomService]
+  controllers: [ItemRoomExamAndTeacherController  ],
+  providers: [ItemRoomExamAndTeacherService , TestScheduleStudentService, TableExamBigBlockClassService, TableBigClassExamService, TeacherMarkExamRoomService, TeacherTrackService , TeacherMarkExamRoomService , StudentsService , TeacherService , RoomService]
 })
 export class ItemRoomExamAndTeacherModule {}

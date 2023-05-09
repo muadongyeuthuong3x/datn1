@@ -369,17 +369,13 @@ const ScheduleSComponent = () => {
 
 
     const changeFormExam = (e) => {
-        const dataOld = { ...onFormCreate };
-        const form_exam_old = dataOld.form_exam;
-
+        const dataOld = { ...onFormCreate }; 
         dataOld.form_exam = e;
         setOnchangeFormCreate(dataOld);
     }
 
     const changeFormExamEdit = (e) => {
-        const dataOld = { ...dataFormEdit };
-        const form_exam_old = dataOld.form_exam;
-
+        const dataOld = JSON.parse(JSON.stringify(dataFormEdit));
         dataOld.form_exam = e;
         setDataFormEdit(dataOld);
     }
@@ -429,6 +425,8 @@ const ScheduleSComponent = () => {
         }
         setDataFormEdit(dataOld);
     }
+
+    console.log("FORMEDIT" , dataFormEdit)
 
     const onSelectItem = (id, i) => {
         const dataOld = { ...onFormCreate };
@@ -835,10 +833,11 @@ const ScheduleSComponent = () => {
     }
 
     const getIdTeacherScore = (item) => {
-        let listTeacher = [];
+        let listTeacher = "";
         for (let i = 0; i < item.length; i++) {
-            let idTeacher = item[i].id_teacher_mark_score.id
-            listTeacher.push(Number(idTeacher))
+            let idTeacher = Number(item[i].id_teacher_mark_score.id);
+            listTeacher = idTeacher;
+            // listTeacher.push(Number(idTeacher))
         }
         return listTeacher;
     }
@@ -1037,11 +1036,13 @@ const ScheduleSComponent = () => {
         })
         return result;
     }
-
+    
+   
     const resultFormExam = (mode) => {
+
         let result = ''
         examForms.forEach(item => {
-            if (item.value == mode) {
+            if (item.id == mode) {
                 result = item.name
             }
         })
@@ -1132,7 +1133,7 @@ const ScheduleSComponent = () => {
                 key: i,
                 index: i + 1,
                 name: item?.id_exam?.name,
-                form_exam: resultFormExam(item?.form_exam),
+                form_exam: resultFormExam(item?.id_testScheduleStudent[0].form_exam),
                 mode: resultMode(item?.id_testScheduleStudent[0].mode),
                 bigBlockClass: getClassBigExam(item?.id_big_class_exam),
                 yearExam: item?.time_year_start + "-" + item?.time_year_end,
@@ -1872,7 +1873,7 @@ const ScheduleSComponent = () => {
                     </div>
 
 
-
+                   
 
                     <div className='form_2'>
                         <Form.Item

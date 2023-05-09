@@ -116,3 +116,6 @@ https://orkhan.gitbook.io/typeorm/docs/find-options
 
 
 https://ant.design/components/form
+
+
+https://aws.amazon.com/vi/compare/the-difference-between-mysql-vs-postgresql/#:~:text=MySQL%20%C4%91%C6%A1n%20thu%E1%BA%A7n%20l%C3%A0%20m%E1%BB%99t,l%E1%BA%ADp%20tr%C3%ACnh%20nh%C6%B0%20Java%20v%C3%A0%20.

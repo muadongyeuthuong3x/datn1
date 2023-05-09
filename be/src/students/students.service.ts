@@ -16,7 +16,6 @@ import {
   LessThan,
 } from 'typeorm';
 import { Student } from './entities/student.entity';
-import { ClassService } from 'src/class/class.service';
 import { TableExamBigBlockClass } from 'src/table_exam_big_block_class/entities/table_exam_big_block_class.entity';
 import { TableExamBigBlockClassService } from 'src/table_exam_big_block_class/table_exam_big_block_class.service';
 import { Response } from 'express';
@@ -34,9 +33,7 @@ const mime = require('excel4node');
 export class StudentsService {
   constructor(
     @InjectRepository(Student)
-    @Inject(forwardRef(() => ClassService))
     private readonly studentRepository: Repository<Student>,
-    private readonly classService: ClassService,
     private dataSource: DataSource,
     private examBigClassRepository: TableExamBigBlockClassService,
   ) { }
@@ -74,7 +71,8 @@ export class StudentsService {
             checkNotiMaSv = getValue[1]
             checkScore = true;
           }
-          studentCreate.id_exam_big_class = id_exam;
+
+          studentCreate.id_exam_big_class = id_exam as any;
           studentCreate.id_exam_query = id_exam as any;
           const result = await this.findDataIsExit(getValue[1], id_exam);
           if (!result) {
@@ -386,9 +384,7 @@ export class StudentsService {
     }
   }
 
-  findOneClass(id_class_kma: number) {
-    return this.classService.findOne(id_class_kma);
-  }
+
 
   findAll() {
     return `This action returns all students`;

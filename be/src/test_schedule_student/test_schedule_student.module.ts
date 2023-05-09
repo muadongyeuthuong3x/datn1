@@ -13,10 +13,6 @@ import { TableBigClassExam } from 'src/table-big-class-exam/entities/table-big-c
 import { TableBigClassExamController } from 'src/table-big-class-exam/table-big-class-exam.controller';
 import { ItemRoomExamAndTeacherModule } from 'src/item-room-exam-and-teacher/item-room-exam-and-teacher.module';
 import { ItemRoomExamAndTeacherService } from 'src/item-room-exam-and-teacher/item-room-exam-and-teacher.service';
-import { ClassModule } from 'src/class/class.module';
-import { ClassController } from 'src/class/class.controller';
-import { ClassService } from 'src/class/class.service';
-import { Class } from 'src/class/entities/class.entity';
 import { ItemRoomExamAndTeacherController } from 'src/item-room-exam-and-teacher/item-room-exam-and-teacher.controller';
 import { ItemRoomExamAndTeacher } from 'src/item-room-exam-and-teacher/entities/item-room-exam-and-teacher.entity';
 import { TeacherTrackService } from 'src/teacher_track/teacher_track.service';
@@ -37,18 +33,17 @@ import { Room } from 'src/room/entities/room.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TestScheduleStudent , TableExamBigBlockClass , TableBigClassExam , Class,ItemRoomExamAndTeacher , TeacherTrack , TeacherMarkExamRoom, Student  , Teacher, Room]),
+    TypeOrmModule.forFeature([TestScheduleStudent , TableExamBigBlockClass , TableBigClassExam , ItemRoomExamAndTeacher , TeacherTrack , TeacherMarkExamRoom, Student  , Teacher, Room]),
     TableExamBigBlockClassModule,
     TableBigClassExamModule,
     ItemRoomExamAndTeacherModule,
-    ClassModule,
     TeacherTrackModule,
     TeacherMarkExamRoomModule,
     StudentsModule,
     TeacherModule,
     RoomModule
   ],
-  controllers: [TestScheduleStudentController ,TableExamBigBlockClassController, TableBigClassExamController  , ClassController , ItemRoomExamAndTeacherController],
-  providers: [TestScheduleStudentService ,TableExamBigBlockClassService,TableBigClassExamService  ,ItemRoomExamAndTeacherService , ClassService,TeacherTrackService , TeacherMarkExamRoomService, StudentsService , TeacherService ,RoomService]
+  controllers: [TestScheduleStudentController ,TableExamBigBlockClassController, TableBigClassExamController  ,ItemRoomExamAndTeacherController],
+  providers: [TestScheduleStudentService ,TableExamBigBlockClassService,TableBigClassExamService  ,ItemRoomExamAndTeacherService ,TeacherTrackService , TeacherMarkExamRoomService, StudentsService , TeacherService ,RoomService]
 })
 export class TestScheduleStudentModule {}
