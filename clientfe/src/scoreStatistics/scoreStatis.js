@@ -90,7 +90,9 @@ export default function ScoreStatis() {
     // countFail,
     // countSuccess
      useEffect(()=>{
-      dispatch(dispatchDefault())
+        return () => {
+            dispatch(dispatchDefault())
+          };
      },[])
     
     useEffect(() => {

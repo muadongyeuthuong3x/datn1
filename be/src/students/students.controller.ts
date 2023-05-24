@@ -58,7 +58,7 @@ export class StudentsController {
       console.log(getKeys[1] !== 'Mã SV')
       console.log(getKeys[2] !== 'Họ và tên') 
       console.log(getKeys[3] !== 'Lớp')
-      console.log(getKeys[4] !== 'Điểm thành phần 1')
+      console.log(getKeys[4] != 'Điểm thành phần 1')
       console.log(getKeys[5] !== 'Điểm thành phần 2')
       if (
         getKeys[0] !== 'STT' ||

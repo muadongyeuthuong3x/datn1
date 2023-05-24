@@ -119,3 +119,25 @@ https://ant.design/components/form
 
 
 https://aws.amazon.com/vi/compare/the-difference-between-mysql-vs-postgresql/#:~:text=MySQL%20%C4%91%C6%A1n%20thu%E1%BA%A7n%20l%C3%A0%20m%E1%BB%99t,l%E1%BA%ADp%20tr%C3%ACnh%20nh%C6%B0%20Java%20v%C3%A0%20.
+
+
+https://viblo.asia/p/8-diem-so-sanh-giua-mysql-va-postgresql-de-chon-lua-cai-nao-phu-hop-hon-OeVKB4NElkW#_2-performance-cua-cau-dml-1
+
+// so sánh mysql với postgress
+
++ sort mysql dữ liệu lớn thì không nhanh bằng postgress
++ update performance  chậm hơn mysql , và get data chậm hơn bời UPDATE sẽ có xử lý gần giống như là khi INSERT. 
+Cụ thể là nó sẽ oánh dấu flag như là delete vào dòng trước khi thay đổi rồi thêm dòng mới mà có dữ liệu sau khi mà thay đổi vào.
+Ngược lại thì MySQL sẽ ghi đè đối tượng sẽ được UPDATE nên nó đúng với nghĩa là cập nhật.
+
+* Về thuật toán join
+ MySQL cơ bản chỉ support Nested Loop Join. Bởi lẽ MySQL được thiết kế theo quan điểm là không support thuật toán phức tạp
+
+(Nested Loop Join :  đơn giản đọc từng hàng từ bảng đầu tiên trong một vòng lặp, chuyển từng hàng đến một vòng lặp lồng nhau để xử lý bảng tiếp theo trong phép nối . 
+ Quá trình này được lặp lại nhiều lần khi vẫn còn các bảng được nối ) 
+ bởi vì mysql được thiết kế với db chạy trên memory hay disk mà có dung lương rất nhỏ nên phải bỏ qua các thuật toán phức tạp
+
+ Hash Join là một thuật toán giúp ta tiết kiệm thời gian join hơn rất nhiều so với Nested Loop Join vì nó sẽ sử dụng cấu trúc dữ liệu Hash Table để lưu dữ liệu của 1 bảng lại
+ nhưng tốn bộ nhớ (thích hơn so sánh =)
+
+https://vntalking.com/hieu-ve-cluster-trong-node-js-da-luong-trong-node-js.html

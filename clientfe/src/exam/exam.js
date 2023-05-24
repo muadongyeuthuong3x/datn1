@@ -118,6 +118,13 @@ const ExamComponent = () => {
         console.log(e.target.value)
         if(e.target.name== 'tc_learn'){
             if(e.target.value < 1){
+                setFromCreateSearch(prev => {
+                    return {
+                        ...prev,
+                        [e.target.name]: 1
+        
+                    }
+                })
               return  toast.error("Số tín chỉ phải lớn hơn không")
             }
         }

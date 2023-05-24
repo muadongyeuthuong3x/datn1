@@ -23,7 +23,9 @@ export class Room {
   })
   form_room: RoomData;
 
-  @OneToMany(() => ItemRoomExamAndTeacher, (item) => item.id_Room)
+  @OneToMany(() => ItemRoomExamAndTeacher, (item) => item.id_Room, {
+    cascade: true,
+  })
   id_ItemRoomExamAndTeacher: number;
 
   @CreateDateColumn({ name: 'created_at', default: new Date() })

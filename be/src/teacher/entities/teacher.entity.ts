@@ -28,14 +28,20 @@ export class Teacher {
     @Column()
     id_teacher_department_query: string;
 
-    @ManyToOne(() => Department, item => item.idDepartment)
+    @ManyToOne(() => Department, item => item.idDepartment ,{
+        onDelete: 'CASCADE',
+    })
     id_teacher_department: Department;
 
-    @OneToMany(() => TeacherTrack, item => item.id_Teacher)
+    @OneToMany(() => TeacherTrack, item => item.id_Teacher , {
+        onDelete: 'CASCADE',
+    })
     id_teacherTrack: TeacherTrack;
 
    
-    @OneToMany(() => TeacherMarkExamRoom, item => item.id_teacher_mark_score)
+    @OneToMany(() => TeacherMarkExamRoom, item => item.id_teacher_mark_score, {
+        onDelete: 'CASCADE',
+    })
     id_teacherMarkExamRoom: TeacherMarkExamRoom;
    
 

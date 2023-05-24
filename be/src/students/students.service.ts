@@ -616,7 +616,7 @@ export class StudentsService {
             dataAll = this.dataArray(dataAll, scoreStudentEndEnd, i, i + 1)
           }
         } else if (item.point_end_end == -1) {
-          if (scoreStusentEnd < 4 && scoreStusentEnd > -1) {
+          if (scoreStusentEnd < 4 && scoreStusentEnd >= -1) {
             countFail++;
           } else if (scoreStusentEnd >= 4) {
             countSuccess++;

@@ -73,6 +73,7 @@ export class DepartmentService {
       const dataRemove = await this.departmentRepository.delete(id);
       return dataRemove;
     } catch (error) {
+      console.log(error)
       throw new BadGatewayException({
         status: "error",
         message: "Server error "

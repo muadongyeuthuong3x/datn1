@@ -279,10 +279,11 @@ const StudentComponent = () => {
         multiple: false,
         onChange(info) {
             const listFiles = info.fileList;
+            console.log("listFiles" , listFiles)
             if(listFiles[0].type == "image/png"){
                return toast.error("Không đúng định dạng file")
             }
-            console.log("listFiles" , listFiles)
+           
             setFormCreateBetween(prev => {
                 return {
                     ...prev,
@@ -502,12 +503,17 @@ const StudentComponent = () => {
             {/* multi  upload file */}
             <Modal title={`Upload điểm giữa kì năm học ${formCreateBetween.time_year_start} - ${formCreateBetween.time_year_end}`} open={isShowModalOpenBetween} onOk={createFileBetween}
                 onCancel={() => {
-                    setIsShowModalOpenBetween(false);
-                }
+                    setFormCreateBetween(prev => {
+                        setIsShowModalOpenBetween(false);
+                        return {
+                            ...prev,
+                            files: []
+                        }
+                    })}
                 }>
 
                 <div style={{ marginBottom: "20px" }}> Môn thi : {formCreateBetween.name}  </div>
-                <Dragger {...props} accept=".xlsx"  beforeUpload={() => false}   className={formCreateBetween.files?.length  > 0? 'blockedBetween' : undefined}>
+                <Dragger {...props} accept=".xlsx"    fileList={[]} beforeUpload={() => false}   >
                     <p className="ant-upload-drag-icon">
                         <UploadOutlined />
                     </p>
@@ -537,7 +543,7 @@ const StudentComponent = () => {
                 }>
 
                 <div style={{ marginBottom: "20px" }}> Môn thi : {formCreateEnd.name}  </div>
-                <Dragger {...propsEnd} accept=".xlsx" beforeUpload={() => false}  className={formCreateEnd.files?.length > 0 ? 'blockedEnd' : undefined} >
+                <Dragger {...propsEnd} accept=".xlsx"   fileList={[]} beforeUpload={() => false}   >
                     <p className="ant-upload-drag-icon">
                         <UploadOutlined />
                     </p>
@@ -566,7 +572,7 @@ const StudentComponent = () => {
                 }>
 
                 <div style={{ marginBottom: "20px" }}> Môn thi : {formCreateEndEnd.name}  </div>
-                <Dragger {...propsEndEnd} accept=".xlsx" beforeUpload={() => false}  className={formCreateEndEnd.files?.length > 0 ? 'blockedEndEnd' : undefined} >
+                <Dragger {...propsEndEnd} accept=".xlsx"   fileList={[]} beforeUpload={() => false}   >
                     <p className="ant-upload-drag-icon">
                         <UploadOutlined />
                     </p>

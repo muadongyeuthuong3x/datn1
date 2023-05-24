@@ -28,6 +28,8 @@ export class TeacherTrack {
   })
   id_itemRoomExamAndTeacher: number;
 
-  @ManyToOne(() => Teacher, (item) => item.id_teacherTrack)
+  @ManyToOne(() => Teacher, (item) => item.id_teacherTrack , {
+    onDelete: 'CASCADE',
+})
   id_Teacher: Teacher;
 }

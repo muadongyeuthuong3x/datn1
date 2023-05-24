@@ -18,7 +18,9 @@ export class TeacherMarkExamRoom {
     @Column()
     id_room_query : string;
     
-    @ManyToOne(() => Teacher, item => item.id_teacherMarkExamRoom)
+    @ManyToOne(() => Teacher, item => item.id_teacherMarkExamRoom , {
+        onDelete: 'CASCADE',
+    })
     id_teacher_mark_score : number;
 
     @ManyToOne(() => ItemRoomExamAndTeacher, item => item.id_teacher_mark_exam,{
