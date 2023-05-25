@@ -218,6 +218,7 @@ export class StudentsService {
       }
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      console.log(error)
       throw new BadGatewayException({
         error: 'error',
         message: 'server error',
@@ -876,6 +877,7 @@ export class StudentsService {
         
             table {
                 margin-top: 10px;
+                with : 100%;
             }
         
         
@@ -1009,7 +1011,7 @@ export class StudentsService {
                 Không lý do : ......
             </div>
         </div> 
-    <table>
+    <table style="width:100%">
             <tr>
               <th class="stt">STT</th>
               <th class="msv">Mã SV</th>
@@ -1022,11 +1024,11 @@ export class StudentsService {
               <th class="gc">Ghi chú</th>
             </tr>
           ${dataStudent.map((e, index) => {
-            const dataObject = splitName(e.name);
-            const result = Number(e.point_diligence) < 4 ? `<span class="bg100"> ${e.point_diligence == 0 ? "N100" : "N25"}</span>` : (Number(e.point_beetween) < 4 ? `<span class="bg100">Không đủ điều kiện</span>` : "")  
-            return (
-            `<tr>
-                <td>${index+1}</td>
+      const dataObject = splitName(e.name);
+      const result = Number(e.point_diligence) < 4 ? `<span class="bg100"> ${e.point_diligence == 0 ? "N100" : "N25"}</span>` : (Number(e.point_beetween) < 4 ? `<span class="bg100">Không đủ điều kiện</span>` : "")
+      return (
+        `<tr>
+                <td>${index + 1}</td>
                 <td>${e.code_student}</td>
                 <td>${dataObject.hd}</td>
                 <td>${dataObject.name1} </td>
@@ -1035,7 +1037,8 @@ export class StudentsService {
                 <td> </td>
                 <td> </td>
                 <td>${result}</td>
-          </tr>`)}).join('')
+          </tr>`)
+    }).join('')
       } 
           </table>
           <div class="hndate">
@@ -1180,6 +1183,7 @@ export class StudentsService {
         
             table {
                 margin-top: 10px;
+                with : 100%;
             }
         
         
