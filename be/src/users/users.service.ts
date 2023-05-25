@@ -74,13 +74,14 @@ export class UsersService {
     return data;
   }
 
-  async findEamil(email: string) {
-    const data = await this.usersRepository.find({
+  async findEamil(email: string, emailGet: string) {
+    let data = await this.usersRepository.find({
       where: {
         email: Like(`%${email}%`),
       },
-      select: ["id", "email", "role", "name"]
+      select: ['id', 'email', 'role', 'name'],
     });
+    data = data.filter((e) => e.email != emailGet);
     return data;
   }
 

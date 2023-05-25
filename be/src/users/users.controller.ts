@@ -7,10 +7,10 @@ import { UserSchema } from './helpers/validate_schema_user';
 import { BadGatewayException } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UserRO } from './interfaceData/interface-login';
-
+import {  JwtService } from '@nestjs/jwt';
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService , private jwtService: JwtService) { }
 
   @Post()
   @UsePipes(new JoiValidatePipe(UserSchema))
@@ -68,8 +68,12 @@ export class UsersController {
   }
 
   @Post('/search')
-  async findEamil(@Body() data: { email: string }) {
-    return this.usersService.findEamil(data.email);
+  async findEamil(@Body() data: { email: string }, @Req() req: any) {
+    const decodedToken = this.jwtService.verify(
+      req.headers.authorization.split(' ')[1]
+    );
+    const emailGet = decodedToken.email
+    return this.usersService.findEamil(data.email ,emailGet);
   }
 
 

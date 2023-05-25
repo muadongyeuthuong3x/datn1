@@ -1363,16 +1363,24 @@ export class StudentsService {
     });
 
   }
+  
+  checkScoreAA = (score, scoreBetween) => {
+    let check = false
+    if (Number(score) >= 4 && Number(scoreBetween) >= 4) {
+      check =  true
+    } 
+    return check
+}
 
   async wirteData(id: string, res, checkExam) {
-    let data = [];
+    let data : any = [];
     let score = ''
     if (checkExam == "end") {
       score = "Điểm thi cuối kì"
       data = await this.studentRepository.findBy(({
         id_exam_query: id,
-        point_diligence: MoreThanOrEqual(4),
-        point_beetween: MoreThanOrEqual(4),
+        // point_diligence: MoreThanOrEqual(4),
+        // point_beetween: MoreThanOrEqual(4),
       }));
     } else {
       score = "Điểm thi lại cuối kì"
@@ -1384,7 +1392,7 @@ export class StudentsService {
           point_end: LessThan(4),
         }
       });
-
+      data = data.filter(e=>e.point_end != '-1')
       // data =   await this.studentRepository
       //   .createQueryBuilder('student')
       //   .where('student.id_exam_query >= :id_exam_query', { id_exam_query: id })
@@ -1399,6 +1407,8 @@ export class StudentsService {
     const headerColumns = ["STT", "SBD", "Mã SV", "Họ và Tên", "Lớp", "Đề Số", "Số tờ", score];
     const dataInportFile = [];
     for (let i = 0; i < data.length; i++) {
+      const dataScore = this.checkScoreAA(data[i]['point_diligence'], data[i]['point_beetween']) == true ? '' : '0';
+
       dataInportFile.push({
         stt: `${i}`,
         sbd: `${i + 1}`,
@@ -1407,7 +1417,7 @@ export class StudentsService {
         class: data[i]['class_student'],
         ds: '',
         st: '',
-        score: ''
+        score: dataScore ,
       })
     }
 
