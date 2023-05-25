@@ -937,12 +937,12 @@ const ScheduleSComponent = () => {
 
 
 
-    const showModalEdit = (item) => {
+    const showModalEdit = (item ,item1) => {
         console.log("item", item)
         const { time_year_end, time_year_start ,id } = item;
         const id_exam_edit = item.id_exam.id;
         const id_class_exam = getClassBigExam(item?.id_big_class_exam);
-        const { form_exam, mode, roomPeopleMax, time_exam, grading_exam, department } = item.id_testScheduleStudent[0];
+        const { form_exam, mode, roomPeopleMax, time_exam, grading_exam, department } = item1;
         const formSearchCountStudent = {
             exam: id_exam_edit,
             time_start: time_year_start,
@@ -954,7 +954,7 @@ const ScheduleSComponent = () => {
         }
 
         const dataRoomOld = [];
-        const { id_itemRoomExamAndTeacher } = item.id_testScheduleStudent[0];
+        const { id_itemRoomExamAndTeacher } = item1;
         for (let i = 0; i < id_itemRoomExamAndTeacher.length; i++) {
             const objectPush = {
                 time_start_exam: id_itemRoomExamAndTeacher[i].time_start,
@@ -972,7 +972,7 @@ const ScheduleSComponent = () => {
 
         setDataFormEdit({
             id_exam: id_exam_edit,
-            id_edit : item.id_testScheduleStudent[0].id,
+            id_edit : item1.id,
             mode: mode,
             bigBlockClassExam: id_class_exam,
             roomPeopleMax: roomPeopleMax,
@@ -1128,22 +1128,26 @@ const ScheduleSComponent = () => {
     useEffect(() => {
         // if (listDataTestSchedule.length > 0) {
         let dataList = [];
+        console.log("listDataTestSchedule",listDataTestSchedule)
         listDataTestSchedule.forEach((item, i) => {
-            dataList.push({
-                key: i,
-                index: i + 1,
-                name: item?.id_exam?.name,
-                form_exam: resultFormExam(item?.id_testScheduleStudent[0].form_exam),
-                mode: resultMode(item?.id_testScheduleStudent[0].mode),
-                bigBlockClass: getClassBigExam(item?.id_big_class_exam),
-                yearExam: item?.time_year_start + "-" + item?.time_year_end,
-                time_exam: item?.id_testScheduleStudent[0].time_exam,
-                edit: <Button type='primary' onClick={() => showModalEdit(item)}>Edit</Button>, // chi chay 1 lan
-                delete: <Button type='primary' danger onClick={() => showModalDelete(item?.id_testScheduleStudent[0].id)}>Delete</Button>,
-                // export: <Button type='primary' onClick={() => showModalPDF({ id: item?.id_testScheduleStudent[0].id, subject: item?.id_exam?.name, mode: resultMode(item?.id_testScheduleStudent[0].mode), form_exam: resultFormExam(item?.form_exam), blokcclass: getClassBigExam(item?.id_big_class_exam) })}>Lấy danh sách thi</Button>
-                export: <Button type='primary' onClick={() => showModalPDF({ id_room: item?.id_testScheduleStudent[0].id_itemRoomExamAndTeacher, time_start: item.time_year_start, big_class: getClassBigExam(item?.id_big_class_exam), name: item.id_exam.name, mode: item.id_testScheduleStudent[0].mode, form_exam: item?.id_testScheduleStudent[0].id_ExamForm.name , numberTc : item.id_exam.tc_learn ,semester : item.id_exam.semester })}>Lấy danh sách thi</Button>
-            });
+            item.id_testScheduleStudent.forEach((item1, y) => {
+                dataList.push({
+                    key: i,
+                    index: i + 1,
+                    name: item?.id_exam?.name,
+                    form_exam: resultFormExam(item1.form_exam),
+                    mode: resultMode(item1.mode),
+                    bigBlockClass: getClassBigExam(item?.id_big_class_exam),
+                    yearExam: item?.time_year_start + "-" + item?.time_year_end,
+                    time_exam: item1.time_exam,
+                    edit: <Button type='primary' onClick={() => showModalEdit(item , item1)}>Edit</Button>, // chi chay 1 lan
+                    delete: <Button type='primary' danger onClick={() => showModalDelete(item1.id)}>Delete</Button>,
+                    // export: <Button type='primary' onClick={() => showModalPDF({ id: item?.id_testScheduleStudent[0].id, subject: item?.id_exam?.name, mode: resultMode(item?.id_testScheduleStudent[0].mode), form_exam: resultFormExam(item?.form_exam), blokcclass: getClassBigExam(item?.id_big_class_exam) })}>Lấy danh sách thi</Button>
+                    export: <Button type='primary' onClick={() => showModalPDF({ id_room: item1.id_itemRoomExamAndTeacher, time_start: item.time_year_start, big_class: getClassBigExam(item?.id_big_class_exam), name: item.id_exam.name, mode: item1.mode, form_exam: item1.id_ExamForm.name, numberTc: item.id_exam.tc_learn, semester: item.id_exam.semester })}>Lấy danh sách thi</Button>
+                });
+            })
         })
+        console.log("dataList",dataList)
         setlistScheduleExamStudent(dataList)
         // }
     }, [listDataTestSchedule, examForms, callApiReset])

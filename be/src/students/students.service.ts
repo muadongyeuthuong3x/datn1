@@ -14,6 +14,7 @@ import {
   MoreThanOrEqual,
   Repository,
   LessThan,
+  Between,
 } from 'typeorm';
 import { Student } from './entities/student.entity';
 import { TableExamBigBlockClass } from 'src/table_exam_big_block_class/entities/table_exam_big_block_class.entity';
@@ -692,18 +693,27 @@ export class StudentsService {
       const countFind = await this.studentRepository.count({
         where: {
           id_exam_query: dataQuery.id,
-          point_end: LessThan(4),
-        }
+          point_end: LessThan(4)
+        },
+        
+      })
+      const countFindTr = await this.studentRepository.count({
+        where: {
+          id_exam_query: dataQuery.id,
+          point_end: -1
+        },
+        
       })
       return res.status(200).json({
         status: 'success',
-        message: countFind,
+        message: countFind - countFindTr,
       })
 
     } catch (error) {
+      
       return res.status(500).json({
         status: 'error',
-        message: 'server error',
+        message: error,
       });
     }
   }
@@ -719,7 +729,7 @@ export class StudentsService {
 
   async findIdGetExamBigClassTl(idExamBigClass: any) {
     const data = await this.studentRepository.find({
-      where: { id_exam_query: idExamBigClass, point_end: LessThan(4), }, select: ["id"], order: {
+      where: { id_exam_query: idExamBigClass, point_end: LessThan(4), point_diligence : MoreThanOrEqual(4) , point_beetween :MoreThanOrEqual(4)  }, select: ["id"], order: {
         'id': 'ASC',
       }
     });

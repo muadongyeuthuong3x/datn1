@@ -62,8 +62,8 @@ export class TestScheduleStudentService {
       }
 
       const data = await this.tableExamBigBlockClassServiceRepository.findOneData({ id_exam_where: id_exam, time_year_start: timeYearExamStart });
-      const dataCheck = await this.checkFindExitsExam((data.id).toString())
-      if (dataCheck != null && mode == dataCheck?.mode) {
+      const dataCheck = await this.checkFindExitsExam((data.id).toString() , mode)
+      if (dataCheck!= null) {
         return res.status(500).json({
           status: "error",
           message: "Môn thi này đã được lên lịch"
@@ -128,10 +128,11 @@ export class TestScheduleStudentService {
 
   }
 
-  async checkFindExitsExam(idFind: string) {
+  async checkFindExitsExam(idFind: string , mode : number) {
     return await this.testScheduleStudentRepository.findOne({
       where: {
-        id_query_exam_big_class: idFind
+        id_query_exam_big_class: idFind,
+        mode : mode
       }
     })
   }
@@ -234,6 +235,11 @@ export class TestScheduleStudentService {
 
     if (+roomPeopleMax < 1) {
       return message = "Chưa chọn số sinh viên tối đa của 1 phòng thi"
+
+    }
+
+    if (+form_exam < 1) {
+      return message = "Chưa chọn hình thức thi"
 
     }
 
