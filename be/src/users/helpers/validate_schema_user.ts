@@ -18,7 +18,7 @@ export const UserSchema = Joi.object({
         'string.required': `email cannot be left blank`,
         'string.pattern.base': `incorrect password format have min three charaters`,
       }),
-    role: Joi.string().valid(UserRole.Admin , UserRole._KMA).required().messages({
+    role: Joi.string().valid(UserRole.Admin , UserRole._KMA ,UserRole._SCORE).required().messages({
         'string.base': `role no string`,
         'string.empty': `role cannot be an empty field`,
         'string.required': `role cannot be left blank`,

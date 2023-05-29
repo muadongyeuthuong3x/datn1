@@ -60,8 +60,10 @@ export class StudentsService {
           studentCreate.code_student = getValue[1];
           studentCreate.name = getValue[2];
           studentCreate.class_student = getValue[3];
-          studentCreate.point_diligence = getValue[4];
-          studentCreate.point_beetween = getValue[5];
+          studentCreate.point_diligence =
+            getValue[4].length == 0 ? 0 : getValue[4];
+          studentCreate.point_beetween =
+            getValue[5].length == 0 ? 0 : getValue[5];
           if (
             getValue[4] > 10 ||
             getValue[4] < 0 ||
@@ -179,16 +181,16 @@ export class StudentsService {
             getValue[2],
             id_exam,
           );
-
-          if (getValue[7] > 10 || getValue[7] < 0) {
+          if (getValue[7] > 10 || getValue[7] < 0 ) {
             checkNotiName = name;
             checkNotiMaSv = getValue[1]
             checkScore = true;
           }
           if (!!result) {
             const { id } = result;
+            const end = getValue[7].length == 0 ? 0 : getValue[7];
             await queryRunner.manager.update(Student, id, {
-              point_end: getValue[7],
+              point_end: end,
             });
           } else {
             checkRollBack = true;
@@ -257,6 +259,7 @@ export class StudentsService {
     let checkNotiName = '';
     let checkNotiMaSv = '';
     try {
+    
       await Promise.all(
         createStudentDto.map(async (item) => {
           const getValue = Object.values(item);
@@ -271,8 +274,9 @@ export class StudentsService {
           }
           if (!!result) {
             const { id } = result;
+            const endend = getValue[7].length == 0 ? 0 : getValue[7];
             await queryRunner.manager.update(Student, id, {
-              point_end_end: getValue[7],
+              point_end_end: endend,
             });
           } else {
             checkRollBack = true;
@@ -302,6 +306,7 @@ export class StudentsService {
         });
       }
     } catch (error) {
+      // console.log(error)
       await queryRunner.rollbackTransaction();
       throw new BadGatewayException({
         error: 'error',

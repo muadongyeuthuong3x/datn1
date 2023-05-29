@@ -19,6 +19,9 @@ const listScoreStudent = createSlice({
             state.loading = false
             state.data = payload
         },
+        clearData: (state, { payload }) => {
+            state.data = []
+        },
         loaddingFailes: state => {
             state.loading = false
         },
@@ -51,7 +54,7 @@ const listScoreStudent = createSlice({
     },
 })
 
-export const { loadding, getListScoreSuccess, loaddingFailes,deleteIdStudent,editDataScoreStudent } = listScoreStudent.actions
+export const { loadding, getListScoreSuccess, loaddingFailes,deleteIdStudent,editDataScoreStudent,clearData } = listScoreStudent.actions
 
 export function apiGetListExam() {
     return async dispatch => {
@@ -108,6 +111,12 @@ export function editScoreStudent(data) {
             toast.error(error.response.data.message)
             dispatch(loaddingFailes())
         }
+    }
+}
+
+export function clearDataListScore() {
+    return async dispatch => {
+        dispatch(clearData())
     }
 }
 

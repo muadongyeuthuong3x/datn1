@@ -13,7 +13,7 @@ interface RequestWithUser extends Request {
    }
 }
 @Injectable()
-export class AuthLogin implements NestMiddleware{
+export class AuthLoginScore implements NestMiddleware{
  
     constructor(private readonly userService: UsersService  ,  private jwtService: JwtService) {}
 
@@ -30,8 +30,8 @@ export class AuthLogin implements NestMiddleware{
                     message : "Error Token"
                 })
             }
-            
-            if(findUserInDataBase.role == UserRole._SCORE ){
+
+            if(findUserInDataBase.role != UserRole._SCORE ){
                 throw new BadGatewayException({
                     error : "error",
                     message : "Bạn không có quyền truy cập"

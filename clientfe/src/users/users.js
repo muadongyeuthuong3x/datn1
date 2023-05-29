@@ -245,6 +245,7 @@ const UsersComponent = () => {
                             options={[
                                 { value: 'admin', label: 'admin' },
                                 { value: 'user', label: 'user' },
+                                { value: 'score', label: 'Điểm sinh viên' },
                             ]}
                         />
                     </Form.Item>
@@ -333,6 +334,7 @@ const UsersComponent = () => {
                             options={[
                                 { value: 'admin', label: 'admin' },
                                 { value: 'user', label: 'user' },
+                                { value: 'score', label: 'Điểm sinh viên' },
                             ]}
                         />
                     </Form.Item>

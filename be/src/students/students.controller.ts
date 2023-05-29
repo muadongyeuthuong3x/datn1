@@ -53,13 +53,15 @@ export class StudentsController {
       const temp = XLSX.utils.sheet_to_json(
         workbook.Sheets[workbook.SheetNames[i]],
       );
+
+      if (temp.length == 0) {
+        return res.status(500).json({
+          status: 'error',
+          message: `File upload không có dữ liệu`,
+        });
+      }
+      
       const getKeys = Object.keys(temp[0]);
-      console.log(getKeys[0] !== 'STT')
-      console.log(getKeys[1] !== 'Mã SV')
-      console.log(getKeys[2] !== 'Họ và tên') 
-      console.log(getKeys[3] !== 'Lớp')
-      console.log(getKeys[4] != 'Điểm thành phần 1')
-      console.log(getKeys[5] !== 'Điểm thành phần 2')
       if (
         getKeys[0] !== 'STT' ||
         getKeys[1] !== 'Mã SV' ||
@@ -107,6 +109,12 @@ export class StudentsController {
         workbook.Sheets[workbook.SheetNames[i]],
       );
       const getKeys = Object.keys(temp[0]);
+      if (temp.length == 0) {
+        return res.status(500).json({
+          status: 'error',
+          message: `File upload không có dữ liệu`,
+        });
+      }
       if (
         getKeys[0] !== 'STT' ||
         getKeys[1] !== 'SBD' ||
@@ -155,6 +163,12 @@ export class StudentsController {
       const temp = XLSX.utils.sheet_to_json(
         workbook.Sheets[workbook.SheetNames[i]],
       );
+      if (temp.length == 0) {
+        return res.status(500).json({
+          status: 'error',
+          message: `File upload không có dữ liệu`,
+        });
+      }
       const getKeys = Object.keys(temp[0]);
       if (
         getKeys[0] !== 'STT' ||
@@ -176,6 +190,8 @@ export class StudentsController {
         data.push(res);
       });
     }
+    
+    
     return await this.studentsService.createScoreEndEnd(
       id_exam,
       data,

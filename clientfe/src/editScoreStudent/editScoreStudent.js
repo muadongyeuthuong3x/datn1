@@ -2,7 +2,7 @@ import { Button, Table, Modal, Input, Form, Select, Space } from 'antd';
 import { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetListExamBlock } from "../slices/examBlock";
-import { searchDataListScoreStudent, deleteDataStudent,editScoreStudent } from "../slices/editScore";
+import { searchDataListScoreStudent, deleteDataStudent,editScoreStudent ,clearDataListScore } from "../slices/editScore";
 
 const { Option } = Select;
 
@@ -197,7 +197,10 @@ const EditScore = () => {
             setlistScoreExam([])
         }
     }, [data])
-
+    
+    useEffect(()=>{
+        return () => { dispatch(clearDataListScore())};
+    },[])
     // delete
     const handleOkDelete = () => {
         dispatch(deleteDataStudent(idDelete));

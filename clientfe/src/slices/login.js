@@ -32,7 +32,14 @@ export function apiLoginWeb(dataLogin, alert) {
             Cookies.set('tokenwebkma', token)
             localStorage.setItem("datawebkma", JSON.stringify({ email, role }))
             dispatch(loginSuccess)
-            window.location.href = `/dashboard`
+            if(role == 'admin'){
+                window.location.href = `/dashboard`
+            }else if(role== 'user'){
+                window.location.href = `/department`
+            }else {
+                window.location.href = `/edit-score`
+            }
+        
         } catch (error) {
             alert.error(error.response.data.message)
             dispatch(loginFailure())

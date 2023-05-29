@@ -97,14 +97,14 @@ const DashBoard = ({ ComponentProps, loading }) => {
             link: "/student-score",
             text: "Lên Điểm Thi",
             icon: '',
-            isAdmin: false,
+            isAdmin: 'score',
             key: 8
         },
         {
             link: "/edit-score",
             text: "Sửa điểm thi",
             icon: '',
-            isAdmin: false,
+            isAdmin: 'score',
             key: 9
         },
        
@@ -148,14 +148,22 @@ const DashBoard = ({ ComponentProps, loading }) => {
         // eslint-disable-next-line array-callback-return
         items.map(data => {
             const { isAdmin, link, text, icon, key } = data
-            if (checkRole === "admin" && isAdmin) {
+            if (checkRole === "admin" && isAdmin !=='score' ) {
+                console.log(text)
                 itemsList.push({
                     link: link,
                     text: text,
                     icon: icon,
                     key: key
                 })
-            } else if ((checkRole === "user" && !isAdmin) || checkRole === "admin") {
+            } else if ((checkRole === "user" && isAdmin !='score' && ! isAdmin) || checkRole === "admin" && isAdmin != 'score') {
+                itemsList.push({
+                    link: link,
+                    text: text,
+                    icon: icon,
+                    key: key
+                })
+            }else if ((checkRole === "score" && isAdmin == 'score') || link == '/login') {
                 itemsList.push({
                     link: link,
                     text: text,
@@ -164,8 +172,9 @@ const DashBoard = ({ ComponentProps, loading }) => {
                 })
             }
         })
+        console.log(itemsList)
         return itemsList;
-    }, [checkRole, items])
+    }, [])
 
 
     const openTabMenu = (e) => {
