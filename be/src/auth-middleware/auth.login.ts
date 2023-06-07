@@ -17,7 +17,7 @@ export class AuthLogin implements NestMiddleware{
  
     constructor(private readonly userService: UsersService  ,  private jwtService: JwtService) {}
 
-    async use(req  : RequestWithUser, _ : Response , next : NextFunction){
+    async use(req  : RequestWithUser, res: Response , next : NextFunction){
         const authHeaders = req.headers.authorization;
         if(authHeaders && authHeaders.startsWith('Bearer') && authHeaders.split(' ')[1]){
             const token = authHeaders.split(' ')[1];
@@ -46,10 +46,10 @@ export class AuthLogin implements NestMiddleware{
             }
             next();
         }else {
-            throw new BadGatewayException({
-                error : "error",
-                message : "Error Token"
-            })
+            return res.status(500).json({
+                status: 'error',
+                message: 'token error',
+              });
         }
     }
 

@@ -245,7 +245,7 @@ export default function ScoreStatis() {
                 <div>
                     <h2 style={{ fontSize: "30px", marginBottom: "20px" }}> Tổng số sinh viên đạt điểm </h2>
                     <BarChart
-                        width={800}
+                        width={600}
                         height={500}
                         data={dataTT}
                         margin={{

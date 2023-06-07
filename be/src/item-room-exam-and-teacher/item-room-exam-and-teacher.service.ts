@@ -31,7 +31,7 @@ export class ItemRoomExamAndTeacherService {
     private readonly studentRepository: StudentsService,
     private readonly teacherS: TeacherService,
     private readonly rooms: RoomService,
-  ) {}
+  ) { }
 
   async create(
     createItemRoomExamAndTeacherDto: CreateItemRoomExamAndTeacherDto,
@@ -118,7 +118,7 @@ export class ItemRoomExamAndTeacherService {
     return `This action updates a #${id} itemRoomExamAndTeacher`;
   }
 
-  async remove(id: number) {}
+  async remove(id: number) { }
 
   async findStudentByRoom(id: number) {
     await this.studentRepository.findStudent(id);
