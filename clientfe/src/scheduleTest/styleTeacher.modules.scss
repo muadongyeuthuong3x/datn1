@@ -86,3 +86,12 @@
     color: black;
     font-weight: 500;
 }
+
+.ant-drawer .ant-drawer-body {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    padding: 0px;
+    overflow: auto;
+    min-width: 1267px;
+}

@@ -81,11 +81,12 @@ const CreateScreen = ({ navigation }) => {
             config.headers.Authorization =  tokenHeader;
             return config;
         });
+        console.log(createUser)
         try {
-         const data = await axios.put(`${API_URL}users`, createUser);
+         const data = await axios.post(`${API_URL}users`, createUser);
          Toast.show('Tạo tài khoản thành công', Toast.LONG);
         } catch (error) {
-            console.log(error)
+            console.log(111111111,error)
             Toast.show('Email đã tồn tại trong hệ thống', Toast.LONG);
         }
 

@@ -50,7 +50,7 @@ const Login = () => {
                             <span className="icon2" onClick={onCLickShowPass}>  {iconShowPass ? <i className="fa fa-unlock" aria-hidden="true"></i> : <i className="fa fa-lock" aria-hidden="true"></i>}  </span>
                         </div>
                         <div className="sub-w3l">
-                            <h6><a href="#">Forgot Password?</a></h6>
+                            {/* <h6><a href="#">Forgot Password?</a></h6> */}
                             <div className="right-w3l" onClick={onClickButtonLogin}>
                                 <input type="button" value="Login" />
                             </div>

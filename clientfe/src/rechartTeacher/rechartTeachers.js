@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getYearExam } from "../slices/scheduleTest";
 import {findCoundTeacherTrack}  from "../slices/teacher"
 import instance from '../configApi/axiosConfig'
+import './style.modules.scss'
 
 const { Option } = Select;
 const colors = scaleOrdinal(schemeCategory10).range();
@@ -187,7 +188,7 @@ const AppRechaetTeachers = () => {
     setcountNameTeacherTrackScore(countTeacherMarkExamScore)
    }
   return (
-    <>
+    <div className="scroll_TT">
     <div className='form_search'>
 
     <Select
@@ -245,8 +246,8 @@ const AppRechaetTeachers = () => {
                 <Button type='primary' onClick={searchData}> Thống kê</Button>
             </div>
     <BarChart
-    width={1200}
-    height={700}
+    width={1300}
+    height={600}
       data={data}
       margin={{
         top: 20,
@@ -269,7 +270,7 @@ const AppRechaetTeachers = () => {
         ))}
       </Bar>
     </BarChart>
-    </>
+    </div>
   );
 }
 export default AppRechaetTeachers;

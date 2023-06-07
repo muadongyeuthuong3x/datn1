@@ -15,7 +15,7 @@ export class UsersController {
   @Post()
   @UsePipes(new JoiValidatePipe(UserSchema))
   async create(@Body() createUserDto: CreateUserDto) {
-    console.log(createUserDto)
+    console.log(createUserDto) 
     const dataRes = await this.usersService.findOneEmail(createUserDto);
     if (!dataRes) {
       const data =   await this.usersService.createUser(createUserDto);
