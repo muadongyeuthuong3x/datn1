@@ -60,15 +60,15 @@ export class StudentsService {
           studentCreate.code_student = getValue[1];
           studentCreate.name = getValue[2];
           studentCreate.class_student = getValue[3];
-          studentCreate.point_diligence =
-            getValue[4].length == 0 ? 0 : getValue[4];
-          studentCreate.point_beetween =
-            getValue[5].length == 0 ? 0 : getValue[5];
+          studentCreate.point_diligence = getValue[4];
+          studentCreate.point_beetween = getValue[5];
           if (
             getValue[4] > 10 ||
             getValue[4] < 0 ||
             getValue[5] > 10 ||
-            getValue[5] < 0
+            getValue[5] < 0||
+            getValue[4] == undefined ||
+            getValue[5] == undefined
           ) {
             checkNotiName = name;
             checkNotiMaSv = getValue[1]
@@ -181,15 +181,20 @@ export class StudentsService {
             getValue[2],
             id_exam,
           );
-          if (getValue[7] > 10 || getValue[7] < 0 ) {
+          if (
+            getValue[7] > 10 ||
+            getValue[7] < 0 ||
+            !getValue[7] 
+          ) {
             checkNotiName = name;
             checkNotiMaSv = getValue[1]
             checkScore = true;
           }
-          if (!!result) {
+          if (!!result && !checkScore) {
+          
             const { id } = result;
-            const end = getValue[7].length == 0 ? 0 : getValue[7];
-            await queryRunner.manager.update(Student, id, {
+            const end = getValue[7];
+            return await queryRunner.manager.update(Student, id, {
               point_end: end,
             });
           } else {
@@ -230,7 +235,6 @@ export class StudentsService {
       await queryRunner.release();
     }
   }
-
   async findDataIsExitAnhUpdate(code_student: string, id_exam_query: any) {
     try {
       const data = await this.studentRepository.findOneBy({
@@ -268,12 +272,12 @@ export class StudentsService {
             getValue[2],
             id_exam,
           );
-          if (getValue[7] > 10 || getValue[7] < 0) {
+          if (getValue[7] > 10 || getValue[7] < 0 || !getValue[7]) {
             checkNotiName = name;
             checkNotiMaSv = getValue[2]
             checkScore = true;
           }
-          if (!!result) {
+          if (!!result && !checkScore ) {
             const { id } = result;
             const endend = getValue[7].length == 0 ? 0 : getValue[7];
             await queryRunner.manager.update(Student, id, {
@@ -307,7 +311,7 @@ export class StudentsService {
         });
       }
     } catch (error) {
-      // console.log(error)
+       console.log(error)
       await queryRunner.rollbackTransaction();
       throw new BadGatewayException({
         error: 'error',
