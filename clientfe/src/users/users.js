@@ -61,7 +61,7 @@ const UsersComponent = () => {
                     key: i,
                     name: item?.name,
                     email: item?.email,
-                    role: item?.role,
+                    role: (item?.role == "score") ? "Điểm sinh viên" : item?.role,
                     edit: <Button type='primary' onClick={() => showModalEdit(item)}>Edit</Button>,
                     delete: <Button type='primary' danger onClick={() => showModalDelete(item?.id)}>Delete</Button>
                 });

@@ -389,8 +389,8 @@ export class TestScheduleStudentController {
           </div>
     
           <div class="footer">
-            <div> CBChT thứ nhất</div>
-            <div> CBChT thứ hai</div>
+            <div> Cán bộ coi thi thứ nhất</div>
+            <div> Cán bộ coi thi thứ hai</div>
             <div> Người nhận bài thi </div>
           </div>
     
